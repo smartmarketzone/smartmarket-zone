@@ -41,3 +41,12 @@ firebase.auth().signInWithEmailAndPassword(email, password)
 .catch(e => alert(e.message));
 
 }
+function seleccionarTipo(tipo){
+localStorage.setItem("tipoUsuario", tipo);
+
+if(tipo === "comercio"){
+window.location.href = "comercio.html";
+}else{
+window.location.href = "cliente.html";
+}
+}
