@@ -6,7 +6,7 @@ const firebaseConfig = {
 
 // INICIALIZAR
 firebase.initializeApp(firebaseConfig);
-
+const db = firebase.firestore();
 // CAMBIO DE VISTAS
 function showLogin(){
 document.getElementById("loginBox").style.display="block";
