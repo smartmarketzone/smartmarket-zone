@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SmartMarket Zone</title>
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+</head>
+
+<body>
+
+<nav class="navbar">
+<h1>SmartMarket Zone</h1>
+<ul>
+<li><a href="#buscar">Buscar</a></li>
+<li><a href="#mapa">Mapa</a></li>
+<li><a href="#registro">Registrar Comercio</a></li>
+</ul>
+</nav>
+
+<header class="hero">
+<h2>Encuentra el mejor precio cerca de ti</h2>
+<p>Conectamos consumidores con comercios locales.</p>
+</header>
+
+<section id="buscar" class="search-section">
+<h2>Buscar Producto</h2>
+<input type="text" id="productInput" placeholder="Ej: leche, arroz, pan">
+<button onclick="searchProduct()">Buscar</button>
+<ul id="resultsList"></ul>
+</section>
+
+<section id="mapa">
+<h2>Comercios Cercanos</h2>
+<div id="map"></div>
+</section>
+
+<section id="registro">
+<h2>Registrar Comercio</h2>
+<form id="storeForm">
+<input type="text" placeholder="Nombre del negocio" required>
+<input type="text" placeholder="Dirección">
+<input type="text" placeholder="Productos principales">
+<button type="submit">Registrar</button>
+</form>
+</section>
+
+<footer>
+<p>© 2026 SmartMarket Zone</p>
+</footer>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="script.js"></script>
+
+</body>
+</html>
