@@ -44,11 +44,25 @@ window.location.href = "tipo.html";
 
 }
 function seleccionarTipo(tipo){
-localStorage.setItem("tipoUsuario", tipo);
+
+let user = firebase.auth().currentUser;
+
+if(user){
+
+db.collection("usuarios").doc(user.uid).set({
+email: user.email,
+tipo: tipo
+})
+.then(() => {
 
 if(tipo === "comercio"){
 window.location.href = "comercio.html";
 }else{
 window.location.href = "cliente.html";
 }
+
+});
+
+}
+
 }
