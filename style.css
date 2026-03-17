@@ -1,26 +1,40 @@
 body{
 margin:0;
-font-family:Arial;
+font-family:sans-serif;
 }
 
 .auth-body{
-background:#1e88e5;
+background:linear-gradient(135deg,#1e88e5,#42a5f5);
+height:100vh;
 display:flex;
 justify-content:center;
 align-items:center;
-height:100vh;
 }
 
-.auth-container{
+.card{
 background:white;
 padding:30px;
-border-radius:12px;
-width:300px;
-box-shadow:0 10px 25px rgba(0,0,0,0.2);
+border-radius:15px;
+width:320px;
 text-align:center;
+box-shadow:0 15px 40px rgba(0,0,0,0.2);
 }
 
-.auth-container input{
+.logo{
+color:#1e88e5;
+margin-bottom:10px;
+}
+
+.tabs button{
+margin:5px;
+padding:8px;
+border:none;
+background:#eee;
+cursor:pointer;
+border-radius:5px;
+}
+
+input{
 width:100%;
 padding:10px;
 margin:10px 0;
@@ -28,10 +42,9 @@ border-radius:6px;
 border:1px solid #ccc;
 }
 
-.auth-container button{
+button{
 width:100%;
 padding:10px;
-margin-top:10px;
 border:none;
 background:#1e88e5;
 color:white;
@@ -39,6 +52,6 @@ border-radius:6px;
 cursor:pointer;
 }
 
-.auth-container button:hover{
+button:hover{
 background:#1565c0;
 }
