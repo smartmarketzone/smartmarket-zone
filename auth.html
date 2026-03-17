@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>SmartMarket</title>
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body class="auth-body">
+
+<div class="card">
+
+<h1 class="logo">SmartMarket</h1>
+
+<div class="tabs">
+<button onclick="showLogin()">Login</button>
+<button onclick="showRegister()">Registro</button>
+</div>
+
+<div id="loginBox">
+<input type="email" id="loginEmail" placeholder="Correo">
+<input type="password" id="loginPass" placeholder="Contraseña">
+<button onclick="login()">Entrar</button>
+</div>
+
+<div id="registerBox" style="display:none;">
+<input type="email" id="regEmail" placeholder="Correo">
+<input type="password" id="regPass" placeholder="Contraseña">
+<button onclick="register()">Crear cuenta</button>
+</div>
+
+</div>
+
+<!-- FIREBASE (VERSIÓN CORRECTA) -->
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+
+<script src="auth.js"></script>
+
+</body>
+</html>
