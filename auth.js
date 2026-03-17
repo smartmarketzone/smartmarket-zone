@@ -37,7 +37,9 @@ let email = document.getElementById("loginEmail").value;
 let password = document.getElementById("loginPass").value;
 
 firebase.auth().signInWithEmailAndPassword(email, password)
-.then(() => alert("Bienvenido"))
+.then(() => {
+window.location.href = "tipo.html";
+})
 .catch(e => alert(e.message));
 
 }
