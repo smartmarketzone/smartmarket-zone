@@ -11,7 +11,7 @@
 
 <h2>¿Cómo deseas usar SmartMarket?</h2>
 
-<button onclick="test()">
+<button onclick="seleccionarTipo('comercio')">
 Soy Comercio
 </button>
 
@@ -21,43 +21,11 @@ Soy Cliente
 
 </div>
 
-<!-- FIREBASE -->
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
 
 <script src="auth.js"></script>
 
-<script>
-firebase.auth().onAuthStateChanged(user => {
-
-if(user){
-
-db.collection("usuarios").doc(user.uid).get()
-.then(doc => {
-
-if(doc.exists){
-
-let tipo = doc.data().tipo;
-
-if(tipo === "comercio"){
-window.location.href = "comercio.html";
-}else{
-window.location.href = "cliente.html";
-}
-
-}
-
-});
-
-}
-
-});
-</script>
-
 </body>
-<script>
-function test(){
-alert("funciona el botón");
-}
-</script></html>
+</html>
