@@ -1,13 +1,60 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Comercio</title>
+<title>Panel Comercio</title>
+<link rel="stylesheet" href="style.css">
 </head>
 
-<body>
+<body class="auth-body">
 
-<h1>Panel de Comercio</h1>
-<p>Aquí podrás subir productos</p>
+<div class="card">
+
+<h2>Agregar Producto</h2>
+
+<input type="text" id="nombre" placeholder="Nombre del producto">
+<input type="number" id="precio" placeholder="Precio">
+<input type="text" id="descripcion" placeholder="Descripción">
+
+<button onclick="guardarProducto()">Guardar Producto</button>
+
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+
+<script src="auth.js"></script>
+
+<script>
+function guardarProducto(){
+
+let nombre = document.getElementById("nombre").value;
+let precio = document.getElementById("precio").value;
+let descripcion = document.getElementById("descripcion").value;
+
+let user = firebase.auth().currentUser;
+
+if(!user){
+alert("Debes iniciar sesión");
+return;
+}
+
+db.collection("productos").add({
+nombre: nombre,
+precio: precio,
+descripcion: descripcion,
+usuario: user.uid
+})
+.then(() => {
+alert("Producto guardado");
+})
+.catch(error => {
+alert("Error al guardar");
+console.error(error);
+});
+
+}
+</script>
 
 </body>
 </html>
