@@ -7,12 +7,14 @@
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800&display=swap" rel="stylesheet">
     <style>
+        /* Estilos específicos para esta página */
         .role-container {
             display: flex;
             flex-direction: column;
             gap: 15px;
             margin-top: 25px;
         }
+        
         .role-card {
             background: rgba(255, 255, 255, 0.1);
             border: 2px solid rgba(255, 255, 255, 0.2);
@@ -21,26 +23,46 @@
             cursor: pointer;
             transition: all 0.3s ease;
             text-align: center;
+            display: flex; /* Para centrar el contenido internamente */
+            flex-direction: column;
+            align-items: center;
         }
+        
+        /* Efecto al tocar/pulsar (activo en móvil) */
         .role-card:active {
-            transform: scale(0.95);
+            transform: scale(0.96);
             background: rgba(30, 136, 229, 0.3);
             border-color: #1e88e5;
         }
+
+        /* --- NUEVOS ESTILOS PARA LAS ETIQUETAS DE IDENTIFICACIÓN --- */
+        .role-tag {
+            font-size: 11px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #90caf9; /* Color azul acento */
+            margin-bottom: 5px; /* Espacio antes del icono */
+            display: block;
+        }
+
         .role-icon {
             font-size: 40px;
             margin-bottom: 10px;
             display: block;
         }
+        
         .role-card h3 {
             margin: 0;
             color: #fff;
             font-size: 18px;
         }
+        
         .role-card p {
             margin: 5px 0 0;
             font-size: 13px;
             color: #ccc;
+            line-height: 1.4;
         }
     </style>
 </head>
@@ -51,13 +73,18 @@
     <p class="slogan">¿Cómo usarás la plataforma hoy?</p>
 
     <div class="role-container">
+        
         <div class="role-card" onclick="seleccionarRol('comercio')">
+            <span class="role-tag">COMERCIO</span> 
+            
             <span class="role-icon">🏪</span>
             <h3>Soy un Comercio</h3>
             <p>Quiero vender mis productos y aparecer en el mapa.</p>
         </div>
 
         <div class="role-card" onclick="seleccionarRol('cliente')">
+            <span class="role-tag">PERSONA</span>
+            
             <span class="role-icon">🛍️</span>
             <h3>Soy un Cliente</h3>
             <p>Quiero buscar tiendas cercanas y ver ofertas.</p>
@@ -74,7 +101,7 @@
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
 
 <script>
-    // Configuración verificada
+    // Configuración verificada y activa
     const firebaseConfig = {
         apiKey: "AIzaSyA6tYooh4CtX7ww9GRyXWhuakl2nLovtsY",
         authDomain: "smartmarket-zone-e7559.firebaseapp.com",
@@ -87,6 +114,7 @@
 
     const db = firebase.firestore();
 
+    // Lógica de selección intacta y segura
     function seleccionarRol(tipo) {
         const user = firebase.auth().currentUser;
 
@@ -96,13 +124,14 @@
             return;
         }
 
-        // Guardar la elección en la base de datos
+        // Guardar la elección en la base de datos (USAMOS MERGE PARA SEGURIDAD)
         db.collection("usuarios").doc(user.uid).set({
             email: user.email,
             tipo: tipo,
             ultimoAcceso: firebase.firestore.FieldValue.serverTimestamp()
         }, { merge: true }) // 'merge' evita borrar datos previos si existen
         .then(() => {
+            // Redirección dinámica basada en la elección
             if (tipo === 'comercio') {
                 window.location.href = "registro_comercio.html";
             } else {
