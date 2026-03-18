@@ -20,66 +20,67 @@
             -webkit-backdrop-filter: blur(15px);
             border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 20px;
             padding: 25px; width: 90%; max-width: 450px; box-shadow: 0 15px 35px rgba(0,0,0,0.5);
-            margin: 20px; box-sizing: border-box;
+            margin: 20px; box-sizing: border-box; text-align: center;
         }
 
-        h2 { font-weight: 900; text-align: center; margin-bottom: 20px; color: #4fc3f7; font-size: 22px; }
+        h2 { font-weight: 900; margin-bottom: 20px; color: #4fc3f7; font-size: 22px; }
 
-        .input-group { margin-bottom: 12px; text-align: left; }
+        .input-group { margin-bottom: 15px; text-align: left; }
         label { display: block; font-size: 11px; margin-bottom: 5px; opacity: 0.9; text-transform: uppercase; font-weight: bold; }
         
-        input, select {
+        input, select, textarea {
             width: 100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1);
             border-radius: 10px; padding: 12px; color: white; box-sizing: border-box; outline: none; font-family: 'Montserrat';
         }
 
-        /* DISEÑO DEL MAPA */
         #map {
             height: 200px; width: 100%; border-radius: 15px;
-            margin: 15px 0; border: 2px solid #1e88e5;
-            z-index: 1; /* Evita que el mapa se encime a otros elementos */
+            margin: 10px 0; border: 2px solid #1e88e5;
         }
 
         .btn-save {
             width: 100%; background: #1e88e5; color: white; border: none;
             padding: 16px; border-radius: 12px; font-weight: 900; cursor: pointer;
             transition: 0.3s; text-transform: uppercase; letter-spacing: 1px;
-            box-shadow: 0 5px 15px rgba(30, 136, 229, 0.3);
+            box-shadow: 0 5px 15px rgba(30, 136, 229, 0.3); margin-top: 10px;
         }
         .btn-save:active { transform: scale(0.96); }
 
-        .info-map { font-size: 10px; text-align: center; color: #ffca28; margin-bottom: 5px; font-weight: bold; }
+        .status-map { font-size: 10px; color: #ffca28; margin-top: 5px; font-weight: bold; }
     </style>
 </head>
 <body>
 
 <div class="card">
-    <h2>REGISTRAR NEGOCIO 🏪</h2>
+    <h2>MI NEGOCIO 🏪</h2>
     
     <div class="input-group">
-        <label>Nombre de tu empresa</label>
-        <input type="text" id="nombreNegocio" placeholder="Ej: Supermarket Central">
+        <label>Nombre Comercial</label>
+        <input type="text" id="nombreNegocio" placeholder="Ej: Tienda de Gabo">
     </div>
 
     <div class="input-group">
         <label>Categoría</label>
         <select id="categoriaNegocio">
             <option value="viveres">Víveres / Alimentos</option>
-            <option value="restaurante">Restaurante / Comida rápida</option>
-            <option value="tecnologia">Electrónica / Tecnología</option>
+            <option value="restaurante">Comida rápida</option>
+            <option value="tecnologia">Tecnología</option>
             <option value="ropa">Ropa / Moda</option>
-            <option value="farmacia">Farmacia / Salud</option>
-            <option value="otro">Otros servicios</option>
         </select>
     </div>
 
     <div class="input-group">
-        <label>Ubicación (Toca el mapa)</label>
-        <p class="info-map">📍 TOCA EL PUNTO EXACTO DE TU LOCAL</p>
-        <div id="map"></div>
+        <label>Dirección Física</label>
+        <textarea id="direccionNegocio" rows="2" placeholder="Escribe tu dirección o toca el mapa..."></textarea>
     </div>
 
-    <button class="btn-save" id="btnFinalizar" onclick="guardarComercio()">Guardar y Continuar</button>
+    <div class="input-group">
+        <label>Ubicación en Mapa</label>
+        <div id="map"></div>
+        <div class="status-map" id="statusMap">📍 Toca el mapa para fijar dirección</div>
+    </div>
+
+    <button class="btn-save" id="btnFinalizar" onclick="guardarComercio()">Finalizar Registro</button>
 </div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -88,7 +89,6 @@
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
 
 <script>
-    // Configuración Firebase
     const firebaseConfig = {
         apiKey: "AIzaSyA6tYooh4CtX7ww9GRyXWhuakl2nLovtsY",
         authDomain: "smartmarket-zone-e7559.firebaseapp.com",
@@ -97,7 +97,7 @@
     if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
-    // Inicializar Mapa (Coordenadas por defecto)
+    // Coordenadas iniciales (Venezuela por defecto, puedes ajustarlas)
     let lat = 10.2461; 
     let lng = -67.5958;
 
@@ -106,40 +106,69 @@
 
     let marker = L.marker([lat, lng], {draggable: true}).addTo(map);
 
+    // FUNCIÓN PARA OBTENER DIRECCIÓN POR COORDENADAS (Reverse Geocoding)
+    async function obtenerDireccion(lat, lng) {
+        document.getElementById('statusMap').innerText = "🔍 Buscando dirección...";
+        try {
+            const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}`);
+            const data = await response.json();
+            if (data.display_name) {
+                document.getElementById('direccionNegocio').value = data.display_name;
+                document.getElementById('statusMap').innerText = "✅ Ubicación fijada";
+            }
+        } catch (error) {
+            console.error("Error al obtener dirección:", error);
+            document.getElementById('direccionNegocio').value = `Lat: ${lat.toFixed(5)}, Lng: ${lng.toFixed(5)}`;
+            document.getElementById('statusMap').innerText = "📍 Coordenadas fijadas";
+        }
+    }
+
+    // Evento al tocar el mapa
     map.on('click', function(e) {
         marker.setLatLng(e.latlng);
         lat = e.latlng.lat;
         lng = e.latlng.lng;
+        obtenerDireccion(lat, lng); // <--- Aquí ocurre la magia
+    });
+
+    // Evento al arrastrar el marcador
+    marker.on('dragend', function(e) {
+        const position = marker.getLatLng();
+        lat = position.lat;
+        lng = position.lng;
+        obtenerDireccion(lat, lng);
     });
 
     function guardarComercio() {
         const nombre = document.getElementById('nombreNegocio').value.trim();
         const cat = document.getElementById('categoriaNegocio').value;
+        const direccion = document.getElementById('direccionNegocio').value.trim();
         const user = firebase.auth().currentUser;
 
-        if (!user) { alert("⚠️ Sesión expirada. Vuelve a entrar."); return; }
-        if (!nombre) { alert("⚠️ Por favor, pon un nombre."); return; }
+        if (!user) { alert("⚠️ Inicia sesión"); return; }
+        if (!nombre || !direccion) { alert("⚠️ Completa nombre y dirección"); return; }
 
         const btn = document.getElementById('btnFinalizar');
-        btn.innerText = "PROCESANDO...";
+        btn.innerText = "GUARDANDO...";
         btn.disabled = true;
 
         db.collection("comercios").doc(user.uid).set({
             nombre: nombre,
             categoria: cat,
+            direccion: direccion,
             lat: lat,
             lng: lng,
             uid: user.uid,
             email: user.email,
-            fechaRegistro: firebase.firestore.FieldValue.serverTimestamp()
+            fecha: firebase.firestore.FieldValue.serverTimestamp()
         })
         .then(() => {
-            alert("✅ ¡Registro exitoso!");
+            alert("✅ ¡Negocio registrado con éxito!");
             window.location.href = "comercio.html";
         })
         .catch(e => {
             alert("❌ Error: " + e.message);
-            btn.innerText = "Guardar y Continuar";
+            btn.innerText = "Finalizar Registro";
             btn.disabled = false;
         });
     }
