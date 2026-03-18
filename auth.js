@@ -8,27 +8,6 @@ firebase.initializeApp(firebaseConfig);
 
 const db = firebase.firestore();
 
-// VISTAS
-function showLogin(){
-document.getElementById("loginBox").style.display="block";
-document.getElementById("registerBox").style.display="none";
-}
-
-function showRegister(){
-document.getElementById("loginBox").style.display="none";
-document.getElementById("registerBox").style.display="block";
-}
-
-// REGISTRO
-function register(){
-let email = document.getElementById("regEmail").value;
-let password = document.getElementById("regPass").value;
-
-firebase.auth().createUserWithEmailAndPassword(email, password)
-.then(() => alert("Cuenta creada"))
-.catch(e => alert(e.message));
-}
-
 // LOGIN
 function login(){
 let email = document.getElementById("loginEmail").value;
@@ -41,13 +20,34 @@ window.location.href = "tipo.html";
 .catch(e => alert(e.message));
 }
 
+// REGISTRO
+function register(){
+let email = document.getElementById("regEmail").value;
+let password = document.getElementById("regPass").value;
+
+firebase.auth().createUserWithEmailAndPassword(email, password)
+.then(() => alert("Cuenta creada"))
+.catch(e => alert(e.message));
+}
+
+// CAMBIAR VISTAS
+function showLogin(){
+document.getElementById("loginBox").style.display="block";
+document.getElementById("registerBox").style.display="none";
+}
+
+function showRegister(){
+document.getElementById("loginBox").style.display="none";
+document.getElementById("registerBox").style.display="block";
+}
+
 // GUARDAR TIPO
 function seleccionarTipo(tipo){
 
 let user = firebase.auth().currentUser;
 
 if(!user){
-alert("Error: usuario no detectado");
+alert("Error usuario");
 return;
 }
 
@@ -59,14 +59,11 @@ tipo: tipo
 
 if(tipo === "comercio"){
 window.location.href = "registro_comercio.html";
-}
+}else{
 window.location.href = "cliente.html";
 }
 
 })
-.catch(error => {
-alert("Error al guardar");
-console.error(error);
-});
+.catch(() => alert("Error al guardar"));
 
 }
