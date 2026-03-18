@@ -14,10 +14,10 @@
     <h1 class="logo">Smart<span>Market</span></h1>
     <p class="slogan">Ingresa a tu cuenta</p>
 
-    <input type="email" id="regEmail" placeholder="Tu correo electrónico" inputmode="email">
-    <input type="password" id="regPass" placeholder="Tu contraseña">
+    <input type="email" id="regEmail" placeholder="Tu correo electrónico" inputmode="email" autocomplete="email">
+    <input type="password" id="regPass" placeholder="Tu contraseña" autocomplete="current-password">
 
-    <button type="button" class="btn-primary" onclick="login()">
+    <button type="button" class="btn-primary" id="btnEntrar">
         Entrar
     </button>
     
@@ -30,6 +30,19 @@
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
 <script src="auth.js"></script>
+
+<script>
+    // Forzamos la detección del clic en móviles
+    document.getElementById('btnEntrar').addEventListener('click', function(e) {
+        e.preventDefault();
+        console.log("Intentando iniciar sesión...");
+        if (typeof login === 'function') {
+            login();
+        } else {
+            alert("Error: La función de acceso no ha cargado. Reintenta en un momento.");
+        }
+    });
+</script>
 
 </body>
 </html>
