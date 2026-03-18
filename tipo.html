@@ -3,10 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SmartMarket - Selección de Perfil</title>
+    <title>SmartMarket - Perfil</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
-        /* 1. FONDO ANIMADO PROFESIONAL */
         body {
             margin: 0;
             padding: 0;
@@ -16,99 +15,104 @@
             justify-content: center;
             align-items: center;
             font-family: 'Montserrat', sans-serif;
-            background: linear-gradient(-45deg, #0f2027, #203a43, #2c5364, #1e88e5);
-            background-size: 400% 400%;
-            animation: gradientAnimation 15s ease infinite;
-            overflow: hidden;
+            
+            /* FONDO DE MAPA CON CAPA AZUL */
+            background: linear-gradient(rgba(15, 32, 39, 0.8), rgba(30, 136, 229, 0.7)), 
+                        url('https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
         }
 
-        @keyframes gradientAnimation {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-
-        /* 2. TARJETA EFECTO CRISTAL (GLASSMORPHISM) */
         .card {
-            background: rgba(255, 255, 255, 0.07);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            border-radius: 25px;
-            padding: 35px 25px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
-            width: 90%;
-            max-width: 380px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 30px 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            width: 85%;
+            max-width: 360px;
             text-align: center;
             color: white;
         }
 
-        .logo { font-weight: 900; font-size: 28px; margin-bottom: 5px; letter-spacing: -1px; }
-        .logo span { color: #1e88e5; }
-        .slogan { font-size: 13px; opacity: 0.8; margin-bottom: 30px; }
+        .logo { font-weight: 900; font-size: 26px; margin-bottom: 5px; }
+        .logo span { color: #4fc3f7; }
+        .slogan { font-size: 12px; opacity: 0.9; margin-bottom: 25px; text-transform: uppercase; letter-spacing: 1px; }
 
-        /* 3. CONTENEDOR DE ROLES */
-        .role-container { display: flex; flex-direction: column; gap: 20px; }
+        .role-container { display: flex; flex-direction: column; gap: 15px; }
 
         .role-card {
-            background: rgba(255, 255, 255, 0.05);
+            background: rgba(0, 0, 0, 0.3);
             border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 18px;
-            padding: 20px;
+            border-radius: 15px;
+            padding: 15px;
             cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: 0.3s;
             display: flex;
             flex-direction: column;
             align-items: center;
-            position: relative;
         }
 
-        /* Efecto al presionar */
-        .role-card:active { transform: scale(0.94); background: rgba(255, 255, 255, 0.15); }
+        .role-card:active { transform: scale(0.97); background: rgba(30, 136, 229, 0.4); }
 
-        /* 4. ETIQUETAS NEGRAS RESALTADAS */
+        /* ETIQUETA AMARILLA CON LETRA NEGRA */
         .role-tag {
-            background: #ffca28; /* Amarillo vibrante */
-            color: #000;         /* LETRAS NEGRAS */
+            background: #ffeb3b; 
+            color: #000;
             font-size: 10px;
             font-weight: 900;
-            padding: 4px 14px;
-            border-radius: 50px;
-            margin-bottom: 12px;
-            box-shadow: 0 4px 15px rgba(255, 202, 40, 0.3);
-            text-transform: uppercase;
+            padding: 3px 12px;
+            border-radius: 4px;
+            margin-bottom: 8px;
         }
 
-        .role-icon { font-size: 48px; margin-bottom: 10px; }
-        h3 { margin: 0; font-size: 20px; font-weight: 700; }
-        .role-card p { font-size: 13px; opacity: 0.7; margin: 8px 0 0; line-height: 1.4; }
+        .role-icon { font-size: 35px; margin-bottom: 5px; }
+        h3 { margin: 0; font-size: 18px; }
+        .role-card p { font-size: 12px; opacity: 0.8; margin-top: 5px; }
 
-        .logout { margin-top: 30px; font-size: 12px; opacity: 0.5; cursor: pointer; text-decoration: underline; }
+        /* CIERRE DE SESIÓN CORREGIDO ABAJO */
+        .logout-box {
+            margin-top: 25px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        .logout-btn {
+            font-size: 12px;
+            color: #4fc3f7;
+            text-decoration: none;
+            cursor: pointer;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
 
 <div class="card">
     <div class="logo">SMART<span>MARKET</span></div>
-    <p class="slogan">Selecciona tu perfil de usuario</p>
+    <p class="slogan">Selecciona tu perfil</p>
 
     <div class="role-container">
         <div class="role-card" onclick="seleccionarRol('comercio')">
             <span class="role-tag">COMERCIO</span> 
-            <span class="role-icon">🏪</span>
+            <span class="role-icon">📍🏪</span>
             <h3>Soy un Comercio</h3>
-            <p>Publica tus productos y llega a más clientes locales.</p>
+            <p>Ubica tu negocio en el mapa y vende más.</p>
         </div>
 
         <div class="role-card" onclick="seleccionarRol('cliente')">
             <span class="role-tag">PERSONA</span>
-            <span class="role-icon">🛍️</span>
+            <span class="role-icon">🛰️🛍️</span>
             <h3>Soy un Cliente</h3>
-            <p>Explora tiendas cercanas y encuentra las mejores ofertas.</p>
+            <p>Encuentra productos cerca de tu ubicación.</p>
         </div>
     </div>
 
-    <div class="logout" onclick="logout()">Cerrar sesión e ir al inicio</div>
+    <div class="logout-box">
+        <span class="logout-btn" onclick="logout()">← Cerrar sesión e ir al inicio</span>
+    </div>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
