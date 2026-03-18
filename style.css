@@ -1,53 +1,65 @@
-/* HOME */
-.home-body{
+body{
+margin:0;
+font-family:Arial, sans-serif;
+}
+
+.auth-body{
+background:linear-gradient(135deg,#1e88e5,#42a5f5);
 height:100vh;
 display:flex;
 justify-content:center;
 align-items:center;
-background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);
-color:white;
 }
 
-.home-container{
+.card{
+background:white;
+padding:30px;
+border-radius:15px;
+width:320px;
 text-align:center;
-animation:fadeIn 1s ease-in;
+box-shadow:0 15px 40px rgba(0,0,0,0.2);
 }
 
-.home-title{
-font-size:48px;
-margin-bottom:10px;
+.logo{
+color:#1e88e5;
+font-size:28px;
 font-weight:bold;
 }
 
-.home-slogan{
-font-size:18px;
-margin-bottom:30px;
-opacity:0.8;
-}
-
-.home-btn{
-padding:15px 40px;
-font-size:18px;
-border:none;
-border-radius:30px;
-background:#00c6ff;
-background:linear-gradient(to right,#00c6ff,#0072ff);
-color:white;
-cursor:pointer;
-transition:0.3s;
-}
-
-.home-btn:hover{
-transform:scale(1.05);
-}
-
-@keyframes fadeIn{
-from{opacity:0; transform:translateY(20px);}
-to{opacity:1; transform:translateY(0);}
-}
 .slogan{
 margin-top:10px;
 margin-bottom:25px;
 color:#555;
 font-size:16px;
+}
+
+.tabs button{
+margin:5px;
+padding:8px;
+border:none;
+background:#eee;
+cursor:pointer;
+border-radius:5px;
+}
+
+input{
+width:100%;
+padding:10px;
+margin:10px 0;
+border-radius:6px;
+border:1px solid #ccc;
+}
+
+button{
+width:100%;
+padding:10px;
+border:none;
+background:#1e88e5;
+color:white;
+border-radius:6px;
+cursor:pointer;
+}
+
+button:hover{
+background:#1565c0;
 }
