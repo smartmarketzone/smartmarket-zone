@@ -3,140 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SmartMarket VZLA</title>
+    <title>SmartMarket VZLA - Mapa</title>
     <link rel="icon" href="https://fav.farm/🛒">
-    
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
-    
     <style>
-        :root { --blue: #1e88e5; --cyan: #4fc3f7; --dark: #050a0e; --yellow: #ffeb3b; }
+        :root { --blue: #1e88e5; --cyan: #4fc3f7; --dark: #050a0e; --yellow: #ffeb3b; --bg-card: #0b171c; }
+        html, body { height: 100%; margin: 0; padding: 0; background: #000; overflow: hidden; font-family: 'Montserrat', sans-serif; color: white; }
         
-        /* IMPORTANTE: El html y body deben tener altura 100% */
-        html, body { height: 100%; margin: 0; padding: 0; background: #000; overflow: hidden; font-family: 'Montserrat', sans-serif; }
-        
-        /* El mapa DEBE tener una altura definida y z-index bajo */
-        #map { 
-            position: absolute; top: 0; bottom: 0; width: 100%; 
-            height: 100%; background: #111; z-index: 1; 
-        }
+        #map { position: absolute; top: 0; bottom: 0; width: 100%; height: 100%; background: #111; z-index: 1; }
 
         .search-container { position: absolute; top: 15px; left: 50%; transform: translateX(-50%); z-index: 1000; width: 90%; max-width: 450px; }
         .search-box { width: 100%; padding: 15px 25px; border-radius: 30px; border: none; background: white; box-shadow: 0 10px 30px rgba(0,0,0,0.5); font-weight: 800; outline: none; color: #333; }
 
-        #store-modal { position: fixed; bottom: -100%; left: 0; width: 100%; height: 60vh; background: #0b171c; border-radius: 30px 30px 0 0; z-index: 3000; transition: 0.4s ease; padding: 25px; box-sizing: border-box; color: white; box-shadow: 0 -10px 40px rgba(0,0,0,0.8); overflow-y: auto; }
+        #store-modal { position: fixed; bottom: -100%; left: 0; width: 100%; height: 60vh; background: var(--bg-card); border-radius: 30px 30px 0 0; z-index: 3000; transition: 0.4s ease; padding: 25px; box-sizing: border-box; box-shadow: 0 -10px 40px rgba(0,0,0,0.8); overflow-y: auto; }
         #store-modal.active { bottom: 0; }
         
         .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; height: 75px; background: #0b171c; border-top: 2px solid var(--cyan); display: flex; justify-content: space-around; align-items: center; z-index: 2000; }
         .nav-item { text-align: center; color: rgba(255,255,255,0.4); text-decoration: none; font-size: 10px; font-weight: 900; flex: 1; display: flex; flex-direction: column; }
         .nav-item.active { color: var(--cyan); }
+        
+        .inventory-item { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #222; font-size: 14px; }
     </style>
 </head>
 <body>
 
 <div class="search-container">
-    <input type="text" id="buscador" class="search-box" placeholder="🔍 Buscar en el mapa..." oninput="filtrarMapa()">
+    <input type="text" id="buscador" class="search-box" placeholder="🔍 Buscar tiendas o productos..." oninput="filtrarMapa()">
 </div>
 
 <div id="map"></div>
 
 <div id="store-modal">
-    <div onclick="cerrarDetalle()" style="width:40px; height:5px; background:rgba(255,255,255,0.2); margin:0 auto 20px; border-radius:10px;"></div>
-    <h2 id="store-name" style="color:var(--cyan); margin:0;">TIENDA</h2>
+    <div onclick="cerrarDetalle()" style="width:40px; height:5px; background:rgba(255,255,255,0.2); margin:0 auto 20px; border-radius:10px; cursor:pointer;"></div>
+    <h2 id="store-name" style="color:var(--cyan); margin:0; text-transform: uppercase;">TIENDA</h2>
     <div id="modal-products" style="margin-top:20px;"></div>
-    <button id="btn-gps" style="width:100%; padding:15px; margin-top:20px; border-radius:12px; border:none; background:var(--blue); color:white; font-weight:900;">¿CÓMO LLEGAR? 🚗</button>
+    <button id="btn-gps" style="width:100%; padding:15px; margin-top:20px; border-radius:12px; border:none; background:var(--blue); color:white; font-weight:900; cursor:pointer;">¿CÓMO LLEGAR? 🚗</button>
 </div>
 
 <nav class="bottom-nav">
     <a href="index.html" class="nav-item active"><span>📍</span>MAPA</a>
     <a href="cliente.html" class="nav-item"><span>👤</span>PERFIL</a>
-    <a href="registro_comercio.html" id="nav-reg" class="nav-item" style="display:none;"><span>🏪</span>REGISTRAR</a>
-    <a href="comercio.html" id="nav-pan" class="nav-item" style="display:none;"><span>📊</span>PANEL</a>
-</nav>
-
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
-
-<script>
-    const firebaseConfig = {
-        apiKey: "AIzaSyA6tYooh4CtX7ww9GRyXWhuakl2nLovtsY",
-        authDomain: "smartmarket-zone-e7559.firebaseapp.com",
-        projectId: "smartmarket-zone-e7559"
-    };
-    if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
-
-    let map, marcadores = [];
-
-    // FUNCIÓN DE INICIALIZACIÓN CRÍTICA
-    function startApp() {
-        console.log("Iniciando Mapa...");
-        
-        // Si el mapa ya existe, lo quitamos para evitar conflictos
-        if (map != undefined) { map.remove(); }
-
-        // Crear mapa apuntando a San Joaquín, Carabobo
-        map = L.map('map', { zoomControl: false }).setView([10.29, -67.79], 14);
-
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '© OpenStreetMap'
-        }).addTo(map);
-
-        // Forzar actualización de tamaño (Esto quita la pantalla negra/gris)
-        setTimeout(() => { map.invalidateSize(); }, 500);
-
-        cargarComercios();
-    }
-
-    // Seguridad y Roles
-    firebase.auth().onAuthStateChanged(async (user) => {
-        if (user) {
-            const doc = await db.collection("usuarios").doc(user.uid).get();
-            if (doc.exists && doc.data().tipo === "comercio") {
-                document.getElementById('nav-reg').style.display = 'flex';
-                document.getElementById('nav-pan').style.display = 'flex';
-            }
-        }
-    });
-
-    async function cargarComercios(filtro = "") {
-        marcadores.forEach(m => map.removeLayer(m));
-        marcadores = [];
-        const snap = await db.collection("comercios").get();
-        snap.forEach(doc => {
-            const data = doc.data();
-            if(filtro === "" || data.nombre.toLowerCase().includes(filtro.toLowerCase())) {
-                const m = L.marker([data.lat, data.lng]).addTo(map);
-                m.on('click', () => {
-                    document.getElementById('store-name').innerText = data.nombre.toUpperCase();
-                    document.getElementById('btn-gps').onclick = () => window.open(`https://www.google.com/maps?q=${data.lat},${data.lng}`);
-                    cargarProds(doc.id);
-                    document.getElementById('store-modal').classList.add('active');
-                });
-                marcadores.push(m);
-            }
-        });
-    }
-
-    async function cargarProds(id) {
-        const cont = document.getElementById('modal-products');
-        cont.innerHTML = "Cargando...";
-        const snap = await db.collection("productos").where("comercioID", "==", id).get();
-        cont.innerHTML = "";
-        snap.forEach(p => {
-            cont.innerHTML += `<div style="display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid #222;">
-                <span>${p.data().nombre}</span> <b style="color:var(--yellow)">Bs. ${p.data().precio}</b>
-            </div>`;
-        });
-    }
-
-    function cerrarDetalle() { document.getElementById('store-modal').classList.remove('active'); }
-    function filtrarMapa() { cargarComercios(document.getElementById('buscador').value); }
-
-    // Ejecutar al cargar la ventana
-    window.onload = startApp;
-</script>
-</body>
-</html>
+    <a href="registro_comercio.html" id="nav-reg" class="nav-item" style="display:none;"><span>🏪</span>REG
