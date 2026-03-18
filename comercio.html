@@ -3,83 +3,67 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Panel Comercio - SmartMarket VZLA</title>
+    <title>Panel de Control - SmartMarket</title>
     <link rel="icon" href="https://fav.farm/📊">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
-        :root { --blue: #1e88e5; --cyan: #4fc3f7; --dark: #050a0e; --yellow: #ffeb3b; --red: #ff5252; --card: rgba(255,255,255,0.05); }
-        body { margin: 0; font-family: 'Montserrat', sans-serif; background: var(--dark); color: white; padding-bottom: 90px; }
+        :root { --blue: #1e88e5; --cyan: #4fc3f7; --dark: #050a0e; --yellow: #ffeb3b; --red: #ff5252; }
+        body { margin: 0; font-family: 'Montserrat', sans-serif; background: var(--dark); color: white; }
         
-        /* Pantalla de carga mientras verifica */
-        #loading-screen { position: fixed; top:0; left:0; width:100%; height:100%; background: var(--dark); z-index: 5000; display: flex; align-items: center; justify-content: center; }
+        /* BLOQUEO TOTAL DE PANTALLA HASTA QUE SE CONFIRME EL USUARIO */
+        #bloqueo-seguridad { 
+            position: fixed; top:0; left:0; width:100%; height:100%; 
+            background: #050a0e; z-index: 9999; display: flex; 
+            flex-direction: column; align-items: center; justify-content: center;
+            text-align: center; padding: 20px; box-sizing: border-box;
+        }
+        .loader { width: 50px; height: 50px; border: 5px solid #162a33; border-top: 5px solid var(--cyan); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 20px; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+
+        .app-content { display: none; padding-bottom: 90px; } /* Oculto por defecto */
 
         .header { background: #0b171c; padding: 25px; text-align: center; border-bottom: 2px solid var(--cyan); }
-        .header h1 { margin: 0; font-size: 20px; color: var(--cyan); text-transform: uppercase; letter-spacing: 1px; }
-
-        .tabs { display: flex; padding: 10px; gap: 10px; background: rgba(0,0,0,0.3); }
-        .tab { flex: 1; padding: 12px; text-align: center; font-size: 11px; font-weight: 900; cursor: pointer; border-radius: 10px; background: var(--card); opacity: 0.5; }
-        .tab.active { background: var(--blue); opacity: 1; color: white; }
-
-        .content { padding: 20px; display: none; }
-        .content.active { display: block; animation: fadeIn 0.4s; }
-
-        .card { background: var(--card); border-radius: 20px; padding: 20px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 20px; }
-        label { display: block; font-size: 10px; font-weight: 900; color: var(--cyan); margin-bottom: 8px; }
-        input { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.5); color: white; outline: none; box-sizing: border-box; font-family: 'Montserrat'; margin-bottom: 10px; }
+        .card { background: rgba(255,255,255,0.05); border-radius: 20px; padding: 20px; margin: 20px; border: 1px solid rgba(255,255,255,0.1); }
+        input { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.5); color: white; margin-bottom: 10px; box-sizing: border-box; }
+        .btn-main { width: 100%; background: var(--blue); color: white; border: none; padding: 15px; border-radius: 12px; font-weight: 900; cursor: pointer; text-transform: uppercase; }
         
-        .btn-main { width: 100%; background: var(--blue); color: white; border: none; padding: 15px; border-radius: 12px; font-weight: 900; cursor: pointer; margin-top: 15px; text-transform: uppercase; }
+        .p-item { background: rgba(255,255,255,0.03); padding: 15px; border-radius: 15px; margin: 10px 20px; border-left: 4px solid var(--cyan); display: flex; justify-content: space-between; align-items: center; }
         
-        .p-item { background: rgba(255,255,255,0.03); padding: 15px; border-radius: 15px; margin-bottom: 10px; border-left: 4px solid var(--cyan); display: flex; justify-content: space-between; align-items: center; }
-        .p-info h3 { margin: 0; font-size: 14px; text-transform: uppercase; }
-        .p-info b { color: var(--yellow); font-size: 16px; }
-        .btn-del { background: var(--red); border: none; color: white; padding: 8px; border-radius: 8px; font-size: 10px; font-weight: 900; }
-
-        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; height: 75px; background: #0b171c; border-top: 2px solid var(--cyan); display: flex; justify-content: space-around; align-items: center; z-index: 2000; }
-        .nav-item { text-align: center; color: rgba(255,255,255,0.4); text-decoration: none; font-size: 10px; font-weight: 900; display: flex; flex-direction: column; align-items: center; flex:1; }
-        .nav-item.active { color: var(--cyan); }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; height: 75px; background: #0b171c; border-top: 2px solid var(--cyan); display: flex; justify-content: space-around; align-items: center; }
+        .nav-item { text-align: center; color: rgba(255,255,255,0.4); text-decoration: none; font-size: 10px; font-weight: 900; flex:1; }
     </style>
 </head>
 <body>
 
-<div id="loading-screen">Verificando Credenciales...</div>
-
-<div class="header">
-    <h1 id="nombreLocal">MI COMERCIO</h1>
-    <p id="correoLocal" style="font-size: 10px; opacity: 0.5; margin: 5px 0 0;">...</p>
+<div id="bloqueo-seguridad">
+    <div class="loader"></div>
+    <h2 id="msg-seguridad">VALIDANDO COMERCIO...</h2>
+    <p style="font-size: 10px; opacity: 0.5;">SmartMarket Venezuela Security System</p>
+    <button id="btn-reintento" style="display:none; margin-top:20px; padding:10px; background:var(--red); color:white; border:none; border-radius:10px;" onclick="location.href='auth.html'">VOLVER AL LOGIN</button>
 </div>
 
-<div class="tabs">
-    <div class="tab active" onclick="switchTab('inventario', this)">📦 INVENTARIO</div>
-    <div class="tab" onclick="switchTab('ajustes', this)">⚙️ MI LOCAL</div>
-</div>
-
-<div id="inventario" class="content active">
-    <div class="card">
-        <label>Producto / Marca</label>
-        <input type="text" id="pNombre" placeholder="Ej: Harina Pan 1kg">
-        <div style="display:flex; gap:10px;">
-            <div style="flex:1;"><label>Precio Bs.</label><input type="number" id="pPrecio" placeholder="0.00"></div>
-            <div style="flex:1;"><label>Stock</label><input type="number" id="pStock" placeholder="Cant."></div>
-        </div>
-        <button class="btn-main" onclick="guardarProducto()">Publicar Producto</button>
+<div class="app-content" id="main-app">
+    <div class="header">
+        <h1 id="nombreLocal" style="margin:0; font-size:18px; color:var(--cyan);">MI TIENDA</h1>
+        <small id="correoLocal" style="opacity:0.5;"></small>
     </div>
+
+    <div class="card">
+        <h3 style="margin-top:0; font-size:14px; color:var(--yellow);">AÑADIR PRODUCTO</h3>
+        <input type="text" id="pNombre" placeholder="Nombre del producto">
+        <input type="number" id="pPrecio" placeholder="Precio en Bs.">
+        <input type="number" id="pStock" placeholder="Cantidad en stock">
+        <button class="btn-main" onclick="guardarProducto()">Publicar en el Mapa</button>
+    </div>
+
     <div id="listaProductos"></div>
-</div>
 
-<div id="ajustes" class="content">
-    <div class="card">
-        <label>Ubicación GPS Detectada</label>
-        <input type="text" id="locGPS" readonly style="opacity: 0.6;">
-        <button class="btn-main" style="background: var(--cyan); color: #000;" onclick="resetClave()">Cambiar Contraseña</button>
-        <button class="btn-main" style="background: var(--red); margin-top:10px;" onclick="cerrarSesion()">Cerrar Sesión</button>
-    </div>
+    <nav class="bottom-nav">
+        <a href="index.html" class="nav-item">📍 MAPA</a>
+        <a href="comercio.html" class="nav-item" style="color:var(--cyan)">📊 PANEL</a>
+        <a href="#" class="nav-item" onclick="cerrarSesion()" style="color:var(--red)">🚪 SALIR</a>
+    </nav>
 </div>
-
-<nav class="bottom-nav">
-    <a href="index.html" class="nav-item"><span>📍</span>MAPA</a>
-    <a href="comercio.html" class="nav-item active"><span>📊</span>PANEL</a>
-</nav>
 
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
@@ -95,64 +79,66 @@
     const db = firebase.firestore();
     let userUID = null;
 
-    // --- EL PORTERO CORREGIDO ---
+    // EL MONITOR DE SEGURIDAD MÁS ROBUSTO HASTA AHORA
     firebase.auth().onAuthStateChanged(async (user) => {
+        const msg = document.getElementById('msg-seguridad');
+        const btn = document.getElementById('btn-reintento');
+
         if (user) {
             userUID = user.uid;
+            console.log("Sesión detectada para UID:", userUID);
+
             try {
-                // Esperamos la respuesta de Firestore antes de cualquier cosa
+                // Forzamos la lectura de la base de datos
                 const docU = await db.collection("usuarios").doc(userUID).get();
                 
                 if (docU.exists) {
                     const data = docU.data();
-                    
-                    // Verificación estricta de tipo
+                    console.log("Datos encontrados:", data);
+
+                    // Si eres Comercio, desbloqueamos la app
                     if (data.tipo === "comercio") {
-                        // Acceso permitido
-                        document.getElementById('loading-screen').style.display = 'none';
+                        document.getElementById('bloqueo-seguridad').style.display = 'none';
+                        document.getElementById('main-app').style.display = 'block';
                         document.getElementById('correoLocal').innerText = user.email;
                         cargarDatosLocal();
                         cargarLista();
                     } else {
-                        // Es una persona normal, mandarla al mapa
-                        window.location.href = "index.html";
+                        msg.innerText = "ACCESO DENEGADO: NO ERES COMERCIO";
+                        btn.style.display = "block";
+                        // Solo redirigimos después de 3 segundos para que el usuario lea el por qué
+                        setTimeout(() => { window.location.href = "index.html"; }, 3000);
                     }
                 } else {
-                    // El usuario no tiene perfil en la base de datos
-                    window.location.href = "auth.html";
+                    msg.innerText = "PERFIL NO ENCONTRADO EN DATABASE";
+                    btn.style.display = "block";
                 }
             } catch (error) {
-                console.error("Error al verificar:", error);
-                window.location.href = "index.html";
+                msg.innerText = "ERROR DE CONEXIÓN A FIREBASE";
+                console.error(error);
             }
         } else {
-            // No ha iniciado sesión
             window.location.href = "auth.html";
         }
     });
 
     async function cargarDatosLocal() {
         const docL = await db.collection("comercios").doc(userUID).get();
-        if(docL.exists) {
-            document.getElementById('nombreLocal').innerText = docL.data().nombre;
-            document.getElementById('locGPS').value = `${docL.data().lat}, ${docL.data().lng}`;
-        }
+        if(docL.exists) document.getElementById('nombreLocal').innerText = docL.data().nombre.toUpperCase();
     }
 
     async function guardarProducto() {
-        const nombre = document.getElementById('pNombre').value.trim();
-        const precio = parseFloat(document.getElementById('pPrecio').value);
-        const stock = parseInt(document.getElementById('pStock').value);
-
-        if(!nombre || isNaN(precio)) return alert("⚠️ Completa los datos");
+        const n = document.getElementById('pNombre').value;
+        const p = parseFloat(document.getElementById('pPrecio').value);
+        const s = parseInt(document.getElementById('pStock').value);
+        if(!n || isNaN(p)) return alert("Datos inválidos");
 
         await db.collection("productos").add({
-            nombre, precio, stock, comercioID: userUID, fecha: new Date()
+            nombre: n, precio: p, stock: s, comercioID: userUID, fecha: new Date()
         });
-        
+        alert("✅ Producto subido al mapa");
         document.getElementById('pNombre').value = "";
         document.getElementById('pPrecio').value = "";
-        document.getElementById('pStock').value = "";
     }
 
     function cargarLista() {
@@ -160,29 +146,18 @@
             const cont = document.getElementById('listaProductos');
             cont.innerHTML = "";
             snap.forEach(doc => {
-                const p = doc.data();
+                const item = doc.data();
                 cont.innerHTML += `
                     <div class="p-item">
-                        <div class="p-info">
-                            <h3>${p.nombre}</h3>
-                            <b>Bs. ${p.precio.toFixed(2)}</b>
-                        </div>
-                        <button class="btn-del" onclick="eliminarP('${doc.id}')">ELIMINAR</button>
+                        <div><b>${item.nombre}</b><br><small>Bs. ${item.precio}</small></div>
+                        <button onclick="eliminar('${doc.id}')" style="background:none; border:none; color:var(--red); font-weight:900;">X</button>
                     </div>`;
             });
         });
     }
 
-    function switchTab(id, el) {
-        document.querySelectorAll('.content').forEach(c => c.classList.remove('active'));
-        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-        document.getElementById(id).classList.add('active');
-        el.classList.add('active');
-    }
-
-    function eliminarP(id) { if(confirm("¿Eliminar?")) db.collection("productos").doc(id).delete(); }
-    function cerrarSesion() { firebase.auth().signOut().then(() => window.location.href="auth.html"); }
-    function resetClave() { firebase.auth().sendPasswordResetEmail(firebase.auth().currentUser.email).then(() => alert("✅ Correo enviado")); }
+    function eliminar(id) { if(confirm("¿Borrar?")) db.collection("productos").doc(id).delete(); }
+    function cerrarSesion() { firebase.auth().signOut(); }
 </script>
 </body>
 </html>
