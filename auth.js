@@ -1,22 +1,31 @@
-// CONFIGURACIÓN DE FIREBASE (Tomada de tu base actual)
+// 1. CONFIGURACIÓN DE FIREBASE
 const firebaseConfig = {
   apiKey: "AIzaSyA6tYooh4CtX7ww9GRyXWhuakl2nLovtsY",
   authDomain: "smartmarket-zone-e7559.firebaseapp.com",
   projectId: "smartmarket-zone-e7559"
 };
 
-// Inicializar Firebase solo si no se ha inicializado antes
+// Inicialización segura para evitar errores en recargas
 if (!firebase.apps.length) {
     firebase.initializeApp(firebaseConfig);
 }
 
 const db = firebase.firestore();
 
+// 2. CONFIGURACIÓN ESPECIAL PARA MÓVILES
+// Esto obliga al navegador a recordar al usuario aunque cierre la pestaña
+firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL)
+  .then(() => {
+      console.log("Persistencia de sesión activada correctamente");
+  })
+  .catch((error) => {
+      console.error("Error en persistencia:", error);
+  });
+
 // --- FUNCIÓN DE LOGIN ---
 function login() {
-    // Usamos regEmail/regPass para mantener consistencia con los IDs del HTML
-    const email = document.getElementById("regEmail").value;
-    const password = document.getElementById("regPass").value;
+    const email = document.getElementById("regEmail").value.trim();
+    const password = document.getElementById("regPass").value.trim();
 
     if (!email || !password) {
         alert("Por favor, completa todos los campos.");
@@ -25,33 +34,34 @@ function login() {
 
     firebase.auth().signInWithEmailAndPassword(email, password)
     .then((userCredential) => {
-        // Al entrar, verificamos qué tipo de usuario es para saber a dónde mandarlo
-        const user = userCredential.user;
-        verificarRutaUsuario(user.uid);
+        console.log("Login exitoso en móvil/PC");
+        verificarRutaUsuario(userCredential.user.uid);
     })
     .catch((error) => {
-        alert("Error al iniciar sesión: " + error.message);
+        console.error("Error login:", error.code);
+        alert("Error: " + error.message);
     });
 }
 
 // --- FUNCIÓN DE REGISTRO ---
 function register() {
-    const email = document.getElementById("regEmail").value;
-    const password = document.getElementById("regPass").value;
+    const email = document.getElementById("regEmail").value.trim();
+    const password = document.getElementById("regPass").value.trim();
 
-    if (password.length < 6) {
-        alert("La contraseña debe tener al menos 6 caracteres.");
+    if (!email || password.length < 6) {
+        alert("Revisa los datos. La contraseña debe tener al menos 6 caracteres.");
         return;
     }
 
     firebase.auth().createUserWithEmailAndPassword(email, password)
     .then((userCredential) => {
         alert("¡Cuenta creada con éxito!");
-        // Después de registrar, lo mandamos a elegir si es Cliente o Comercio
+        // Al registrarse, lo mandamos directo a elegir su rol
         window.location.href = "tipo.html";
     })
     .catch((error) => {
-        alert("Error en el registro: " + error.message);
+        console.error("Error registro:", error.code);
+        alert("Error: " + error.message);
     });
 }
 
@@ -60,18 +70,17 @@ function seleccionarTipo(tipo) {
     const user = firebase.auth().currentUser;
 
     if (!user) {
-        alert("Debes estar autenticado para elegir un rol.");
+        alert("Sesión expirada. Por favor, inicia sesión de nuevo.");
+        window.location.href = "login.html";
         return;
     }
 
-    // Guardamos el rol en la colección "usuarios" vinculada al UID de Firebase
     db.collection("usuarios").doc(user.uid).set({
         email: user.email,
         tipo: tipo,
-        fechaRegistro: new Date()
+        fechaRegistro: firebase.firestore.FieldValue.serverTimestamp()
     })
     .then(() => {
-        // Redirección dinámica según la elección
         if (tipo === "comercio") {
             window.location.href = "registro_comercio.html";
         } else {
@@ -80,11 +89,11 @@ function seleccionarTipo(tipo) {
     })
     .catch((error) => {
         console.error("Error al guardar tipo:", error);
-        alert("Hubo un error al guardar tu elección.");
+        alert("Hubo un problema al guardar tu elección.");
     });
 }
 
-// --- UTILIDAD: VERIFICAR RUTA AL LOGUEARSE ---
+// --- UTILIDAD: REDIRECCIÓN AUTOMÁTICA SEGÚN ROL ---
 function verificarRutaUsuario(uid) {
     db.collection("usuarios").doc(uid).get().then((doc) => {
         if (doc.exists) {
@@ -95,8 +104,12 @@ function verificarRutaUsuario(uid) {
                 window.location.href = "cliente.html";
             }
         } else {
-            // Si el usuario existe en Auth pero no tiene datos en Firestore, va a elegir tipo
+            // Si el usuario no tiene rol, lo mandamos a elegir uno
             window.location.href = "tipo.html";
         }
+    }).catch((error) => {
+        console.error("Error verificando ruta:", error);
+        // Por seguridad, si hay error de lectura, mandamos a tipo.html
+        window.location.href = "tipo.html";
     });
 }
