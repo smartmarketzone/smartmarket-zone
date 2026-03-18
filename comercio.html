@@ -3,250 +3,52 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SmartMarket - Mi Inventario Pro</title>
+    <title>SmartMarket - Mi Panel de Comercio</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
         body {
             margin: 0; padding: 0; font-family: 'Montserrat', sans-serif;
-            background: linear-gradient(rgba(15, 32, 39, 0.85), rgba(30, 136, 229, 0.75)), 
-                        url('https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
+            background: linear-gradient(rgba(15, 32, 39, 0.9), rgba(30, 136, 229, 0.85)), 
+                        url('https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1?auto=format&fit=crop&w=1350&q=80');
             background-size: cover; background-attachment: fixed; color: white;
             display: flex; flex-direction: column; align-items: center; min-height: 100vh;
         }
 
-        .header { width: 100%; padding: 25px 0; text-align: center; }
-        .header h1 { font-weight: 900; font-size: 24px; color: #4fc3f7; margin: 0; text-shadow: 0 2px 10px rgba(0,0,0,0.5); }
-        .header p { font-size: 10px; opacity: 0.8; letter-spacing: 2px; }
+        /* HEADER CON BOTÓN SALIR */
+        .header { 
+            width: 100%; padding: 30px 0; text-align: center; position: relative;
+            background: rgba(0,0,0,0.2); backdrop-filter: blur(5px);
+        }
+        .header h1 { font-weight: 900; font-size: 24px; color: #4fc3f7; margin: 0; text-transform: uppercase; }
+        .user-info { font-size: 9px; color: #ffeb3b; font-weight: 700; margin-top: 5px; opacity: 0.8; }
+        
+        .btn-logout {
+            position: absolute; top: 15px; right: 15px; 
+            background: rgba(244, 67, 54, 0.2); border: 1px solid #f44336; 
+            color: #f44336; padding: 6px 12px; border-radius: 8px; 
+            font-size: 10px; font-weight: 900; cursor: pointer; transition: 0.3s;
+        }
+        .btn-logout:hover { background: #f44336; color: white; }
 
+        /* FORMULARIO */
         .card-form {
             background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 20px; padding: 20px; width: 90%; max-width: 450px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.5); margin-bottom: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 20px; 
+            padding: 20px; width: 90%; max-width: 450px; margin: 20px 0;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
         }
 
         .input-group { margin-bottom: 15px; text-align: left; }
         label { display: block; font-size: 10px; margin-bottom: 5px; font-weight: 900; color: #4fc3f7; text-transform: uppercase; }
         
         input, textarea {
-            width: 100%; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.1);
+            width: 100%; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1);
             border-radius: 10px; padding: 12px; color: white; box-sizing: border-box; outline: none; font-family: 'Montserrat';
         }
 
         .flex-row { display: flex; gap: 10px; }
         .flex-row div { flex: 1; }
 
-        .price-input-wrapper { position: relative; display: flex; align-items: center; }
-        .price-prefix { position: absolute; left: 12px; font-weight: 900; color: #4fc3f7; pointer-events: none; }
-        .price-input-wrapper input { padding-left: 45px; color: #ffeb3b; font-weight: 900; font-size: 18px; }
-
-        .btn-main {
-            width: 100%; background: #1e88e5; color: white; border: none;
-            padding: 16px; border-radius: 12px; font-weight: 900; cursor: pointer;
-            text-transform: uppercase; transition: 0.3s; margin-top: 10px;
-        }
-
-        .list-header { width: 90%; max-width: 450px; margin-bottom: 15px; border-bottom: 1px solid rgba(79, 195, 247, 0.3); padding-bottom: 5px; }
-        .products-list { width: 90%; max-width: 450px; padding-bottom: 50px; }
-        
-        .product-card {
-            background: rgba(0, 0, 0, 0.5); border-radius: 15px; padding: 15px;
-            margin-bottom: 15px; border-left: 4px solid #4fc3f7; display: flex; flex-direction: column;
-        }
-
-        .prod-top { display: flex; justify-content: space-between; align-items: flex-start; }
-        .prod-info h3 { margin: 0; font-size: 17px; color: #fff; text-transform: uppercase; }
-        .prod-info p { margin: 4px 0; font-size: 11px; opacity: 0.6; }
-
-        .prod-price { text-align: right; font-weight: 900; color: #ffeb3b; font-size: 19px; }
-        .prod-price small { display: block; font-size: 9px; color: #fff; opacity: 0.5; }
-
-        .stock-pill {
-            display: inline-block; padding: 3px 8px; border-radius: 6px; font-size: 9px;
-            font-weight: 900; text-transform: uppercase; margin-top: 8px;
-        }
-        .s-ok { background: #4caf50; }
-        .s-low { background: #ff9800; }
-        .s-none { background: #f44336; }
-
-        .prod-actions {
-            margin-top: 12px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.1);
-            display: flex; gap: 10px; justify-content: flex-end;
-        }
-        .btn-act {
-            background: rgba(255,255,255,0.1); border: none; color: white;
-            padding: 7px 12px; border-radius: 6px; cursor: pointer; font-size: 11px; font-weight: 700;
-        }
-    </style>
-</head>
-<body>
-
-<div class="header">
-    <h1 id="localName">CARGANDO...</h1>
-    <p>INVENTARIO EN BOLÍVARES (BS.)</p>
-</div>
-
-<div class="card-form">
-    <input type="hidden" id="prodID">
-    
-    <div class="input-group">
-        <label>Nombre del Producto</label>
-        <input type="text" id="pNombre" placeholder="Ej: PAN SALADO">
-    </div>
-
-    <div class="flex-row">
-        <div class="input-group">
-            <label>Precio (Bs.)</label>
-            <div class="price-input-wrapper">
-                <span class="price-prefix">Bs</span>
-                <input type="number" id="pPrecio" step="0.01" placeholder="0.00">
-            </div>
-        </div>
-        <div class="input-group">
-            <label>Stock</label>
-            <input type="number" id="pStock" placeholder="Cant.">
-        </div>
-    </div>
-
-    <div class="input-group">
-        <label>Descripción</label>
-        <textarea id="pDesc" rows="2" placeholder="Detalles del producto..."></textarea>
-    </div>
-
-    <button class="btn-main" id="btnAccion" onclick="procesar()">Publicar Producto</button>
-</div>
-
-<div class="list-header">
-    <span style="font-weight: 900; font-size: 13px;">📦 MI INVENTARIO PUBLICADO</span>
-</div>
-
-<div class="products-list" id="lista">
-    </div>
-
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
-
-<script>
-    const firebaseConfig = {
-        apiKey: "AIzaSyA6tYooh4CtX7ww9GRyXWhuakl2nLovtsY",
-        authDomain: "smartmarket-zone-e7559.firebaseapp.com",
-        projectId: "smartmarket-zone-e7559"
-    };
-    if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
-    let uid = "";
-
-    firebase.auth().onAuthStateChanged(user => {
-        if (user) {
-            uid = user.uid;
-            db.collection("comercios").doc(uid).get().then(doc => {
-                if(doc.exists) document.getElementById('localName').innerText = doc.data().nombre.toUpperCase();
-            });
-            cargarLista();
-        } else { window.location.href = "auth.html"; }
-    });
-
-    // Función para formatear el precio con puntos y comas (Formato Venezuela)
-    function formatearPrecio(num) {
-        return new Intl.NumberFormat('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(num);
-    }
-
-    function procesar() {
-        const id = document.getElementById('prodID').value;
-        const nombre = document.getElementById('pNombre').value.trim();
-        const precio = parseFloat(document.getElementById('pPrecio').value);
-        const stock = parseInt(document.getElementById('pStock').value);
-        const desc = document.getElementById('pDesc').value.trim();
-
-        if(!nombre || isNaN(precio) || isNaN(stock)) {
-            alert("⚠️ Por favor ingresa Nombre, Precio y Stock correctamente.");
-            return;
-        }
-
-        const datos = { 
-            nombre: nombre, 
-            precio: precio, 
-            stock: stock, 
-            descripcion: desc, 
-            comercioID: uid, 
-            fecha: firebase.firestore.FieldValue.serverTimestamp() 
-        };
-
-        const btn = document.getElementById('btnAccion');
-        btn.innerText = "PROCESANDO...";
-        btn.disabled = true;
-
-        if(id) {
-            db.collection("productos").doc(id).update(datos).then(() => limpiar());
-        } else {
-            db.collection("productos").add(datos).then(() => limpiar());
-        }
-    }
-
-    function limpiar() {
-        document.getElementById('prodID').value = "";
-        document.getElementById('pNombre').value = "";
-        document.getElementById('pPrecio').value = "";
-        document.getElementById('pStock').value = "";
-        document.getElementById('pDesc').value = "";
-        const btn = document.getElementById('btnAccion');
-        btn.innerText = "Publicar Producto";
-        btn.disabled = false;
-    }
-
-    function cargarLista() {
-        // Quitamos el orderBy temporalmente para evitar el error de índice de Firebase
-        db.collection("productos").where("comercioID", "==", uid)
-        .onSnapshot(snap => {
-            const lista = document.getElementById('lista');
-            lista.innerHTML = "";
-            if (snap.empty) {
-                lista.innerHTML = "<p style='text-align:center; opacity:0.5;'>No hay productos aún.</p>";
-                return;
-            }
-            snap.forEach(doc => {
-                const p = doc.data();
-                const id = doc.id;
-                let stockClase = p.stock > 10 ? 's-ok' : (p.stock > 0 ? 's-low' : 's-none');
-                let stockMsg = p.stock > 0 ? `Stock: ${p.stock}` : "AGOTADO";
-
-                lista.innerHTML += `
-                    <div class="product-card">
-                        <div class="prod-top">
-                            <div class="prod-info">
-                                <h3>${p.nombre}</h3>
-                                <p>${p.descripcion}</p>
-                                <span class="stock-pill ${stockClase}">${stockMsg}</span>
-                            </div>
-                            <div class="prod-price"><small>Precio</small>Bs. ${formatearPrecio(p.precio)}</div>
-                        </div>
-                        <div class="prod-actions">
-                            <button class="btn-act" style="background:#1e88e5" onclick="prepararEdicion('${id}','${p.nombre}',${p.precio},${p.stock},'${p.descripcion}')">✏️ Editar</button>
-                            <button class="btn-act" style="background:#d32f2f" onclick="borrar('${id}')">🗑️ Borrar</button>
-                        </div>
-                    </div>`;
-            });
-        }, error => {
-            console.log("Error en snapshot: ", error);
-        });
-    }
-
-    function prepararEdicion(id, n, p, s, d) {
-        document.getElementById('prodID').value = id;
-        document.getElementById('pNombre').value = n;
-        document.getElementById('pPrecio').value = p;
-        document.getElementById('pStock').value = s;
-        document.getElementById('pDesc').value = d;
-        document.getElementById('btnAccion').innerText = "Actualizar Cambios";
-        window.scrollTo({top: 0, behavior: 'smooth'});
-    }
-
-    function borrar(id) {
-        if(confirm("¿Eliminar este producto?")) {
-            db.collection("productos").doc(id).delete();
-        }
-    }
-</script>
-</body>
-</html>
+        /* PRECIO CON BS FUERA */
+        .price-wrapper { position: relative; display: flex; align-items: center; }
+        .price-tag { position: absolute; left: 12px; font-weight: 900; color: #4fc3f7; pointer-events: none;
