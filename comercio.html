@@ -3,110 +3,78 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SmartMarket - Panel de Comercio</title>
+    <title>Panel Comercio - SmartMarket VZLA</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
-        :root { --blue: #1e88e5; --cyan: #4fc3f7; --dark: #0f2027; --yellow: #ffeb3b; --red: #f44336; }
-        body { margin: 0; font-family: 'Montserrat', sans-serif; background: var(--dark); color: white; min-height: 100vh; padding-bottom: 80px; }
+        :root { --blue: #1e88e5; --cyan: #4fc3f7; --dark: #050a0e; --yellow: #ffeb3b; --red: #ff5252; --card: rgba(255,255,255,0.05); }
+        body { margin: 0; font-family: 'Montserrat', sans-serif; background: var(--dark); color: white; padding-bottom: 90px; }
         
-        /* HEADER */
-        .header { background: rgba(0,0,0,0.3); padding: 25px 20px; text-align: center; border-bottom: 2px solid var(--cyan); position: relative; }
-        .header h1 { font-weight: 900; font-size: 22px; color: var(--cyan); margin: 0; text-transform: uppercase; }
-        .header p { font-size: 10px; opacity: 0.7; margin: 5px 0 0; }
-        
-        .btn-logout { position: absolute; top: 15px; right: 15px; background: rgba(244,67,54,0.1); border: 1px solid var(--red); color: var(--red); padding: 5px 10px; border-radius: 8px; font-size: 9px; font-weight: 900; cursor: pointer; }
+        .header { background: #0b171c; padding: 25px; text-align: center; border-bottom: 2px solid var(--cyan); }
+        .header h1 { margin: 0; font-size: 20px; color: var(--cyan); text-transform: uppercase; letter-spacing: 1px; }
 
-        /* TABS (PESTAÑAS) */
-        .tabs { display: flex; background: rgba(255,255,255,0.05); margin: 15px; border-radius: 12px; padding: 5px; }
-        .tab { flex: 1; padding: 12px; text-align: center; font-size: 11px; font-weight: 900; cursor: pointer; border-radius: 10px; transition: 0.3s; opacity: 0.5; }
-        .tab.active { background: var(--blue); opacity: 1; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+        .tabs { display: flex; padding: 10px; gap: 10px; background: rgba(0,0,0,0.3); }
+        .tab { flex: 1; padding: 12px; text-align: center; font-size: 11px; font-weight: 900; cursor: pointer; border-radius: 10px; background: var(--card); opacity: 0.5; }
+        .tab.active { background: var(--blue); opacity: 1; color: white; }
 
-        .content-section { display: none; padding: 0 20px; }
-        .content-section.active { display: block; }
+        .content { padding: 20px; display: none; }
+        .content.active { display: block; animation: fadeIn 0.4s; }
 
-        /* FORMULARIOS Y CARDS */
-        .card { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 20px; margin-bottom: 20px; }
-        label { display: block; font-size: 10px; font-weight: 900; color: var(--cyan); margin: 15px 0 5px; text-transform: uppercase; }
-        input, textarea { width: 100%; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.1); padding: 12px; border-radius: 10px; color: white; font-family: 'Montserrat'; box-sizing: border-box; outline: none; }
+        .card { background: var(--card); border-radius: 20px; padding: 20px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 20px; }
+        label { display: block; font-size: 10px; font-weight: 900; color: var(--cyan); margin-bottom: 8px; }
+        input { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.5); color: white; outline: none; box-sizing: border-box; font-family: 'Montserrat'; }
         
         .btn-main { width: 100%; background: var(--blue); color: white; border: none; padding: 15px; border-radius: 12px; font-weight: 900; cursor: pointer; margin-top: 15px; text-transform: uppercase; }
         
-        /* INVENTARIO LIST */
-        .prod-item { background: rgba(0,0,0,0.5); border-radius: 15px; padding: 15px; margin-bottom: 12px; border-left: 4px solid var(--cyan); position: relative; }
-        .prod-item h3 { margin: 0; font-size: 16px; text-transform: uppercase; }
-        .prod-item .price { color: var(--yellow); font-weight: 900; font-size: 18px; display: block; margin: 5px 0; }
-        .prod-item .stock { font-size: 10px; padding: 4px 8px; border-radius: 5px; font-weight: 900; }
-        .stock-in { background: #4caf50; }
-        .stock-out { background: var(--red); }
+        /* Lista de Productos */
+        .p-item { background: rgba(255,255,255,0.03); padding: 15px; border-radius: 15px; margin-bottom: 10px; border-left: 4px solid var(--cyan); display: flex; justify-content: space-between; align-items: center; }
+        .p-info h3 { margin: 0; font-size: 14px; text-transform: uppercase; }
+        .p-info b { color: var(--yellow); font-size: 16px; }
+        .btn-del { background: var(--red); border: none; color: white; padding: 8px; border-radius: 8px; font-size: 10px; font-weight: 900; }
 
-        .actions { display: flex; gap: 10px; margin-top: 10px; }
-        .btn-action { flex: 1; padding: 8px; border-radius: 8px; border: none; font-size: 10px; font-weight: 900; color: white; cursor: pointer; }
-
-        /* NAV INFERIOR */
-        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; height: 70px; background: var(--dark); border-top: 2px solid var(--cyan); display: flex; justify-content: space-around; align-items: center; z-index: 1000; }
-        .nav-item { text-align: center; color: rgba(255,255,255,0.4); text-decoration: none; font-size: 9px; font-weight: 900; display: flex; flex-direction: column; align-items: center; gap: 4px; flex: 1; }
+        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; height: 75px; background: #0b171c; border-top: 2px solid var(--cyan); display: flex; justify-content: space-around; align-items: center; z-index: 2000; }
+        .nav-item { text-align: center; color: rgba(255,255,255,0.4); text-decoration: none; font-size: 10px; font-weight: 900; display: flex; flex-direction: column; align-items: center; }
         .nav-item.active { color: var(--cyan); }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
 
 <div class="header">
-    <button class="btn-logout" onclick="cerrarSesion()">CERRAR SESIÓN</button>
-    <h1 id="localTitle">MI COMERCIO</h1>
-    <p id="localEmail">...</p>
+    <h1 id="nombreLocal">MI COMERCIO</h1>
+    <p id="correoLocal" style="font-size: 10px; opacity: 0.5; margin: 5px 0 0;">...</p>
 </div>
 
 <div class="tabs">
     <div class="tab active" onclick="switchTab('inventario', this)">📦 INVENTARIO</div>
-    <div class="tab" onclick="switchTab('config', this)">⚙️ MI LOCAL</div>
+    <div class="tab" onclick="switchTab('ajustes', this)">⚙️ MI LOCAL</div>
 </div>
 
-<div id="inventario" class="content-section active">
+<div id="inventario" class="content active">
     <div class="card">
-        <h2 style="font-size: 14px; margin-top: 0;">➕ AGREGAR PRODUCTO</h2>
-        <input type="hidden" id="prodID">
-        <label>Nombre del Producto</label>
-        <input type="text" id="pNombre" placeholder="Ej: Harina Pan">
-        
-        <div style="display: flex; gap: 10px;">
-            <div style="flex: 1;">
-                <label>Precio (Bs.)</label>
-                <input type="number" id="pPrecio" step="0.01" placeholder="0.00">
-            </div>
-            <div style="flex: 1;">
-                <label>Stock</label>
-                <input type="number" id="pStock" placeholder="Cant.">
-            </div>
+        <label>Producto / Marca</label>
+        <input type="text" id="pNombre" placeholder="Ej: Harina Pan 1kg">
+        <div style="display:flex; gap:10px; margin-top:10px;">
+            <div style="flex:1;"><label>Precio Bs.</label><input type="number" id="pPrecio" placeholder="0.00"></div>
+            <div style="flex:1;"><label>Stock</label><input type="number" id="pStock" placeholder="Cant."></div>
         </div>
-        <button class="btn-main" id="btnAccion" onclick="procesarProducto()">Publicar en el Mapa</button>
+        <button class="btn-main" onclick="guardarProducto()">Publicar Producto</button>
     </div>
-
     <div id="listaProductos"></div>
 </div>
 
-<div id="config" class="content-section">
+<div id="ajustes" class="content">
     <div class="card">
-        <h2 style="font-size: 14px; margin-top: 0; color: var(--yellow);">📍 DATOS DEL LOCAL</h2>
-        <label>Nombre Comercial</label>
-        <input type="text" id="confNombre" readonly>
-        
-        <label>Coordenadas (Ubicación)</label>
-        <input type="text" id="confLat" readonly style="font-size: 10px; opacity: 0.6;">
-        
-        <label>Correo Vinculado</label>
-        <input type="text" id="confEmail" readonly>
-
-        <hr style="margin: 25px 0; border: 0; border-top: 1px solid rgba(255,255,255,0.1);">
-        
-        <h2 style="font-size: 14px; color: var(--cyan);">🔐 SEGURIDAD</h2>
-        <p style="font-size: 10px; opacity: 0.7;">Si deseas cambiar tu contraseña, se enviará un enlace a tu correo.</p>
-        <button class="btn-main" style="background: var(--cyan); color: #000;" onclick="resetPassword()">Cambiar Contraseña</button>
+        <label>Ubicación GPS</label>
+        <input type="text" id="locGPS" readonly style="opacity: 0.6;">
+        <label style="margin-top:15px;">Seguridad</label>
+        <button class="btn-main" style="background: var(--cyan); color: #000;" onclick="cambiarClave()">Enviar Link Cambio de Clave</button>
+        <button class="btn-main" style="background: var(--red); margin-top:10px;" onclick="cerrarSesion()">Cerrar Sesión</button>
     </div>
 </div>
 
 <nav class="bottom-nav">
-    <a href="index.html" class="nav-item"><span>📍</span> MAPA</a>
-    <a href="comercio.html" class="nav-item active"><span>📊</span> MI PANEL</a>
+    <a href="index.html" class="nav-item"><span>📍</span>MAPA</a>
+    <a href="comercio.html" class="nav-item active"><span>📊</span>PANEL</a>
 </nav>
 
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
@@ -121,88 +89,74 @@
     };
     if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
-    let uid = "";
+    let userUID = null;
 
     firebase.auth().onAuthStateChanged(async (user) => {
         if (user) {
-            uid = user.uid;
-            document.getElementById('localEmail').innerText = user.email;
-            document.getElementById('confEmail').value = user.email;
-            
-            // Cargar datos del local
-            const doc = await db.collection("comercios").doc(uid).get();
-            if(doc.exists) {
-                const data = doc.data();
-                document.getElementById('localTitle').innerText = data.nombre;
-                document.getElementById('confNombre').value = data.nombre;
-                document.getElementById('confLat').value = `Lat: ${data.lat}, Lng: ${data.lng}`;
+            userUID = user.uid;
+            const docU = await db.collection("usuarios").doc(user.uid).get();
+            if(!docU.exists || docU.data().tipo !== "comercio") {
+                window.location.href = "index.html"; 
+                return;
             }
-            cargarInventario();
+            document.getElementById('correoLocal').innerText = user.email;
+            cargarDatosLocal();
+            cargarLista();
         } else { window.location.href = "auth.html"; }
     });
 
-    function switchTab(target, el) {
-        document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
-        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-        document.getElementById(target).classList.add('active');
-        el.classList.add('active');
+    async function cargarDatosLocal() {
+        const docL = await db.collection("comercios").doc(userUID).get();
+        if(docL.exists) {
+            document.getElementById('nombreLocal').innerText = docL.data().nombre;
+            document.getElementById('locGPS').value = `${docL.data().lat}, ${docL.data().lng}`;
+        }
     }
 
-    async function procesarProducto() {
-        const id = document.getElementById('prodID').value;
-        const nombre = document.getElementById('pNombre').value;
+    async function guardarProducto() {
+        const nombre = document.getElementById('pNombre').value.trim();
         const precio = parseFloat(document.getElementById('pPrecio').value);
         const stock = parseInt(document.getElementById('pStock').value);
 
-        if(!nombre || isNaN(precio)) return alert("Completa los datos");
+        if(!nombre || isNaN(precio)) return alert("⚠️ Datos incompletos");
 
-        const datos = { nombre, precio, stock, comercioID: uid, fecha: new Date() };
-
-        if(id) await db.collection("productos").doc(id).update(datos);
-        else await db.collection("productos").add(datos);
-
-        limpiar();
+        await db.collection("productos").add({
+            nombre, precio, stock, comercioID: userUID, fecha: new Date()
+        });
+        
+        document.getElementById('pNombre').value = "";
+        document.getElementById('pPrecio').value = "";
+        document.getElementById('pStock').value = "";
     }
 
-    function cargarInventario() {
-        db.collection("productos").where("comercioID", "==", uid).onSnapshot(snap => {
-            const lista = document.getElementById('listaProductos');
-            lista.innerHTML = "";
+    function cargarLista() {
+        db.collection("productos").where("comercioID", "==", userUID).onSnapshot(snap => {
+            const cont = document.getElementById('listaProductos');
+            cont.innerHTML = "";
             snap.forEach(doc => {
                 const p = doc.data();
-                const stockLabel = p.stock > 0 ? `<span class="stock stock-in">EN STOCK: ${p.stock}</span>` : `<span class="stock stock-out">SIN STOCK</span>`;
-                lista.innerHTML += `
-                    <div class="prod-item">
-                        <h3>${p.nombre}</h3>
-                        <span class="price">Bs. ${p.precio.toLocaleString('de-DE', {minimumFractionDigits: 2})}</span>
-                        ${stockLabel}
-                        <div class="actions">
-                            <button class="btn-action" style="background:var(--blue)" onclick="editarP('${doc.id}','${p.nombre}',${p.precio},${p.stock})">EDITAR</button>
-                            <button class="btn-action" style="background:var(--red)" onclick="borrarP('${doc.id}')">BORRAR</button>
+                cont.innerHTML += `
+                    <div class="p-item">
+                        <div class="p-info">
+                            <h3>${p.nombre}</h3>
+                            <b>Bs. ${p.precio.toFixed(2)}</b>
                         </div>
+                        <button class="btn-del" onclick="eliminarP('${doc.id}')">ELIMINAR</button>
                     </div>`;
             });
         });
     }
 
-    function resetPassword() {
-        const email = firebase.auth().currentUser.email;
-        firebase.auth().sendPasswordResetEmail(email).then(() => alert("✅ Correo enviado a " + email));
+    function switchTab(id, el) {
+        document.querySelectorAll('.content').forEach(c => c.classList.remove('active'));
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+        el.classList.add('active');
     }
 
-    function editarP(id, n, p, s) {
-        document.getElementById('prodID').value = id;
-        document.getElementById('pNombre').value = n;
-        document.getElementById('pPrecio').value = p;
-        document.getElementById('pStock').value = s;
-        document.getElementById('btnAccion').innerText = "Guardar Cambios";
-        switchTab('inventario', document.querySelectorAll('.tab')[0]);
-        window.scrollTo(0,0);
-    }
-
-    function borrarP(id) { if(confirm("¿Eliminar?")) db.collection("productos").doc(id).delete(); }
-    function limpiar() { document.getElementById('prodID').value = ""; document.getElementById('pNombre').value = ""; document.getElementById('pPrecio').value = ""; document.getElementById('pStock').value = ""; document.getElementById('btnAccion').innerText = "Publicar en el Mapa"; }
+    function eliminarP(id) { if(confirm("¿Eliminar producto?")) db.collection("productos").doc(id).delete(); }
     function cerrarSesion() { firebase.auth().signOut().then(() => window.location.href="auth.html"); }
+    function cambiarClave() { firebase.auth().sendPasswordResetEmail(firebase.auth().currentUser.email).then(() => alert("✅ Correo enviado")); }
 </script>
 </body>
 </html>
