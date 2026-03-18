@@ -1,44 +1,116 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
-<title>SmartMarket Zone</title>
-<link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartMarket Zone - Autenticación</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800&display=swap" rel="stylesheet">
 </head>
-
 <body class="auth-body">
 
 <div class="card">
+    <h1 class="logo">SMARTMARKET <span>ZONE</span></h1>
+    <p class="slogan">COMPRA Y VENDE CERCA DE TI</p>
 
-<h1 class="logo">SmartMarket Zone</h1>
+    <div style="margin-bottom: 20px;">
+        <button type="button" onclick="cambiarModo('login')" style="width: 45%; background: #ccc; display: inline-block;" id="btnTabLogin">Iniciar sesión</button>
+        <button type="button" onclick="cambiarModo('registro')" style="width: 45%; background: #eee; display: inline-block;" id="btnTabRegistro">Registrarse</button>
+    </div>
 
-<p class="slogan">
-Compra y vende cerca de ti
-</p>
+    <h2 id="tituloAccion">Iniciar Sesión</h2>
 
-<div class="tabs">
-<button onclick="showLogin()">Iniciar sesión</button>
-<button onclick="showRegister()">Registrarse</button>
-</div>
+    <input type="email" id="correoPrincipal" placeholder="Correo electrónico">
+    <input type="password" id="clavePrincipal" placeholder="Contraseña">
 
-<div id="loginBox">
-<input type="email" id="loginEmail" placeholder="Correo">
-<input type="password" id="loginPass" placeholder="Contraseña">
-<button onclick="login()">Entrar</button>
-</div>
-
-<div id="registerBox" style="display:none;">
-<input type="email" id="regEmail" placeholder="Correo">
-<input type="password" id="regPass" placeholder="Contraseña">
-<button onclick="register()">Crear cuenta</button>
-</div>
-
+    <button type="button" class="btn-primary" id="btnAccionPrincipal" onclick="procesar()">
+        Entrar
+    </button>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
 
-<script src="auth.js"></script>
+<script>
+    // 1. Configuración de tu proyecto (Verificada de tus archivos)
+    const firebaseConfig = {
+        apiKey: "AIzaSyA6tYooh4CtX7ww9GRyXWhuakl2nLovtsY",
+        authDomain: "smartmarket-zone-e7559.firebaseapp.com",
+        projectId: "smartmarket-zone-e7559"
+    };
+
+    if (!firebase.apps.length) {
+        firebase.initializeApp(firebaseConfig);
+    }
+
+    let modoActual = 'login';
+
+    // Función para cambiar visualmente entre Login y Registro
+    function cambiarModo(modo) {
+        modoActual = modo;
+        const btnAccion = document.getElementById("btnAccionPrincipal");
+        const titulo = document.getElementById("tituloAccion");
+        
+        if (modo === 'login') {
+            titulo.innerText = "Iniciar Sesión";
+            btnAccion.innerText = "Entrar";
+            document.getElementById("btnTabLogin").style.background = "#ccc";
+            document.getElementById("btnTabRegistro").style.background = "#eee";
+        } else {
+            titulo.innerText = "Crear Cuenta";
+            btnAccion.innerText = "Registrarse";
+            document.getElementById("btnTabLogin").style.background = "#eee";
+            document.getElementById("btnTabRegistro").style.background = "#ccc";
+        }
+    }
+
+    // LA FUNCIÓN QUE HACE EL TRABAJO
+    function procesar() {
+        const email = document.getElementById("correoPrincipal").value.trim();
+        const password = document.getElementById("clavePrincipal").value.trim();
+
+        if (email === "" || password === "") {
+            alert("Por favor, completa todos los campos.");
+            return;
+        }
+
+        const btn = document.getElementById("btnAccionPrincipal");
+        btn.innerText = "Procesando...";
+        btn.disabled = true;
+
+        if (modoActual === 'login') {
+            // Lógica de Login
+            firebase.auth().signInWithEmailAndPassword(email, password)
+                .then(() => {
+                    window.location.href = "tipo.html";
+                })
+                .catch(error => {
+                    alert("Error: " + error.message);
+                    btn.innerText = "Entrar";
+                    btn.disabled = false;
+                });
+        } else {
+            // Lógica de Registro
+            if(password.length < 6) {
+                alert("La contraseña debe tener al menos 6 caracteres.");
+                btn.innerText = "Registrarse";
+                btn.disabled = false;
+                return;
+            }
+            firebase.auth().createUserWithEmailAndPassword(email, password)
+                .then(() => {
+                    alert("¡Cuenta creada!");
+                    window.location.href = "tipo.html";
+                })
+                .catch(error => {
+                    alert("Error: " + error.message);
+                    btn.innerText = "Registrarse";
+                    btn.disabled = false;
+                });
+        }
+    }
+</script>
 
 </body>
 </html>
