@@ -3,6 +3,10 @@
 <head>
 <title>Registro Comercio</title>
 <link rel="stylesheet" href="style.css">
+
+<!-- Leaflet CSS -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+
 <style>
 .container{
 display:flex;
@@ -56,29 +60,31 @@ projectId: "smartmarket-zone-e7559"
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
+// MAPA
+let map = L.map('map').setView([10.162, -68.007], 13);
+
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+attribution: '© OpenStreetMap'
+}).addTo(map);
+
 let marcador;
 let lat = null;
 let lng = null;
 
-function initMap(){
-const map = new google.maps.Map(document.getElementById("map"), {
-center: {lat: 10.162, lng: -68.007},
-zoom: 12
-});
+// CLICK EN MAPA
+map.on('click', function(e){
 
-map.addListener("click", function(e){
-lat = e.latLng.lat();
-lng = e.latLng.lng();
+lat = e.latlng.lat;
+lng = e.latlng.lng;
 
-if(marcador) marcador.setMap(null);
-
-marcador = new google.maps.Marker({
-position: e.latLng,
-map: map
-});
-});
+if(marcador){
+map.removeLayer(marcador);
 }
 
+marcador = L.marker([lat, lng]).addTo(map);
+});
+
+// GUARDAR
 function guardarComercio(){
 
 let nombre = document.getElementById("nombreComercio").value;
@@ -106,10 +112,8 @@ alert("Error al guardar");
 }
 </script>
 
-<!-- Google Maps -->
-<script async defer
-src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAc5Bi2EWeROBesJTqczCUJemmsquLMStw&callback=initMap">
-</script>
+<!-- Leaflet JS -->
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
 </body>
 </html>
