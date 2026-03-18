@@ -14,34 +14,70 @@
     <h1 class="logo">Smart<span>Market</span></h1>
     <p class="slogan">Ingresa a tu cuenta</p>
 
-    <input type="email" id="regEmail" placeholder="Tu correo electrónico" inputmode="email" autocomplete="email">
-    <input type="password" id="regPass" placeholder="Tu contraseña" autocomplete="current-password">
+    <input type="email" id="regEmail" placeholder="Correo electrónico" inputmode="email">
+    <input type="password" id="regPass" placeholder="Tu contraseña">
 
     <button type="button" class="btn-primary" id="btnEntrar">
         Entrar
     </button>
     
-    <p style="margin-top:20px; font-size:14px; color: #666;">
-        ¿No tienes cuenta? <a href="register.html" style="color:#1e88e5; font-weight:bold; text-decoration:none;">Regístrate</a>
+    <p style="margin-top:20px; font-size:14px;">
+        ¿No tienes cuenta? <a href="register.html" style="color:#1e88e5;">Regístrate</a>
     </p>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
-<script src="auth.js"></script>
 
 <script>
-    // Forzamos la detección del clic en móviles
-    document.getElementById('btnEntrar').addEventListener('click', function(e) {
-        e.preventDefault();
-        console.log("Intentando iniciar sesión...");
-        if (typeof login === 'function') {
-            login();
-        } else {
-            alert("Error: La función de acceso no ha cargado. Reintenta en un momento.");
-        }
+    // 1. Configuración incrustada para evitar fallos de lectura de archivo
+    const firebaseConfig = {
+        apiKey: "AIzaSyA6tYooh4CtX7ww9GRyXWhuakl2nLovtsY",
+        authDomain: "smartmarket-zone-e7559.firebaseapp.com",
+        projectId: "smartmarket-zone-e7559"
+    };
+
+    if (!firebase.apps.length) {
+        firebase.initializeApp(firebaseConfig);
+    }
+
+    // 2. Escuchar el clic de forma nativa (mejor para móviles)
+    document.getElementById('btnEntrar').addEventListener('pointerdown', function(e) {
+        console.log("Clic detectado");
+        ejecutarLogin();
     });
+
+    // También escuchamos el click normal por si acaso
+    document.getElementById('btnEntrar').addEventListener('click', function(e) {
+        ejecutarLogin();
+    });
+
+    function ejecutarLogin() {
+        const email = document.getElementById("regEmail").value.trim();
+        const password = document.getElementById("regPass").value.trim();
+
+        if (!email || !password) {
+            alert("Por favor, llena los campos");
+            return;
+        }
+
+        // Mostrar un aviso de "Cargando" para saber que el botón sí respondió
+        document.getElementById('btnEntrar').innerText = "Cargando...";
+
+        firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL)
+        .then(() => {
+            return firebase.auth().signInWithEmailAndPassword(email, password);
+        })
+        .then((userCredential) => {
+            // Éxito: Redirigir
+            window.location.href = "tipo.html";
+        })
+        .catch((error) => {
+            document.getElementById('btnEntrar').innerText = "Entrar";
+            alert("Error: " + error.message);
+        });
+    }
 </script>
 
 </body>
