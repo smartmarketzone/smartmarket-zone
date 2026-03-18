@@ -8,6 +8,11 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
 
 <style>
+body{
+margin:0;
+font-family:Arial;
+}
+
 .container{
 display:flex;
 height:100vh;
@@ -17,6 +22,33 @@ height:100vh;
 width:30%;
 padding:20px;
 background:#f4f4f4;
+display:flex;
+flex-direction:column;
+gap:10px;
+}
+
+.form h2{
+margin-bottom:10px;
+}
+
+input{
+padding:10px;
+border-radius:5px;
+border:1px solid #ccc;
+}
+
+button{
+padding:12px;
+background:#2ecc71;
+color:white;
+border:none;
+border-radius:5px;
+cursor:pointer;
+font-weight:bold;
+}
+
+button:hover{
+background:#27ae60;
 }
 
 #map{
@@ -36,7 +68,7 @@ height:100%;
 <input id="nombreComercio" placeholder="Nombre del comercio">
 <input id="direccion" placeholder="Dirección">
 
-<p>Selecciona tu ubicación:</p>
+<p>Haz click en el mapa para seleccionar ubicación</p>
 
 <button onclick="guardarComercio()">Guardar y continuar</button>
 </div>
@@ -51,6 +83,7 @@ height:100%;
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
 
 <script>
+// 🔥 TU CONFIG REAL (YA FUNCIONANDO)
 const firebaseConfig = {
 apiKey: "AIzaSyA6tYooh4CtX7ww9GRyXWhuakl2nLovtsY",
 authDomain: "smartmarket-zone-e7559.firebaseapp.com",
@@ -60,7 +93,14 @@ projectId: "smartmarket-zone-e7559"
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
-// MAPA
+// 🔐 VERIFICAR USUARIO
+firebase.auth().onAuthStateChanged(user => {
+if(!user){
+window.location.href = "auth.html";
+}
+});
+
+// 🗺️ MAPA
 let map = L.map('map').setView([10.162, -68.007], 13);
 
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -71,7 +111,7 @@ let marcador;
 let lat = null;
 let lng = null;
 
-// CLICK EN MAPA
+// 📍 CLICK EN MAPA
 map.on('click', function(e){
 
 lat = e.latlng.lat;
@@ -82,14 +122,36 @@ map.removeLayer(marcador);
 }
 
 marcador = L.marker([lat, lng]).addTo(map);
+
+// 🌍 OBTENER DIRECCIÓN AUTOMÁTICA
+fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`)
+.then(res => res.json())
+.then(data => {
+
+if(data.display_name){
+document.getElementById("direccion").value = data.display_name;
+}else{
+document.getElementById("direccion").value = "Dirección no encontrada";
+}
+
+})
+.catch(() => {
+document.getElementById("direccion").value = "Error al obtener dirección";
 });
 
-// GUARDAR
+});
+
+// 💾 GUARDAR COMERCIO
 function guardarComercio(){
 
 let nombre = document.getElementById("nombreComercio").value;
 let direccion = document.getElementById("direccion").value;
 let user = firebase.auth().currentUser;
+
+if(!nombre || !direccion){
+alert("Completa todos los campos");
+return;
+}
 
 if(!lat || !lng){
 alert("Selecciona ubicación en el mapa");
