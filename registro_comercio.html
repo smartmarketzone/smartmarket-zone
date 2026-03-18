@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SmartMarket - Registro de Comercio</title>
+    <title>SmartMarket - Registro Pro</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
@@ -35,28 +35,30 @@
         .row { display: flex; gap: 10px; margin-bottom: 12px; }
         .row div { flex: 1; }
 
-        /* CONTENEDOR DE MAPA */
-        .map-container { position: relative; margin: 10px 0; border-radius: 12px; overflow: hidden; border: 2px solid #1e88e5; }
-        #map { height: 200px; width: 100%; z-index: 1; }
+        /* CONTENEDOR DE MAPA - IMPORTANTE EL HEIGHT */
+        .map-container { 
+            position: relative; 
+            margin: 10px 0; 
+            border-radius: 12px; 
+            overflow: hidden; 
+            border: 2px solid #1e88e5;
+            height: 220px; /* Forzamos altura */
+            background: #222; /* Fondo mientras carga */
+        }
+        #map { height: 100%; width: 100%; z-index: 1; }
         
-        /* BOTÓN GPS FLOTANTE SOBRE EL MAPA */
         .btn-gps {
             position: absolute; top: 10px; right: 10px; z-index: 1000;
             background: #ffffff; color: #1e88e5; border: none; border-radius: 50%;
             width: 40px; height: 40px; cursor: pointer; font-size: 20px;
             box-shadow: 0 4px 10px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center;
         }
-        .btn-gps:active { transform: scale(0.9); background: #4fc3f7; }
 
         .btn-save {
             width: 100%; background: #1e88e5; color: white; border: none;
             padding: 15px; border-radius: 10px; font-weight: 900; cursor: pointer;
             transition: 0.3s; text-transform: uppercase; margin-top: 15px;
-            box-shadow: 0 5px 15px rgba(30, 136, 229, 0.4);
         }
-        .btn-save:active { transform: scale(0.96); }
-
-        .info-gps { font-size: 10px; color: #ffca28; text-align: center; margin-bottom: 5px; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -82,12 +84,11 @@
 
     <div class="input-group">
         <label>Dirección (Manual o por Mapa)</label>
-        <textarea id="direccionNegocio" rows="2" placeholder="Toca el mapa o usa el GPS para llenar esto..."></textarea>
+        <textarea id="direccionNegocio" rows="2" placeholder="Se llenará al tocar el mapa..."></textarea>
     </div>
 
     <div class="input-group">
         <label>Ubicación en Mapa</label>
-        <p class="info-gps">📍 Toca tu local o usa el botón blanco 🎯</p>
         <div class="map-container">
             <div id="map"></div>
             <button class="btn-gps" onclick="usarGPS()" title="Ubicación Actual">🎯</button>
@@ -100,4 +101,89 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+
+<script>
+    const firebaseConfig = {
+        apiKey: "AIzaSyA6tYooh4CtX7ww9GRyXWhuakl2nLovtsY",
+        authDomain: "smartmarket-zone-e7559.firebaseapp.com",
+        projectId: "smartmarket-zone-e7559"
+    };
+    if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    let lat = 10.2461, lng = -67.5958;
+    let map, marker;
+
+    // INICIALIZACIÓN SEGURA DEL MAPA
+    function initMap() {
+        map = L.map('map', {
+            zoomControl: false // Opcional para móviles más limpio
+        }).setView([lat, lng], 15);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; OpenStreetMap'
+        }).addTo(map);
+
+        marker = L.marker([lat, lng], {draggable: true}).addTo(map);
+
+        // EL TRUCO: Refrescar el tamaño después de un instante
+        setTimeout(() => {
+            map.invalidateSize();
+        }, 400);
+
+        map.on('click', (e) => {
+            marker.setLatLng(e.latlng);
+            lat = e.latlng.lat; lng = e.latlng.lng;
+            actualizarDireccion(lat, lng);
+        });
+    }
+
+    // Ejecutar al cargar
+    window.onload = initMap;
+
+    async function actualizarDireccion(l, g) {
+        try {
+            const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${l}&lon=${g}`);
+            const data = await res.json();
+            if (data.display_name) document.getElementById('direccionNegocio').value = data.display_name;
+        } catch (e) { console.error(e); }
+    }
+
+    function usarGPS() {
+        if (!navigator.geolocation) return alert("GPS no disponible");
+        navigator.geolocation.getCurrentPosition((pos) => {
+            lat = pos.coords.latitude; lng = pos.coords.longitude;
+            map.flyTo([lat, lng], 18);
+            marker.setLatLng([lat, lng]);
+            actualizarDireccion(lat, lng);
+        }, () => alert("Activa el GPS"));
+    }
+
+    function guardarComercio() {
+        const nombre = document.getElementById('nombreNegocio').value.trim();
+        const direccion = document.getElementById('direccionNegocio').value.trim();
+        const abre = document.getElementById('abre').value;
+        const cierra = document.getElementById('cierra').value;
+        const user = firebase.auth().currentUser;
+
+        if (!user || !nombre || !direccion) return alert("Completa los datos");
+
+        document.getElementById('btnFinalizar').innerText = "GUARDANDO...";
+        
+        db.collection("comercios").doc(user.uid).set({
+            nombre, direccion, abre, cierra, lat, lng,
+            uid: user.uid,
+            fecha: firebase.firestore.FieldValue.serverTimestamp()
+        }).then(() => {
+            alert("¡Negocio registrado!");
+            window.location.href = "comercio.html";
+        }).catch(e => {
+            alert("Error: " + e.message);
+            document.getElementById('btnFinalizar').innerText = "Guardar y Continuar";
+        });
+    }
+</script>
+
+</body>
+</html>
