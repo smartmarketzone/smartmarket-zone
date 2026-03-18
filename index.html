@@ -3,46 +3,93 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SmartMarket VZLA - Mapa</title>
-    
+    <title>SmartMarket VZLA</title>
     <link rel="icon" href="https://fav.farm/🛒">
-    
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
-    
     <style>
-        :root { 
-            --blue: #1e88e5; --cyan: #4fc3f7; --dark: #050a0e; 
-            --yellow: #ffeb3b; --white: #ffffff; --red: #ff5252;
-            --bg-card: #0b171c;
-        }
+        :root { --blue: #1e88e5; --cyan: #4fc3f7; --dark: #050a0e; --yellow: #ffeb3b; --bg-card: #0b171c; }
+        body { margin: 0; font-family: 'Montserrat', sans-serif; background: var(--dark); overflow: hidden; color: white; }
         
-        body { margin: 0; font-family: 'Montserrat', sans-serif; background: var(--dark); overflow: hidden; }
+        /* Contenedor del Mapa */
+        #map { height: 100vh; width: 100%; background: #000; z-index: 1; }
 
-        #map { height: 100vh; width: 100%; z-index: 1; }
+        /* Buscador Superior */
+        .search-container { position: absolute; top: 15px; left: 50%; transform: translateX(-50%); z-index: 1000; width: 90%; max-width: 450px; }
+        .search-box { width: 100%; padding: 15px 25px; border-radius: 30px; border: none; background: white; box-shadow: 0 10px 30px rgba(0,0,0,0.5); font-weight: 800; outline: none; color: #333; }
 
-        /* BUSCADOR SUPERIOR */
-        .search-container {
-            position: absolute; top: 15px; left: 50%; transform: translateX(-50%);
-            z-index: 1000; width: 90%; max-width: 450px;
-        }
-        .search-box {
-            width: 100%; padding: 15px 25px; border-radius: 30px; border: none;
-            background: white; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            font-size: 14px; outline: none; font-weight: 800; color: #333;
-        }
-
-        /* TARJETA PROFESIONAL (MODAL) */
-        #store-modal {
-            position: fixed; bottom: -100%; left: 0; width: 100%; height: 70vh;
-            background: var(--bg-card); border-radius: 30px 30px 0 0;
-            z-index: 3000; transition: bottom 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.1);
-            padding: 25px; box-sizing: border-box; color: white;
-            box-shadow: 0 -10px 40px rgba(0,0,0,0.8);
-            overflow-y: auto;
-        }
+        /* Modal Deslizable */
+        #store-modal { position: fixed; bottom: -100%; left: 0; width: 100%; height: 65vh; background: var(--bg-card); border-radius: 30px 30px 0 0; z-index: 3000; transition: 0.5s; padding: 25px; box-sizing: border-box; box-shadow: 0 -10px 40px rgba(0,0,0,0.8); overflow-y: auto; }
         #store-modal.active { bottom: 0; }
+        .handle { width: 50px; height: 5px; background: rgba(255,255,255,0.2); border-radius: 10px; margin: 0 auto 20px; }
 
-        .handle { 
-            width: 50px; height: 5px; background: rgba(255,255,255,0.2); 
-            border-radius: 10px; margin: 0 auto 20px; cursor
+        /* Inventario */
+        .inventory-item { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 14px; }
+        .price { color: var(--yellow); font-weight: 900; }
+
+        /* Nav Inferior */
+        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; height: 75px; background: #0b171c; border-top: 2px solid var(--cyan); display: flex; justify-content: space-around; align-items: center; z-index: 2000; }
+        .nav-item { text-align: center; color: rgba(255,255,255,0.4); text-decoration: none; font-size: 10px; font-weight: 900; flex: 1; display: flex; flex-direction: column; }
+        .nav-item.active { color: var(--cyan); }
+
+        /* Pins Colores */
+        .pin-comida { filter: hue-rotate(90deg); }
+        .pin-farmacia { filter: hue-rotate(180deg); }
+    </style>
+</head>
+<body>
+
+<div class="search-container">
+    <input type="text" id="buscador" class="search-box" placeholder="🔍 ¿Qué buscas en San Joaquín?" oninput="filtrarMapa()">
+</div>
+
+<div id="map"></div>
+
+<div id="store-modal">
+    <div class="handle" onclick="cerrarDetalle()"></div>
+    <span id="store-cat" style="font-size:9px; background:var(--yellow); color:black; padding:3px 8px; border-radius:10px; font-weight:900;">TIENDA</span>
+    <h2 id="store-name" style="margin: 10px 0; color:var(--cyan);">NOMBRE</h2>
+    <div id="modal-products" style="margin-top:20px;"></div>
+    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:25px;">
+        <button id="btn-gps" style="padding:15px; border-radius:12px; border:none; background:var(--blue); color:white; font-weight:900;">COMO LLEGAR</button>
+        <button id="btn-fav" style="padding:15px; border-radius:12px; border:none; background:var(--yellow); font-weight:900;">FAVORITO</button>
+    </div>
+</div>
+
+<nav class="bottom-nav">
+    <a href="index.html" class="nav-item active"><span>📍</span>MAPA</a>
+    <a href="cliente.html" class="nav-item"><span>👤</span>PERFIL</a>
+    <a href="registro_comercio.html" id="nav-reg" class="nav-item" style="display:none;"><span>🏪</span>REGISTRAR</a>
+    <a href="comercio.html" id="nav-pan" class="nav-item" style="display:none;"><span>📊</span>PANEL</a>
+</nav>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+
+<script>
+    const firebaseConfig = {
+        apiKey: "AIzaSyA6tYooh4CtX7ww9GRyXWhuakl2nLovtsY",
+        authDomain: "smartmarket-zone-e7559.firebaseapp.com",
+        projectId: "smartmarket-zone-e7559"
+    };
+    if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+    let map, userUID = null, marcadores = [];
+
+    // 1. Inicializar Mapa con Retraso para evitar pantalla negra
+    function initMap() {
+        if (map) return; 
+        map = L.map('map', { zoomControl: false }).setView([10.29, -67.79], 14); // Vista San Joaquín
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+        
+        map.locate({setView: true, maxZoom: 16});
+        cargarComercios();
+    }
+
+    // 2. Seguridad y Roles
+    firebase.auth().onAuthStateChanged(async (user) => {
+        if (user) {
+            userUID = user.uid;
+            const doc = await db.collection("usuarios").doc(user.uid).get
