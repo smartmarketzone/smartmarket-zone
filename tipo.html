@@ -1,31 +1,120 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
-<title>Seleccionar tipo</title>
-<link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SmartMarket - Elige tu Rol</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800&display=swap" rel="stylesheet">
+    <style>
+        .role-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 25px;
+        }
+        .role-card {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+        .role-card:active {
+            transform: scale(0.95);
+            background: rgba(30, 136, 229, 0.3);
+            border-color: #1e88e5;
+        }
+        .role-icon {
+            font-size: 40px;
+            margin-bottom: 10px;
+            display: block;
+        }
+        .role-card h3 {
+            margin: 0;
+            color: #fff;
+            font-size: 18px;
+        }
+        .role-card p {
+            margin: 5px 0 0;
+            font-size: 13px;
+            color: #ccc;
+        }
+    </style>
 </head>
-
 <body class="auth-body">
 
 <div class="card">
+    <h1 class="logo">Smart<span>Market</span></h1>
+    <p class="slogan">¿Cómo usarás la plataforma hoy?</p>
 
-<h2>¿Cómo deseas usar SmartMarket?</h2>
+    <div class="role-container">
+        <div class="role-card" onclick="seleccionarRol('comercio')">
+            <span class="role-icon">🏪</span>
+            <h3>Soy un Comercio</h3>
+            <p>Quiero vender mis productos y aparecer en el mapa.</p>
+        </div>
 
-<button onclick="seleccionarTipo('comercio')">
-Soy Comercio
-</button>
+        <div class="role-card" onclick="seleccionarRol('cliente')">
+            <span class="role-icon">🛍️</span>
+            <h3>Soy un Cliente</h3>
+            <p>Quiero buscar tiendas cercanas y ver ofertas.</p>
+        </div>
+    </div>
 
-<button onclick="seleccionarTipo('cliente')">
-Soy Cliente
-</button>
-
+    <p style="margin-top:20px; font-size:12px; color:#aaa;" onclick="firebase.auth().signOut().then(() => window.location.href='auth.html')">
+        <u>Cerrar sesión</u>
+    </p>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
 
-<script src="auth.js"></script>
+<script>
+    // Configuración verificada
+    const firebaseConfig = {
+        apiKey: "AIzaSyA6tYooh4CtX7ww9GRyXWhuakl2nLovtsY",
+        authDomain: "smartmarket-zone-e7559.firebaseapp.com",
+        projectId: "smartmarket-zone-e7559"
+    };
+
+    if (!firebase.apps.length) {
+        firebase.initializeApp(firebaseConfig);
+    }
+
+    const db = firebase.firestore();
+
+    function seleccionarRol(tipo) {
+        const user = firebase.auth().currentUser;
+
+        if (!user) {
+            alert("No se detectó una sesión activa. Por favor, vuelve a entrar.");
+            window.location.href = "auth.html";
+            return;
+        }
+
+        // Guardar la elección en la base de datos
+        db.collection("usuarios").doc(user.uid).set({
+            email: user.email,
+            tipo: tipo,
+            ultimoAcceso: firebase.firestore.FieldValue.serverTimestamp()
+        }, { merge: true }) // 'merge' evita borrar datos previos si existen
+        .then(() => {
+            if (tipo === 'comercio') {
+                window.location.href = "registro_comercio.html";
+            } else {
+                window.location.href = "cliente.html";
+            }
+        })
+        .catch(error => {
+            console.error("Error al guardar rol:", error);
+            alert("Hubo un error al guardar tu elección: " + error.message);
+        });
+    }
+</script>
 
 </body>
 </html>
