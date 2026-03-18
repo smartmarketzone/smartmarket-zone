@@ -1,29 +1,33 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
-<title>SmartMarket Zone</title>
-<link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartMarket Zone</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
 </head>
 
 <body class="auth-body">
 
 <div class="card">
+    <div class="logo-icon">🛒</div>
+    
+    <h1 class="logo">SmartMarket<span>Zone</span></h1>
 
-<h1 class="logo">SmartMarket Zone</h1>
+    <p class="slogan">
+        Tu mercado local en un solo lugar
+    </p>
 
-<p class="slogan">
-Tu mercado local en un solo lugar
-</p>
-
-<button onclick="entrar()">
-Entrar
-</button>
-
+    <button class="btn-primary" onclick="entrar()">
+        Entrar ahora
+    </button>
 </div>
 
 <script>
 function entrar(){
-window.location.href = "auth.html";
+    // Redirige al sistema de autenticación
+    window.location.href = "auth.html"; 
 }
 </script>
 
