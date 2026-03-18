@@ -17,62 +17,69 @@
 
         .card {
             background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
             border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 20px;
-            padding: 25px; width: 90%; max-width: 500px; box-shadow: 0 15px 35px rgba(0,0,0,0.5);
-            margin: 20px 0;
+            padding: 25px; width: 90%; max-width: 450px; box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+            margin: 20px; box-sizing: border-box;
         }
 
-        h2 { font-weight: 900; text-align: center; margin-bottom: 20px; color: #4fc3f7; }
+        h2 { font-weight: 900; text-align: center; margin-bottom: 20px; color: #4fc3f7; font-size: 22px; }
 
-        .input-group { margin-bottom: 15px; }
-        label { display: block; font-size: 12px; margin-bottom: 5px; opacity: 0.9; }
-        input, select, textarea {
+        .input-group { margin-bottom: 12px; text-align: left; }
+        label { display: block; font-size: 11px; margin-bottom: 5px; opacity: 0.9; text-transform: uppercase; font-weight: bold; }
+        
+        input, select {
             width: 100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 10px; padding: 12px; color: white; box-sizing: border-box; outline: none;
+            border-radius: 10px; padding: 12px; color: white; box-sizing: border-box; outline: none; font-family: 'Montserrat';
         }
 
         /* DISEÑO DEL MAPA */
         #map {
-            height: 250px; width: 100%; border-radius: 15px;
+            height: 200px; width: 100%; border-radius: 15px;
             margin: 15px 0; border: 2px solid #1e88e5;
+            z-index: 1; /* Evita que el mapa se encime a otros elementos */
         }
 
         .btn-save {
             width: 100%; background: #1e88e5; color: white; border: none;
-            padding: 15px; border-radius: 10px; font-weight: 900; cursor: pointer;
-            transition: 0.3s; text-transform: uppercase;
+            padding: 16px; border-radius: 12px; font-weight: 900; cursor: pointer;
+            transition: 0.3s; text-transform: uppercase; letter-spacing: 1px;
+            box-shadow: 0 5px 15px rgba(30, 136, 229, 0.3);
         }
-        .btn-save:active { transform: scale(0.97); }
+        .btn-save:active { transform: scale(0.96); }
 
-        .info-map { font-size: 11px; text-align: center; color: #ffca28; margin-bottom: 10px; }
+        .info-map { font-size: 10px; text-align: center; color: #ffca28; margin-bottom: 5px; font-weight: bold; }
     </style>
 </head>
 <body>
 
 <div class="card">
-    <h2>Mi Comercio 🏪</h2>
+    <h2>REGISTRAR NEGOCIO 🏪</h2>
     
     <div class="input-group">
-        <label>Nombre del Negocio</label>
-        <input type="text" id="nombreNegocio" placeholder="Ej: Panadería El Sol">
+        <label>Nombre de tu empresa</label>
+        <input type="text" id="nombreNegocio" placeholder="Ej: Supermarket Central">
     </div>
 
     <div class="input-group">
         <label>Categoría</label>
         <select id="categoriaNegocio">
-            <option value="comida">Comida / Restaurante</option>
-            <option value="ropa">Ropa y Calzado</option>
-            <option value="tecnologia">Tecnología</option>
-            <option value="servicios">Servicios</option>
-            <option value="otros">Otros</option>
+            <option value="viveres">Víveres / Alimentos</option>
+            <option value="restaurante">Restaurante / Comida rápida</option>
+            <option value="tecnologia">Electrónica / Tecnología</option>
+            <option value="ropa">Ropa / Moda</option>
+            <option value="farmacia">Farmacia / Salud</option>
+            <option value="otro">Otros servicios</option>
         </select>
     </div>
 
-    <label>Ubicación exacta (Toca el mapa)</label>
-    <p class="info-map">Mueve el mapa y toca donde está tu local</p>
-    <div id="map"></div>
+    <div class="input-group">
+        <label>Ubicación (Toca el mapa)</label>
+        <p class="info-map">📍 TOCA EL PUNTO EXACTO DE TU LOCAL</p>
+        <div id="map"></div>
+    </div>
 
-    <button class="btn-save" onclick="guardarComercio()">Finalizar Registro</button>
+    <button class="btn-save" id="btnFinalizar" onclick="guardarComercio()">Guardar y Continuar</button>
 </div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -81,7 +88,7 @@
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
 
 <script>
-    // 1. Firebase Config
+    // Configuración Firebase
     const firebaseConfig = {
         apiKey: "AIzaSyA6tYooh4CtX7ww9GRyXWhuakl2nLovtsY",
         authDomain: "smartmarket-zone-e7559.firebaseapp.com",
@@ -90,47 +97,49 @@
     if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
-    // 2. Inicializar Mapa (Centrado en una posición inicial)
-    let lat = 10.2461; // Coordenadas iniciales (puedes ajustarlas a tu ciudad)
+    // Inicializar Mapa (Coordenadas por defecto)
+    let lat = 10.2461; 
     let lng = -67.5958;
 
-    const map = L.map('map').setView([lat, lng], 13);
+    const map = L.map('map').setView([lat, lng], 14);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
 
     let marker = L.marker([lat, lng], {draggable: true}).addTo(map);
 
-    // Actualizar coordenadas al hacer clic
     map.on('click', function(e) {
         marker.setLatLng(e.latlng);
         lat = e.latlng.lat;
         lng = e.latlng.lng;
     });
 
-    // 3. Guardar datos
     function guardarComercio() {
-        const nombre = document.getElementById('nombreNegocio').value;
+        const nombre = document.getElementById('nombreNegocio').value.trim();
         const cat = document.getElementById('categoriaNegocio').value;
         const user = firebase.auth().currentUser;
 
-        if (!user) { alert("Inicia sesión primero"); return; }
-        if (!nombre) { alert("Ponle un nombre a tu negocio"); return; }
+        if (!user) { alert("⚠️ Sesión expirada. Vuelve a entrar."); return; }
+        if (!nombre) { alert("⚠️ Por favor, pon un nombre."); return; }
 
-        const btn = document.querySelector('.btn-save');
-        btn.innerText = "Guardando...";
+        const btn = document.getElementById('btnFinalizar');
+        btn.innerText = "PROCESANDO...";
         btn.disabled = true;
 
         db.collection("comercios").doc(user.uid).set({
             nombre: nombre,
             categoria: cat,
-            ubicacion: new firebase.firestore.GeoPoint(lat, lng),
+            lat: lat,
+            lng: lng,
             uid: user.uid,
-            ownerEmail: user.email
-        }).then(() => {
-            alert("¡Negocio registrado con éxito!");
+            email: user.email,
+            fechaRegistro: firebase.firestore.FieldValue.serverTimestamp()
+        })
+        .then(() => {
+            alert("✅ ¡Registro exitoso!");
             window.location.href = "comercio.html";
-        }).catch(e => {
-            alert("Error al guardar: " + e.message);
-            btn.innerText = "Finalizar Registro";
+        })
+        .catch(e => {
+            alert("❌ Error: " + e.message);
+            btn.innerText = "Guardar y Continuar";
             btn.disabled = false;
         });
     }
