@@ -3,102 +3,68 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Mi Perfil - SmartMarket</title>
+    <title>Mi Perfil - SmartMarket VZLA</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
-        :root { --blue: #1e88e5; --cyan: #4fc3f7; --dark: #0f2027; --yellow: #ffeb3b; --red: #f44336; }
+        :root { --blue: #1e88e5; --cyan: #4fc3f7; --dark: #050a0e; --yellow: #ffeb3b; --red: #ff5252; }
+        body { margin: 0; font-family: 'Montserrat', sans-serif; background: var(--dark); color: white; padding-bottom: 90px; }
         
-        /* Fondo base para que no se vea vacío */
-        body { 
-            margin: 0; font-family: 'Montserrat', sans-serif; 
-            background: var(--dark); color: white; min-height: 100vh; 
-            padding-bottom: 90px;
-        }
+        .user-header { background: linear-gradient(135deg, #1e88e5, #00d2ff); padding: 40px 20px; text-align: center; border-radius: 0 0 30px 30px; box-shadow: 0 10px 25px rgba(0,0,0,0.4); }
+        .user-header h1 { margin: 0; font-size: 22px; font-weight: 900; text-transform: uppercase; }
 
-        .header-user { 
-            background: linear-gradient(45deg, #1e88e5, #4fc3f7); 
-            padding: 40px 20px; text-align: center; 
-            border-radius: 0 0 30px 30px; box-shadow: 0 10px 20px rgba(0,0,0,0.3); 
-        }
+        .tabs-user { display: flex; overflow-x: auto; padding: 15px; gap: 10px; background: rgba(0,0,0,0.2); }
+        .tab-u { padding: 12px 20px; border-radius: 15px; background: rgba(255,255,255,0.05); font-size: 11px; font-weight: 900; cursor: pointer; white-space: nowrap; border: 1px solid rgba(255,255,255,0.1); }
+        .tab-u.active { background: var(--yellow); color: #000; border-color: var(--yellow); }
 
-        .user-tabs { display: flex; overflow-x: auto; padding: 15px; gap: 10px; }
-        .u-tab { 
-            background: rgba(255,255,255,0.05); padding: 12px 20px; 
-            border-radius: 15px; font-size: 11px; font-weight: 900; 
-            white-space: nowrap; cursor: pointer; border: 1px solid rgba(255,255,255,0.1); 
-        }
-        .u-tab.active { background: var(--yellow); color: #000; }
+        .section { display: none; padding: 20px; animation: slideUp 0.4s ease; }
+        .section.active { display: block; }
 
-        .section-content { display: none; padding: 0 20px; animation: fadeIn 0.3s ease; }
-        .section-content.active { display: block; }
+        .search-bar-u { width: 100%; padding: 15px; border-radius: 12px; border: none; background: white; color: #333; font-weight: 700; font-family: 'Montserrat'; margin-bottom: 20px; }
 
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .card-u { background: rgba(255,255,255,0.05); border-radius: 18px; padding: 20px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.1); }
+        .card-u h3 { margin: 0; color: var(--cyan); font-size: 15px; }
+        .card-u p { font-size: 12px; opacity: 0.7; margin: 5px 0; }
+        .price-tag { color: var(--yellow); font-weight: 900; font-size: 18px; }
 
-        .item-card { 
-            background: rgba(255,255,255,0.07); border-radius: 15px; 
-            padding: 20px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.1); 
-        }
+        .btn-u { width: 100%; padding: 12px; border-radius: 10px; border: none; font-weight: 900; cursor: pointer; margin-top: 10px; text-transform: uppercase; font-size: 11px; }
 
-        .btn-go { 
-            background: var(--blue); color: white; border: none; 
-            padding: 14px; border-radius: 12px; width: 100%; 
-            font-weight: 900; cursor: pointer; margin-top: 10px; 
-        }
-
-        /* Nav Inferior */
-        .bottom-nav { 
-            position: fixed; bottom: 0; left: 0; right: 0; height: 75px; 
-            background: #0b171c; border-top: 2px solid var(--cyan); 
-            display: flex; justify-content: space-around; align-items: center; z-index: 2000; 
-        }
-        .nav-item { 
-            text-align: center; color: rgba(255,255,255,0.4); 
-            text-decoration: none; font-size: 10px; font-weight: 900; 
-            display: flex; flex-direction: column; align-items: center; 
-        }
+        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; height: 75px; background: #0b171c; border-top: 2px solid var(--cyan); display: flex; justify-content: space-around; align-items: center; z-index: 2000; }
+        .nav-item { text-align: center; color: rgba(255,255,255,0.4); text-decoration: none; font-size: 10px; font-weight: 900; display: flex; flex-direction: column; align-items: center; }
         .nav-item.active { color: var(--cyan); }
+
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
 
-<div class="header-user">
-    <h1 id="userName" style="margin:0; font-size:20px; font-weight:900;">MI CUENTA</h1>
-    <p id="userEmailSub" style="font-size:10px; opacity:0.8; margin-top:5px;">Cargando perfil...</p>
+<div class="user-header">
+    <h1 id="uNombre">HOLA, VECINO</h1>
+    <p id="uCorreo" style="font-size: 11px; opacity: 0.8; margin-top: 5px;">...</p>
 </div>
 
-<div class="user-tabs">
-    <div class="u-tab active" onclick="verTab('tab-perfil', this)">👤 MI PERFIL</div>
-    <div class="u-tab" onclick="verTab('tab-buscar', this)">🔍 BUSCAR MARCAS</div>
-    <div class="u-tab" onclick="verTab('tab-favs', this)">⭐ FAVORITOS</div>
+<div class="tabs-user">
+    <div class="tab-u active" onclick="switchU('perfil', this)">👤 MI PERFIL</div>
+    <div class="tab-u" onclick="switchU('buscar', this)">🔍 BUSCADOR</div>
+    <div class="tab-u" onclick="switchU('favs', this)">⭐ FAVORITOS</div>
 </div>
 
-<div id="tab-perfil" class="section-content active">
-    <div class="item-card">
-        <label style="font-size:10px; color:var(--cyan); font-weight:900;">NOMBRE</label>
-        <div id="p-nombre" style="font-size:16px; font-weight:700; margin-bottom:15px;">...</div>
-        
-        <label style="font-size:10px; color:var(--cyan); font-weight:900;">CORREO</label>
-        <div id="p-correo" style="font-size:16px; font-weight:700; margin-bottom:15px;">...</div>
-
-        <button class="btn-go" style="background:var(--red);" onclick="cerrarSesion()">CERRAR SESIÓN</button>
-    </div>
-
-    <div class="item-card">
-        <h3 style="margin-top:0; color:var(--yellow); font-size:14px;">SEGURIDAD</h3>
-        <p style="font-size:12px; opacity:0.7;">Recibe un enlace para cambiar tu contraseña.</p>
-        <button class="btn-go" onclick="resetPass()">CAMBIAR CONTRASEÑA</button>
+<div id="perfil" class="section active">
+    <div class="card-u">
+        <label style="font-size:10px; color:var(--cyan); font-weight:900;">NOMBRE REGISTRADO</label>
+        <div id="infoNombre" style="font-size:18px; font-weight:700; margin-bottom:15px;">...</div>
+        <button class="btn-u" style="background:var(--cyan); color:#000;" onclick="resetClave()">Cambiar Contraseña</button>
+        <button class="btn-u" style="background:var(--red); color:#fff;" onclick="salir()">Cerrar Sesión</button>
     </div>
 </div>
 
-<div id="tab-buscar" class="section-content">
-    <input type="text" id="inputBuscar" placeholder="Ej: Polar, Harina, Arroz..." 
-           style="width:100%; padding:15px; border-radius:12px; border:none; margin-bottom:20px; font-weight:700;" oninput="buscarGlobal()">
-    <div id="res-busqueda"></div>
+<div id="buscar" class="section">
+    <input type="text" id="inputBusca" class="search-bar-u" placeholder="Busca marca o producto..." oninput="busquedaReal()">
+    <div id="resultadosBusca"></div>
 </div>
 
-<div id="tab-favs" class="section-content">
-    <div id="lista-favs" style="text-align:center; opacity:0.5; margin-top:30px;">
-        Aún no tienes tiendas favoritas guardadas.
+<div id="favs" class="section">
+    <div id="listaFavs">
+        <p style="text-align:center; opacity:0.5;">No tienes favoritos guardados.</p>
     </div>
 </div>
 
@@ -118,49 +84,25 @@
         projectId: "smartmarket-zone-e7559"
     };
     if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
     const db = firebase.firestore();
+    let uid = null;
 
-    // 1. Monitor de Sesión
-    auth.onAuthStateChanged(async (user) => {
+    firebase.auth().onAuthStateChanged(async (user) => {
         if (user) {
-            document.getElementById('p-correo').innerText = user.email;
-            document.getElementById('userEmailSub').innerText = user.email;
-            
-            // Traer datos de Firestore
-            try {
-                const doc = await db.collection("usuarios").doc(user.uid).get();
-                if(doc.exists) {
-                    const data = doc.data();
-                    document.getElementById('userName').innerText = "HOLA, " + data.nombre.toUpperCase();
-                    document.getElementById('p-nombre').innerText = data.nombre;
-                }
-            } catch (e) { console.log("Error cargando perfil", e); }
-        } else {
-            window.location.href = "auth.html";
-        }
+            uid = user.uid;
+            document.getElementById('uCorreo').innerText = user.email;
+            const doc = await db.collection("usuarios").doc(uid).get();
+            if(doc.exists) {
+                document.getElementById('uNombre').innerText = "HOLA, " + doc.data().nombre.toUpperCase();
+                document.getElementById('infoNombre').innerText = doc.data().nombre;
+            }
+            cargarFavs();
+        } else { window.location.href = "auth.html"; }
     });
 
-    // 2. Navegación de pestañas
-    function verTab(id, el) {
-        document.querySelectorAll('.section-content').forEach(s => s.classList.remove('active'));
-        document.querySelectorAll('.u-tab').forEach(t => t.classList.remove('active'));
-        document.getElementById(id).classList.add('active');
-        el.classList.add('active');
-    }
-
-    // 3. Funciones de Usuario
-    function cerrarSesion() { auth.signOut().then(() => window.location.href="auth.html"); }
-    
-    function resetPass() {
-        const email = auth.currentUser.email;
-        auth.sendPasswordResetEmail(email).then(() => alert("✅ Revisa tu correo para cambiar la clave."));
-    }
-
-    // 4. Buscador
-    async function buscarGlobal() {
-        const txt = document.getElementById('inputBuscar').value.toLowerCase();
-        const res = document.getElementById('res-busqueda');
+    async function busquedaReal() {
+        const txt = document.getElementById('inputBusca').value.toLowerCase();
+        const res = document.getElementById('resultadosBusca');
         if(txt.length < 2) { res.innerHTML = ""; return; }
 
         const prods = await db.collection("productos").get();
@@ -170,19 +112,53 @@
             const p = docP.data();
             if(p.nombre.toLowerCase().includes(txt)) {
                 const local = await db.collection("comercios").doc(p.comercioID).get();
-                const lData = local.data();
                 res.innerHTML += `
-                    <div class="item-card">
+                    <div class="card-u">
                         <div style="display:flex; justify-content:space-between;">
-                            <b style="color:var(--cyan)">${p.nombre}</b>
-                            <b style="color:var(--yellow)">Bs. ${p.precio}</b>
+                            <h3>${p.nombre}</h3>
+                            <span class="price-tag">Bs. ${p.precio.toFixed(2)}</span>
                         </div>
-                        <p style="font-size:11px;">Tienda: ${lData.nombre}</p>
-                        <button class="btn-go" onclick="location.href='index.html'">VER EN MAPA</button>
+                        <p>Tienda: <b>${local.data().nombre}</b></p>
+                        <button class="btn-u" style="background:var(--blue); color:white;" onclick="verEnMapa(${local.data().lat}, ${local.data().lng})">Ir a la tienda 📍</button>
                     </div>`;
             }
         });
     }
+
+    function cargarFavs() {
+        db.collection("usuarios").doc(uid).collection("favoritos").onSnapshot(async snap => {
+            const cont = document.getElementById('listaFavs');
+            cont.innerHTML = "";
+            if(snap.empty) cont.innerHTML = "<p style='text-align:center; opacity:0.5;'>Aún no tienes favoritos.</p>";
+            
+            snap.forEach(async (docF) => {
+                const com = await db.collection("comercios").doc(docF.data().idComercio).get();
+                const d = com.data();
+                cont.innerHTML += `
+                    <div class="card-u" style="border-left: 4px solid var(--yellow);">
+                        <h3>${d.nombre.toUpperCase()}</h3>
+                        <p>Ubicación: Venezuela</p>
+                        <button class="btn-u" style="background:var(--yellow); color:#000;" onclick="verEnMapa(${d.lat}, ${d.lng})">Ver en Mapa</button>
+                    </div>`;
+            });
+        });
+    }
+
+    function verEnMapa(lat, lng) {
+        sessionStorage.setItem('targetLat', lat);
+        sessionStorage.setItem('targetLng', lng);
+        window.location.href = "index.html";
+    }
+
+    function switchU(id, el) {
+        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+        document.querySelectorAll('.tab-u').forEach(t => t.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+        el.classList.add('active');
+    }
+
+    function salir() { firebase.auth().signOut().then(() => window.location.href="auth.html"); }
+    function resetClave() { firebase.auth().sendPasswordResetEmail(firebase.auth().currentUser.email).then(() => alert("✅ Link enviado a tu correo")); }
 </script>
 </body>
 </html>
