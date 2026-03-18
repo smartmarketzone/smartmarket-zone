@@ -1,181 +1,179 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
-<title>Registro Comercio</title>
-<link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <title>Registro Comercio</title>
+    
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
 
-<!-- Leaflet CSS -->
-<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
 
-<style>
-body{
-margin:0;
-font-family:Arial;
-}
+        .container {
+            display: flex;
+            height: 100vh;
+        }
 
-.container{
-display:flex;
-height:100vh;
-}
+        .form {
+            width: 30%;
+            padding: 20px;
+            background: #f4f4f4;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+            z-index: 10;
+        }
 
-.form{
-width:30%;
-padding:20px;
-background:#f4f4f4;
-display:flex;
-flex-direction:column;
-gap:10px;
-}
+        .form h2 {
+            margin-bottom: 10px;
+        }
 
-.form h2{
-margin-bottom:10px;
-}
+        input {
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
 
-input{
-padding:10px;
-border-radius:5px;
-border:1px solid #ccc;
-}
+        button {
+            padding: 12px;
+            background: #2ecc71;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
 
-button{
-padding:12px;
-background:#2ecc71;
-color:white;
-border:none;
-border-radius:5px;
-cursor:pointer;
-font-weight:bold;
-}
+        button:hover {
+            background: #27ae60;
+        }
 
-button:hover{
-background:#27ae60;
-}
-
-#map{
-width:70%;
-height:100%;
-}
-</style>
+        /* Aseguramos que el mapa ocupe el espacio restante */
+        #map {
+            flex-grow: 1;
+            height: 100%;
+            background: #e0e0e0; /* Color de carga */
+        }
+    </style>
 </head>
-
 <body>
 
 <div class="container">
+    <div class="form">
+        <h2>Datos del Comercio</h2>
+        <input id="nombreComercio" placeholder="Nombre del comercio">
+        <input id="direccion" placeholder="Dirección">
+        <p>Haz click en el mapa para seleccionar ubicación</p>
+        <button onclick="guardarComercio()">Guardar y continuar</button>
+    </div>
 
-<div class="form">
-<h2>Datos del Comercio</h2>
-
-<input id="nombreComercio" placeholder="Nombre del comercio">
-<input id="direccion" placeholder="Dirección">
-
-<p>Haz click en el mapa para seleccionar ubicación</p>
-
-<button onclick="guardarComercio()">Guardar y continuar</button>
+    <div id="map"></div>
 </div>
 
-<div id="map"></div>
-
-</div>
-
-<!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
 
-<script>
-// 🔥 TU CONFIG REAL (YA FUNCIONANDO)
-const firebaseConfig = {
-apiKey: "AIzaSyA6tYooh4CtX7ww9GRyXWhuakl2nLovtsY",
-authDomain: "smartmarket-zone-e7559.firebaseapp.com",
-projectId: "smartmarket-zone-e7559"
-};
-
-firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
-
-// 🔐 VERIFICAR USUARIO
-firebase.auth().onAuthStateChanged(user => {
-if(!user){
-window.location.href = "auth.html";
-}
-});
-
-// 🗺️ MAPA
-let map = L.map('map').setView([10.162, -68.007], 13);
-
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-attribution: '© OpenStreetMap'
-}).addTo(map);
-
-let marcador;
-let lat = null;
-let lng = null;
-
-// 📍 CLICK EN MAPA
-map.on('click', function(e){
-
-lat = e.latlng.lat;
-lng = e.latlng.lng;
-
-if(marcador){
-map.removeLayer(marcador);
-}
-
-marcador = L.marker([lat, lng]).addTo(map);
-
-// 🌍 OBTENER DIRECCIÓN AUTOMÁTICA
-fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`)
-.then(res => res.json())
-.then(data => {
-
-if(data.display_name){
-document.getElementById("direccion").value = data.display_name;
-}else{
-document.getElementById("direccion").value = "Dirección no encontrada";
-}
-
-})
-.catch(() => {
-document.getElementById("direccion").value = "Error al obtener dirección";
-});
-
-});
-
-// 💾 GUARDAR COMERCIO
-function guardarComercio(){
-
-let nombre = document.getElementById("nombreComercio").value;
-let direccion = document.getElementById("direccion").value;
-let user = firebase.auth().currentUser;
-
-if(!nombre || !direccion){
-alert("Completa todos los campos");
-return;
-}
-
-if(!lat || !lng){
-alert("Selecciona ubicación en el mapa");
-return;
-}
-
-db.collection("comercios").doc(user.uid).set({
-nombre: nombre,
-direccion: direccion,
-lat: lat,
-lng: lng
-})
-.then(()=>{
-window.location.href = "comercio.html";
-})
-.catch(()=>{
-alert("Error al guardar");
-});
-
-}
-</script>
-
-<!-- Leaflet JS -->
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+<script>
+    // Configuración de Firebase
+    const firebaseConfig = {
+        apiKey: "AIzaSyA6tYooh4CtX7ww9GRyXWhuakl2nLovtsY",
+        authDomain: "smartmarket-zone-e7559.firebaseapp.com",
+        projectId: "smartmarket-zone-e7559"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    // Verificación de Usuario
+    firebase.auth().onAuthStateChanged(user => {
+        if(!user){
+            // Comenta la siguiente línea si quieres probar el mapa sin loguearte
+            window.location.href = "auth.html";
+        }
+    });
+
+    // Inicialización del Mapa
+    // Se ejecuta después de que Leaflet.js ya cargó
+    let map = L.map('map').setView([10.162, -68.007], 13);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap'
+    }).addTo(map);
+
+    let marcador;
+    let lat = null;
+    let lng = null;
+
+    // Click en el Mapa
+    map.on('click', function(e){
+        lat = e.latlng.lat;
+        lng = e.latlng.lng;
+
+        if(marcador){
+            map.removeLayer(marcador);
+        }
+
+        marcador = L.marker([lat, lng]).addTo(map);
+
+        // Obtener dirección automática (Nominatim)
+        fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`)
+            .then(res => res.json())
+            .then(data => {
+                if(data.display_name){
+                    document.getElementById("direccion").value = data.display_name;
+                } else {
+                    document.getElementById("direccion").value = "Dirección no encontrada";
+                }
+            })
+            .catch(() => {
+                document.getElementById("direccion").value = "Error al obtener dirección";
+            });
+    });
+
+    // Guardar en Firestore
+    function guardarComercio(){
+        let nombre = document.getElementById("nombreComercio").value;
+        let direccion = document.getElementById("direccion").value;
+        let user = firebase.auth().currentUser;
+
+        if(!nombre || !direccion){
+            alert("Completa todos los campos");
+            return;
+        }
+
+        if(!lat || !lng){
+            alert("Selecciona ubicación en el mapa");
+            return;
+        }
+
+        if(!user) {
+            alert("Debes estar autenticado para guardar");
+            return;
+        }
+
+        db.collection("comercios").doc(user.uid).set({
+            nombre: nombre,
+            direccion: direccion,
+            lat: lat,
+            lng: lng
+        })
+        .then(() => {
+            alert("Comercio guardado con éxito");
+            window.location.href = "comercio.html";
+        })
+        .catch((error) => {
+            console.error("Error al guardar: ", error);
+            alert("Error al guardar");
+        });
+    }
+</script>
 
 </body>
 </html>
