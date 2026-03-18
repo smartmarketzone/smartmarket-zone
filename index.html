@@ -5,11 +5,27 @@
 <link rel="stylesheet" href="style.css">
 </head>
 
-<body>
+<body class="home-body">
 
-<h1>SmartMarket Zone</h1>
+<div class="home-container">
 
-<a href="auth.html">Entrar</a>
+<h1 class="home-title">SmartMarket Zone</h1>
+
+<p class="home-slogan">
+Encuentra productos cerca de ti en segundos
+</p>
+
+<button class="home-btn" onclick="entrar()">
+Entrar
+</button>
+
+</div>
+
+<script>
+function entrar(){
+window.location.href = "auth.html";
+}
+</script>
 
 </body>
 </html>
