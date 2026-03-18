@@ -3,43 +3,126 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SmartMarket VZLA - Mapa</title>
+    <title>SmartMarket Venezuela</title>
+    
+    <link rel="icon" href="https://fav.farm/🛒">
+    
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
+    
     <style>
-        :root { --blue: #1e88e5; --cyan: #4fc3f7; --dark: #0f2027; --yellow: #ffeb3b; }
-        body { margin: 0; font-family: 'Montserrat', sans-serif; background: var(--dark); overflow: hidden; }
+        :root { 
+            --blue: #1e88e5; --cyan: #4fc3f7; --dark: #050a0e; 
+            --yellow: #ffeb3b; --white: #ffffff;
+            --bg-card: #162a33;
+        }
         
-        /* SPLASH SCREEN INTEGRADO */
-        #splash { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #050a0e; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 9999; transition: 0.5s; }
-        .loader { width: 40px; height: 40px; border: 4px solid var(--cyan); border-top: 4px solid transparent; border-radius: 50%; animation: spin 1s linear infinite; }
-        @keyframes spin { 100% { transform: rotate(360deg); } }
-
-        /* BUSCADOR */
-        .search-bar { position: absolute; top: 15px; left: 50%; transform: translateX(-50%); z-index: 1000; width: 90%; max-width: 450px; }
-        .search-input { width: 100%; padding: 15px 25px; border-radius: 30px; border: none; box-shadow: 0 10px 30px rgba(0,0,0,0.5); font-weight: 800; outline: none; }
+        body { margin: 0; font-family: 'Montserrat', sans-serif; background: var(--dark); overflow: hidden; }
 
         #map { height: 100vh; width: 100%; z-index: 1; }
 
-        /* BOTTOM NAV */
-        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; height: 75px; background: #0b171c; border-top: 2px solid var(--cyan); display: flex; justify-content: space-around; align-items: center; z-index: 2000; }
-        .nav-item { text-align: center; color: rgba(255,255,255,0.4); text-decoration: none; font-size: 10px; font-weight: 900; display: flex; flex-direction: column; align-items: center; flex: 1; }
+        /* BUSCADOR SUPERIOR */
+        .search-container {
+            position: absolute; top: 15px; left: 50%; transform: translateX(-50%);
+            z-index: 1000; width: 90%; max-width: 450px;
+        }
+        .search-box {
+            width: 100%; padding: 15px 25px; border-radius: 30px; border: none;
+            background: white; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            font-size: 14px; outline: none; font-weight: 800; color: #333;
+        }
+
+        /* --- TARJETA PROFESIONAL DE TIENDA (MODAL) --- */
+        #store-modal {
+            position: fixed; bottom: -100%; left: 0; width: 100%; height: 75vh;
+            background: var(--bg-card); border-radius: 30px 30px 0 0;
+            z-index: 3000; transition: bottom 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.1);
+            padding: 25px; box-sizing: border-box; color: white;
+            box-shadow: 0 -10px 40px rgba(0,0,0,0.8);
+            overflow-y: auto;
+        }
+        #store-modal.active { bottom: 0; }
+
+        .handle { 
+            width: 50px; height: 5px; background: rgba(255,255,255,0.2); 
+            border-radius: 10px; margin: 0 auto 20px; cursor: pointer;
+        }
+
+        .modal-header { display: flex; justify-content: space-between; align-items: flex-start; }
+        .modal-header h2 { margin: 0; font-size: 22px; font-weight: 900; color: var(--cyan); text-transform: uppercase; }
+        .category-badge { 
+            font-size: 9px; padding: 4px 10px; border-radius: 20px; 
+            text-transform: uppercase; font-weight: 900; color: #000;
+        }
+
+        .inventory-list { margin-top: 25px; }
+        .inventory-item {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 15px 0; border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .inventory-item .name { font-weight: 700; font-size: 14px; }
+        .inventory-item .price { color: var(--yellow); font-weight: 900; font-size: 16px; }
+
+        .modal-actions {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 30px;
+        }
+        .btn-modal {
+            padding: 15px; border-radius: 15px; border: none; font-weight: 900;
+            text-transform: uppercase; cursor: pointer; font-size: 11px;
+        }
+        .btn-route { background: var(--blue); color: white; }
+        .btn-fav { background: var(--yellow); color: #000; }
+        .btn-close { 
+            background: none; border: 1px solid rgba(255,255,255,0.2); 
+            color: white; margin-top: 15px; width: 100%;
+        }
+
+        /* NAV INFERIOR */
+        .bottom-nav {
+            position: fixed; bottom: 0; left: 0; right: 0;
+            height: 75px; background: #0b171c; border-top: 2px solid var(--cyan);
+            display: flex; justify-content: space-around; align-items: center; z-index: 2000;
+        }
+        .nav-item { text-align: center; color: rgba(255,255,255,0.4); text-decoration: none; font-size: 10px; font-weight: 900; flex: 1; }
         .nav-item.active { color: var(--cyan); }
 
-        /* POPUPS */
-        .leaflet-popup-content-wrapper { background: #162a33 !important; color: white !important; border-radius: 15px; }
-        .btn-pop { width: 100%; padding: 10px; margin-top: 8px; border-radius: 8px; border: none; font-weight: 900; cursor: pointer; font-size: 11px; }
+        /* COLORES DE CATEGORIAS EN PINES */
+        .pin-comida { filter: hue-rotate(90deg); } /* Verde */
+        .pin-farmacia { filter: hue-rotate(180deg); } /* Azul */
+        .pin-ferreteria { filter: hue-rotate(30deg); } /* Naranja/Amarillo */
+        .pin-ropa { filter: hue-rotate(280deg); } /* Morado */
     </style>
 </head>
 <body>
 
-<div id="splash"><div class="loader"></div><p style="margin-top:15px; font-weight:900; letter-spacing:2px;">SMARTMARKET VZLA</p></div>
-
-<div class="search-bar">
-    <input type="text" id="buscador" class="search-input" placeholder="🔍 ¿Qué buscas en Venezuela?" oninput="filtrarMapa()">
+<div class="search-container">
+    <input type="text" id="buscador" class="search-box" placeholder="🔍 Marcas o tiendas en Venezuela..." oninput="filtrarMapa()">
 </div>
 
 <div id="map"></div>
+
+<div id="store-modal">
+    <div class="handle" onclick="cerrarDetalle()"></div>
+    <div class="modal-header">
+        <div>
+            <span id="store-cat" class="category-badge" style="background: var(--cyan);">TIENDA</span>
+            <h2 id="store-name">NOMBRE TIENDA</h2>
+            <p id="store-loc" style="font-size: 10px; opacity: 0.6; margin: 5px 0;">📍 Cargando ubicación...</p>
+        </div>
+    </div>
+
+    <div class="inventory-list">
+        <h4 style="color: var(--yellow); font-size: 12px; margin-bottom: 10px;">INVENTARIO ACTUAL</h4>
+        <div id="modal-products">
+            </div>
+    </div>
+
+    <div class="modal-actions">
+        <button id="btn-route-gps" class="btn-modal btn-route">🚗 CÓMO LLEGAR</button>
+        <button id="btn-fav-action" class="btn-modal btn-fav">⭐ FAVORITO</button>
+    </div>
+    <button class="btn-modal btn-close" onclick="cerrarDetalle()">VOLVER AL MAPA</button>
+</div>
 
 <nav class="bottom-nav">
     <a href="index.html" class="nav-item active"><span>📍</span>MAPA</a>
@@ -61,83 +144,93 @@
     };
     if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
-    let map, marcadores = [], userUID = null;
+    let map, userUID = null, marcadores = [];
 
-    // Inicializar Mapa
+    // Colores por categoría
+    const colores = { 
+        comida: 'pin-comida', 
+        farmacia: 'pin-farmacia', 
+        ferreteria: 'pin-ferreteria',
+        ropa: 'pin-ropa',
+        otros: '' 
+    };
+
     function initMap() {
-        map = L.map('map', { zoomControl: false }).setView([10.48, -66.90], 6); // Centro VZLA
+        map = L.map('map', { zoomControl: false }).setView([10.48, -66.90], 6);
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
-        
-        // GPS del usuario
         map.locate({setView: true, maxZoom: 15});
-        map.on('locationfound', (e) => L.circle(e.latlng, {radius: 50, color: '#4fc3f7'}).addTo(map));
-        
-        // Quitar Splash
-        setTimeout(() => document.getElementById('splash').style.display = 'none', 1500);
+        cargarComercios();
     }
 
-    // Seguridad y Roles
-    firebase.auth().onAuthStateChanged(async (user) => {
-        if (user) {
-            userUID = user.uid;
-            const doc = await db.collection("usuarios").doc(user.uid).get();
-            if (doc.exists && doc.data().tipo === "persona") {
-                document.getElementById('btn-registrar').style.display = 'none';
-                document.getElementById('btn-panel').style.display = 'none';
-            }
-            // Si viene de una búsqueda específica
-            const tLat = sessionStorage.getItem('targetLat');
-            if(tLat) {
-                map.setView([tLat, sessionStorage.getItem('targetLng')], 18);
-                sessionStorage.clear();
-            }
-        }
-        cargarLocales();
+    firebase.auth().onAuthStateChanged(user => { 
+        if(user) userUID = user.uid; 
+        // Ocultar botones según rol si es necesario
     });
 
-    async function cargarLocales(filtro = "") {
+    async function cargarComercios(filtro = "") {
         marcadores.forEach(m => map.removeLayer(m));
         marcadores = [];
 
-        const snapComercios = await db.collection("comercios").get();
+        const snap = await db.collection("comercios").get();
         
-        snapComercios.forEach(async (docL) => {
-            const dataL = docL.data();
-            const snapProds = await db.collection("productos").where("comercioID", "==", docL.id).get();
+        snap.forEach(doc => {
+            const data = doc.data();
+            const categoria = data.categoria || 'otros';
             
-            let productosHtml = "";
-            let tieneProducto = false;
-
-            snapProds.forEach(docP => {
-                const p = docP.data();
-                if(filtro === "" || p.nombre.toLowerCase().includes(filtro.toLowerCase())) {
-                    tieneProducto = true;
-                    productosHtml += `<div style="display:flex; justify-content:space-between; font-size:11px; margin-top:4px; border-bottom:1px solid #333;">
-                                        <span>${p.nombre}</span> <b style="color:var(--yellow)">Bs.${p.precio}</b>
-                                      </div>`;
-                }
-            });
-
-            if(tieneProducto || filtro === "" || dataL.nombre.toLowerCase().includes(filtro.toLowerCase())) {
-                const m = L.marker([dataL.lat, dataL.lng]).addTo(map);
-                m.bindPopup(`
-                    <b style="color:var(--cyan); font-size:14px;">${dataL.nombre.toUpperCase()}</b>
-                    <div style="max-height:80px; overflow-y:auto; margin:10px 0;">${productosHtml || 'Sin productos'}</div>
-                    <button class="btn-pop" style="background:var(--blue); color:white;" onclick="window.open('https://www.google.com/maps?q=${dataL.lat},${dataL.lng}')">🚗 CÓMO LLEGAR</button>
-                    <button class="btn-pop" style="background:var(--yellow);" onclick="addFav('${docL.id}')">⭐ GUARDAR</button>
-                `);
-                marcadores.push(m);
+            // Si hay filtro, buscar en productos también
+            const m = L.marker([data.lat, data.lng]).addTo(map);
+            
+            // Aplicar color según categoría
+            if(colores[categoria]) {
+                m._icon.classList.add(colores[categoria]);
             }
+
+            m.on('click', () => mostrarDetalle(doc.id, data));
+            marcadores.push(m);
         });
     }
 
-    async function addFav(id) {
-        if(!userUID) return alert("Inicia sesión primero");
-        await db.collection("usuarios").doc(userUID).collection("favoritos").doc(id).set({idComercio: id, fecha: new Date()});
-        alert("💖 Guardado en tus favoritos");
+    async function mostrarDetalle(id, data) {
+        document.getElementById('store-name').innerText = data.nombre;
+        document.getElementById('store-cat').innerText = data.categoria || 'GENERAL';
+        document.getElementById('store-loc').innerText = `📍 UBICACIÓN: ${data.lat.toFixed(4)}, ${data.lng.toFixed(4)}`;
+        
+        // Configurar botones
+        document.getElementById('btn-route-gps').onclick = () => window.open(`https://www.google.com/maps?q=${data.lat},${data.lng}`);
+        document.getElementById('btn-fav-action').onclick = () => addFav(id);
+
+        // Cargar productos de esta tienda
+        const pCont = document.getElementById('modal-products');
+        pCont.innerHTML = "<p style='font-size:12px; opacity:0.5;'>Cargando inventario...</p>";
+        
+        const prods = await db.collection("productos").where("comercioID", "==", id).get();
+        pCont.innerHTML = "";
+        
+        if(prods.empty) {
+            pCont.innerHTML = "<p style='font-size:12px; opacity:0.5;'>Sin productos publicados.</p>";
+        }
+
+        prods.forEach(docP => {
+            const p = docP.data();
+            pCont.innerHTML += `
+                <div class="inventory-item">
+                    <span class="name">${p.nombre}</span>
+                    <span class="price">Bs. ${p.precio.toFixed(2)}</span>
+                </div>`;
+        });
+
+        document.getElementById('store-modal').classList.add('active');
     }
 
-    function filtrarMapa() { cargarLocales(document.getElementById('buscador').value); }
+    function cerrarDetalle() { document.getElementById('store-modal').classList.remove('active'); }
+
+    async function addFav(id) {
+        if(!userUID) return alert("Inicia sesión para guardar favoritos");
+        await db.collection("usuarios").doc(userUID).collection("favoritos").doc(id).set({idComercio: id});
+        alert("💖 Guardado en favoritos");
+    }
+
+    function filtrarMapa() { cargarComercios(document.getElementById('buscador').value); }
 
     window.onload = initMap;
 </script>
