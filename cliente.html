@@ -1,13 +1,39 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
-<title>Cliente</title>
-</head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SmartMarket - Zona Cliente</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0; padding: 0; font-family: 'Montserrat', sans-serif;
+            background: #0f2027; color: white; min-height: 100vh;
+            display: flex; flex-direction: column;
+        }
 
-<body>
+        /* CABECERA CON IMAGEN DE FONDO */
+        .header-perfil {
+            background: linear-gradient(rgba(15, 32, 39, 0.8), rgba(15, 32, 39, 0.9)), 
+                        url('https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=1000&q=80');
+            background-size: cover; background-position: center;
+            padding: 50px 20px; text-align: center; border-bottom: 3px solid #4fc3f7;
+        }
+        .header-perfil h1 { font-weight: 900; font-size: 24px; margin: 0; color: #4fc3f7; text-transform: uppercase; }
+        .header-perfil p { font-size: 11px; opacity: 0.8; margin-top: 5px; letter-spacing: 1px; }
 
-<h1>Zona Cliente</h1>
-<p>Aquí buscarás productos</p>
+        .container { padding: 20px; flex-grow: 1; display: flex; flex-direction: column; align-items: center; }
 
-</body>
-</html>
+        /* BOTÓN DE BÚSQUEDA RÁPIDA */
+        .search-shortcut {
+            width: 100%; max-width: 400px; background: white; border-radius: 15px;
+            padding: 15px; display: flex; align-items: center; gap: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.4); margin-top: -35px; cursor: pointer;
+            border: none; outline: none; transition: 0.2s;
+        }
+        .search-shortcut:active { transform: scale(0.98); }
+        .search-shortcut span { color: #555; font-weight: 700; font-size: 14px; }
+
+        /* SECCIONES DE CONTENIDO */
+        .section-box { width: 100%; max-width: 450px; margin-top: 35px; }
+        .section-box h2 { font-size: 13px; font-weight: 900; color: #ffeb3b; text-transform: uppercase; margin-bottom: 12px; letter
