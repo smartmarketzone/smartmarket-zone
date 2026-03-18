@@ -58,8 +58,8 @@ tipo: tipo
 .then(() => {
 
 if(tipo === "comercio"){
-window.location.href = "comercio.html";
-}else{
+window.location.href = "registro_comercio.html";
+}
 window.location.href = "cliente.html";
 }
 
