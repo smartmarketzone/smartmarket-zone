@@ -3,112 +3,156 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SmartMarket Zone - Bienvenido</title>
+    <title>SmartMarket - San Joaquín</title>
+    
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
+    
     <style>
-        body {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-family: 'Montserrat', sans-serif;
-            /* Mantenemos el fondo de mapa para la identidad de marca */
-            background: linear-gradient(rgba(15, 32, 39, 0.8), rgba(30, 136, 229, 0.7)), 
-                        url('https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
-            background-size: cover;
-            background-position: center;
-            overflow: hidden;
+        body { margin: 0; font-family: 'Montserrat', sans-serif; background: #0f2027; color: white; overflow: hidden; }
+        
+        /* BUSCADOR */
+        .search-container {
+            position: absolute; top: 20px; left: 50%; transform: translateX(-50%);
+            z-index: 1000; width: 92%; max-width: 450px;
+        }
+        .search-box {
+            width: 100%; padding: 15px 25px; border-radius: 30px; border: none;
+            background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5); font-size: 16px; outline: none;
+            color: #333; font-weight: 800; text-align: center;
         }
 
-        .welcome-card {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 30px;
-            padding: 50px 30px;
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
-            width: 85%;
-            max-width: 400px;
-            text-align: center;
-            color: white;
-            animation: fadeIn 1.2s ease-out;
-        }
+        #map { height: calc(100vh - 70px); width: 100%; z-index: 1; }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+        /* BARRA DE NAVEGACIÓN INFERIOR MEJORADA */
+        .bottom-nav {
+            position: fixed; bottom: 0; left: 0; right: 0;
+            height: 70px; background: rgba(15, 32, 39, 0.98);
+            backdrop-filter: blur(20px); border-top: 2px solid rgba(79, 195, 247, 0.4);
+            display: flex; justify-content: space-around; align-items: center;
+            z-index: 2000; padding-bottom: 5px;
         }
+        .nav-item {
+            text-align: center; color: rgba(255,255,255,0.4);
+            text-decoration: none; font-size: 9px; font-weight: 900;
+            transition: 0.3s; flex: 1; display: flex; flex-direction: column; align-items: center;
+            gap: 4px;
+        }
+        .nav-item.active { color: #4fc3f7; transform: translateY(-3px); }
+        .nav-icon { font-size: 24px; }
 
-        .main-icon {
-            font-size: 60px;
-            margin-bottom: 20px;
-            display: inline-block;
-            filter: drop-shadow(0 5px 15px rgba(0,0,0,0.3));
+        /* POPUPS */
+        .leaflet-popup-content-wrapper {
+            background: rgba(15, 32, 39, 0.98) !important;
+            color: white !important; border-radius: 15px; border: 1px solid #4fc3f7;
         }
+        .status-pill { font-size: 9px; padding: 2px 8px; border-radius: 4px; font-weight: 900; margin-left: 5px; }
+        .open { background: #4caf50; }
+        .closed { background: #f44336; }
 
-        .logo-main {
-            font-weight: 900;
-            font-size: 32px;
-            margin-bottom: 10px;
-            letter-spacing: -1px;
-            line-height: 1;
+        .prod-row {
+            display: flex; justify-content: space-between; padding: 8px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 12px;
         }
-        .logo-main span {
-            color: #4fc3f7;
-        }
-
-        .slogan-main {
-            font-size: 14px;
-            opacity: 0.9;
-            margin-bottom: 40px;
-            font-weight: 400;
-            line-height: 1.5;
-        }
-
-        .btn-start {
-            background: #1e88e5;
-            color: white;
-            text-decoration: none;
-            padding: 18px 40px;
-            border-radius: 50px;
-            font-weight: 900;
-            font-size: 16px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            display: inline-block;
-            transition: 0.3s;
-            box-shadow: 0 10px 20px rgba(30, 136, 229, 0.4);
-        }
-
-        .btn-start:active {
-            transform: scale(0.95);
-            box-shadow: 0 5px 10px rgba(30, 136, 229, 0.2);
-        }
-
-        .footer-text {
-            margin-top: 30px;
-            font-size: 10px;
-            opacity: 0.6;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-        }
+        .p-price { color: #ffeb3b; font-weight: 900; }
     </style>
 </head>
 <body>
 
-<div class="welcome-card">
-    <div class="main-icon">🚀</div>
-    <div class="logo-main">SMART<span>MARKET</span> ZONE</div>
-    <p class="slogan-main">Tu mercado local en la palma de tu mano. Encuentra y vende cerca de ti.</p>
-
-    <a href="auth.html" class="btn-start">Comenzar ahora</a>
-
-    <div class="footer-text">Conectando tu comunidad</div>
+<div class="search-container">
+    <input type="text" id="buscador" class="search-box" placeholder="🔍 ¿Qué buscas en San Joaquín?" oninput="filtrarMapa()">
 </div>
+
+<div id="map"></div>
+
+<nav class="bottom-nav">
+    <a href="index.html" class="nav-item active">
+        <span class="nav-icon">📍</span> MAPA
+    </a>
+    <a href="auth.html" class="nav-item">
+        <span class="nav-icon">👤</span> SOY PERSONA
+    </a>
+    
+    <a href="registro_comercio.html" class="nav-item">
+        <span class="nav-icon">🏪</span> REGISTRAR
+    </a>
+    <a href="comercio.html" class="nav-item">
+        <span class="nav-icon">📊</span> MI PANEL
+    </a>
+</nav>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+
+<script>
+    const firebaseConfig = {
+        apiKey: "AIzaSyA6tYooh4CtX7ww9GRyXWhuakl2nLovtsY",
+        authDomain: "smartmarket-zone-e7559.firebaseapp.com",
+        projectId: "smartmarket-zone-e7559"
+    };
+    if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    const map = L.map('map', { zoomControl: false }).setView([10.2644, -67.7915], 14);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+
+    let marcadores = [];
+
+    function estaAbierto(abre, cierra) {
+        const h = new Date().getHours().toString().padStart(2,'0');
+        const m = new Date().getMinutes().toString().padStart(2,'0');
+        const ahora = h + ":" + m;
+        return (ahora >= abre && ahora <= cierra);
+    }
+
+    async function cargarMapa(busqueda = "") {
+        marcadores.forEach(m => map.removeLayer(m));
+        marcadores = [];
+
+        const locales = await db.collection("comercios").get();
+        
+        locales.forEach(async (docL) => {
+            const dataL = docL.data();
+            const prods = await db.collection("productos").where("comercioID", "==", docL.id).get();
+            
+            let listaHtml = "";
+            let match = false;
+
+            prods.forEach(docP => {
+                const p = docP.data();
+                if(busqueda === "" || p.nombre.toLowerCase().includes(busqueda.toLowerCase())) {
+                    match = true;
+                    listaHtml += `
+                        <div class="prod-row">
+                            <span>${p.nombre}<br><small style="opacity:0.5">Stock: ${p.stock}</small></span>
+                            <span class="p-price">Bs. ${new Intl.NumberFormat('de-DE').format(p.precio)}</span>
+                        </div>`;
+                }
+            });
+
+            if(match || busqueda === "") {
+                const abierto = estaAbierto(dataL.abre, dataL.cierra);
+                const marker = L.marker([dataL.lat, dataL.lng]).addTo(map);
+                marker.bindPopup(`
+                    <b style="color:#4fc3f7">${dataL.nombre}</b>
+                    <span class="status-pill ${abierto?'open':'closed'}">${abierto?'ABIERTO':'CERRADO'}</span>
+                    <div style="max-height:120px; overflow-y:auto; margin-top:10px; min-width:180px;">
+                        ${listaHtml || '<p style="font-size:10px">Sin productos</p>'}
+                    </div>
+                `);
+                marcadores.push(marker);
+            }
+        });
+    }
+
+    function filtrarMapa() {
+        cargarMapa(document.getElementById('buscador').value);
+    }
+
+    window.onload = () => cargarMapa();
+</script>
 
 </body>
 </html>
