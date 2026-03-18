@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SmartMarket - Gestión de Stock</title>
+    <title>SmartMarket - Gestión Total</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
         body {
@@ -36,7 +36,7 @@
         .flex-row div { flex: 1; }
 
         .price-box { position: relative; }
-        .price-box span { position: absolute; left: 10px; top: 11px; font-weight: 900; color: #4fc3f7; font-size: 14px; }
+        .price-box span { position: absolute; left: 10px; top: 11px; font-weight: 900; color: #4fc3f7; }
         .price-box input { padding-left: 35px; color: #ffeb3b; font-weight: 900; }
 
         .btn-add {
@@ -45,69 +45,77 @@
             text-transform: uppercase; margin-top: 10px; box-shadow: 0 5px 15px rgba(30, 136, 229, 0.4);
         }
 
-        /* DISEÑO DE PRODUCTOS CON STOCK */
+        /* LISTA DE PRODUCTOS */
         .products-container { width: 92%; max-width: 480px; padding-bottom: 40px; }
         
         .item-card {
-            background: rgba(0, 0, 0, 0.4); border-radius: 18px; padding: 15px;
-            margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center;
-            border-left: 4px solid #4fc3f7; transition: 0.3s;
+            background: rgba(0, 0, 0, 0.5); border-radius: 18px; padding: 15px;
+            margin-bottom: 15px; border-left: 4px solid #4fc3f7;
+            display: flex; flex-direction: column; gap: 10px;
         }
 
-        .item-info h3 { margin: 0; font-size: 16px; text-transform: capitalize; }
+        .item-main { display: flex; justify-content: space-between; align-items: flex-start; }
+        .item-info h3 { margin: 0; font-size: 16px; color: #4fc3f7; }
         .item-info p { margin: 3px 0; font-size: 11px; opacity: 0.6; }
 
         .stock-tag {
-            font-size: 10px; font-weight: 900; padding: 3px 8px; border-radius: 5px;
-            text-transform: uppercase; margin-top: 5px; display: inline-block;
+            font-size: 9px; font-weight: 900; padding: 3px 8px; border-radius: 5px;
+            text-transform: uppercase; display: inline-block; margin-top: 5px;
         }
-
-        /* Colores dinámicos de Stock */
-        .stock-high { background: #4caf50; color: white; } /* Verde */
-        .stock-low { background: #ff9800; color: white; }  /* Naranja */
-        .stock-empty { background: #f44336; color: white; } /* Rojo */
+        .stock-high { background: #4caf50; }
+        .stock-low { background: #ff9800; }
+        .stock-empty { background: #f44336; }
 
         .item-price { text-align: right; font-weight: 900; color: #ffeb3b; font-size: 18px; }
-        .item-price small { display: block; font-size: 9px; color: #fff; opacity: 0.5; }
+
+        /* BOTONES DE ACCIÓN */
+        .item-actions {
+            display: flex; justify-content: flex-end; gap: 10px;
+            border-top: 1px solid rgba(255,255,255,0.1); padding-top: 10px;
+        }
+        .btn-action {
+            background: rgba(255,255,255,0.1); border: none; color: white;
+            padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px;
+            display: flex; align-items: center; gap: 5px; transition: 0.3s;
+        }
+        .btn-edit:hover { background: #1e88e5; }
+        .btn-delete:hover { background: #f44336; }
+
     </style>
 </head>
 <body>
 
 <div class="header">
-    <h1 id="nombreLocal">CARGANDO...</h1>
-    <p style="font-size: 10px; opacity: 0.7;">CONTROL DE INVENTARIO BS.</p>
+    <h1 id="nombreLocal">MI NEGOCIO</h1>
+    <p style="font-size: 10px;">GESTIÓN DE INVENTARIO</p>
 </div>
 
 <div class="card-form">
-    <div class="input-group">
+    <input type="hidden" id="editID"> <div class="input-group">
         <label>Producto</label>
-        <input type="text" id="nombreP" placeholder="Ej: Café Molido 500g">
+        <input type="text" id="nombreP" placeholder="Ej: Harina Pan">
     </div>
 
     <div class="flex-row">
         <div class="input-group">
             <label>Precio (Bs.)</label>
-            <div class="price-box">
-                <span>Bs</span>
-                <input type="number" id="precioP" placeholder="0.00">
-            </div>
+            <div class="price-box"><span>Bs</span><input type="number" id="precioP" step="0.01"></div>
         </div>
         <div class="input-group">
-            <label>Cantidad (Stock)</label>
-            <input type="number" id="stockP" placeholder="Ej: 20">
+            <label>Stock</label>
+            <input type="number" id="stockP" placeholder="Cant.">
         </div>
     </div>
 
     <div class="input-group">
         <label>Descripción</label>
-        <input type="text" id="descP" placeholder="Breve detalle del producto">
+        <input type="text" id="descP">
     </div>
 
-    <button class="btn-add" onclick="registrar()">Publicar en el Mapa</button>
+    <button class="btn-add" id="btnGuardar" onclick="guardarProducto()">Publicar Producto</button>
 </div>
 
-<div class="products-container" id="lista">
-    </div>
+<div class="products-container" id="lista"></div>
 
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
@@ -121,81 +129,93 @@
     };
     if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
-
     let myUID = "";
 
     firebase.auth().onAuthStateChanged(user => {
         if (user) {
             myUID = user.uid;
-            // Obtener nombre del comercio
             db.collection("comercios").doc(myUID).get().then(doc => {
                 if(doc.exists) document.getElementById('nombreLocal').innerText = doc.data().nombre;
             });
             mostrarProductos();
-        } else {
-            window.location.href = "auth.html";
-        }
+        } else { window.location.href = "auth.html"; }
     });
 
-    function registrar() {
-        const nom = document.getElementById('nombreP').value;
-        const pre = document.getElementById('precioP').value;
-        const sto = document.getElementById('stockP').value;
-        const des = document.getElementById('descP').value;
-
-        if(!nom || !pre || !sto) return alert("Llena los campos básicos");
-
-        db.collection("productos").add({
+    function guardarProducto() {
+        const id = document.getElementById('editID').value;
+        const data = {
             comercioID: myUID,
-            nombre: nom,
-            precio: parseFloat(pre),
-            stock: parseInt(sto),
-            descripcion: des,
+            nombre: document.getElementById('nombreP').value,
+            precio: parseFloat(document.getElementById('precioP').value),
+            stock: parseInt(document.getElementById('stockP').value),
+            descripcion: document.getElementById('descP').value,
             fecha: firebase.firestore.FieldValue.serverTimestamp()
-        }).then(() => {
-            alert("¡Producto en línea!");
-            document.getElementById('nombreP').value = "";
-            document.getElementById('precioP').value = "";
-            document.getElementById('stockP').value = "";
-            document.getElementById('descP').value = "";
-        });
+        };
+
+        if(!data.nombre || isNaN(data.precio)) return alert("Datos incompletos");
+
+        if(id) {
+            // EDITAR
+            db.collection("productos").doc(id).update(data).then(() => limpiar());
+        } else {
+            // NUEVO
+            db.collection("productos").add(data).then(() => limpiar());
+        }
+    }
+
+    function limpiar() {
+        document.getElementById('editID').value = "";
+        document.getElementById('nombreP').value = "";
+        document.getElementById('precioP').value = "";
+        document.getElementById('stockP').value = "";
+        document.getElementById('descP').value = "";
+        document.getElementById('btnGuardar').innerText = "Publicar Producto";
+    }
+
+    function editar(id, n, p, s, d) {
+        document.getElementById('editID').value = id;
+        document.getElementById('nombreP').value = n;
+        document.getElementById('precioP').value = p;
+        document.getElementById('stockP').value = s;
+        document.getElementById('descP').value = d;
+        document.getElementById('btnGuardar').innerText = "Actualizar Cambios";
+        window.scrollTo(0,0);
+    }
+
+    function eliminar(id) {
+        if(confirm("¿Seguro que quieres borrar este producto?")) {
+            db.collection("productos").doc(id).delete();
+        }
     }
 
     function mostrarProductos() {
         db.collection("productos").where("comercioID", "==", myUID)
         .onSnapshot(snap => {
-            const contenedor = document.getElementById('lista');
-            contenedor.innerHTML = "";
+            const lista = document.getElementById('lista');
+            lista.innerHTML = "";
             snap.forEach(doc => {
                 const p = doc.data();
-                let claseStock = "stock-high";
-                let msgStock = `Stock: ${p.stock} disponibles`;
-
-                if(p.stock <= 0) {
-                    claseStock = "stock-empty";
-                    msgStock = "AGOTADO";
-                } else if(p.stock <= 5) {
-                    claseStock = "stock-low";
-                    msgStock = "¡ÚLTIMAS UNIDADES!";
-                }
-
-                contenedor.innerHTML += `
+                const id = doc.id;
+                let c = p.stock > 5 ? 'stock-high' : (p.stock > 0 ? 'stock-low' : 'stock-empty');
+                
+                lista.innerHTML += `
                     <div class="item-card">
-                        <div class="item-info">
-                            <h3>${p.nombre}</h3>
-                            <p>${p.descripcion}</p>
-                            <span class="stock-tag ${claseStock}">${msgStock}</span>
+                        <div class="item-main">
+                            <div class="item-info">
+                                <h3>${p.nombre}</h3>
+                                <p>${p.descripcion}</p>
+                                <span class="stock-tag ${c}">Stock: ${p.stock}</span>
+                            </div>
+                            <div class="item-price">Bs. ${p.precio.toLocaleString('es-VE')}</div>
                         </div>
-                        <div class="item-price">
-                            <small>Bs.</small>
-                            ${parseFloat(p.precio).toLocaleString('es-VE')}
+                        <div class="item-actions">
+                            <button class="btn-action btn-edit" onclick="editar('${id}','${p.nombre}',${p.precio},${p.stock},'${p.descripcion}')">✏️ Editar</button>
+                            <button class="btn-action btn-delete" onclick="eliminar('${id}')">🗑️ Borrar</button>
                         </div>
-                    </div>
-                `;
+                    </div>`;
             });
         });
     }
 </script>
-
 </body>
 </html>
