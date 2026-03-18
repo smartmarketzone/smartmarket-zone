@@ -7,85 +7,49 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
         body {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            margin: 0; padding: 0; width: 100%; min-height: 100vh;
+            display: flex; justify-content: center; align-items: center;
             font-family: 'Montserrat', sans-serif;
-            
-            /* FONDO DE MAPA CON CAPA AZUL */
             background: linear-gradient(rgba(15, 32, 39, 0.8), rgba(30, 136, 229, 0.7)), 
                         url('https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
+            background-size: cover; background-position: center; background-attachment: fixed;
         }
 
         .card {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 20px;
-            padding: 30px 20px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-            width: 85%;
-            max-width: 360px;
-            text-align: center;
-            color: white;
+            background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px; padding: 30px 20px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            width: 85%; max-width: 360px; text-align: center; color: white;
         }
 
         .logo { font-weight: 900; font-size: 26px; margin-bottom: 5px; }
         .logo span { color: #4fc3f7; }
-        .slogan { font-size: 12px; opacity: 0.9; margin-bottom: 25px; text-transform: uppercase; letter-spacing: 1px; }
+        .slogan { font-size: 11px; opacity: 0.9; margin-bottom: 25px; text-transform: uppercase; letter-spacing: 1px; }
 
         .role-container { display: flex; flex-direction: column; gap: 15px; }
 
         .role-card {
-            background: rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 15px;
-            padding: 15px;
-            cursor: pointer;
-            transition: 0.3s;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px; padding: 15px; cursor: pointer; transition: 0.3s;
+            display: flex; flex-direction: column; align-items: center;
         }
 
         .role-card:active { transform: scale(0.97); background: rgba(30, 136, 229, 0.4); }
 
-        /* ETIQUETA AMARILLA CON LETRA NEGRA */
         .role-tag {
-            background: #ffeb3b; 
-            color: #000;
-            font-size: 10px;
-            font-weight: 900;
-            padding: 3px 12px;
-            border-radius: 4px;
-            margin-bottom: 8px;
+            background: #ffeb3b; color: #000; font-size: 10px;
+            font-weight: 900; padding: 3px 12px; border-radius: 4px; margin-bottom: 8px;
         }
 
         .role-icon { font-size: 35px; margin-bottom: 5px; }
         h3 { margin: 0; font-size: 18px; }
         .role-card p { font-size: 12px; opacity: 0.8; margin-top: 5px; }
 
-        /* CIERRE DE SESIÓN CORREGIDO ABAJO */
-        .logout-box {
-            margin-top: 25px;
-            padding-top: 15px;
-            border-top: 1px solid rgba(255,255,255,0.1);
-        }
-        .logout-btn {
-            font-size: 12px;
-            color: #4fc3f7;
-            text-decoration: none;
-            cursor: pointer;
-            font-weight: bold;
-        }
+        .logout-box { margin-top: 25px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.1); }
+        .logout-btn { font-size: 12px; color: #4fc3f7; text-decoration: none; cursor: pointer; font-weight: bold; }
+        
+        /* Pantalla de carga */
+        #loader { display: none; margin-top: 10px; font-size: 12px; color: #ffeb3b; }
     </style>
 </head>
 <body>
@@ -110,6 +74,8 @@
         </div>
     </div>
 
+    <div id="loader">Guardando perfil...</div>
+
     <div class="logout-box">
         <span class="logout-btn" onclick="logout()">← Cerrar sesión e ir al inicio</span>
     </div>
@@ -127,26 +93,38 @@
     };
 
     if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    // 1. EL OBSERVADOR: Mantiene la sesión viva
+    let usuarioActivo = null;
+    auth.onAuthStateChanged((user) => {
+        if (user) {
+            usuarioActivo = user;
+            console.log("Usuario detectado:", user.email);
+        } else {
+            console.log("No hay usuario, redirigiendo...");
+            // Solo redirige si no estamos en proceso de carga
+            if(!window.isProcessing) window.location.href = "auth.html";
+        }
+    });
 
     function seleccionarRol(tipo) {
-        const user = firebase.auth().currentUser;
-        if (!user) { window.location.href = "auth.html"; return; }
+        if (!usuarioActivo) {
+            alert("Espera un momento a que cargue tu sesión...");
+            return;
+        }
 
-        firebase.firestore().collection("usuarios").doc(user.uid).set({
-            email: user.email,
+        window.isProcessing = true;
+        document.getElementById('loader').style.display = "block";
+
+        // Guardamos en Firestore
+        db.collection("usuarios").doc(usuarioActivo.uid).set({
+            email: usuarioActivo.email,
             tipo: tipo,
-            ultimoAcceso: firebase.firestore.FieldValue.serverTimestamp()
+            actualizado: firebase.firestore.FieldValue.serverTimestamp()
         }, { merge: true })
         .then(() => {
-            window.location.href = (tipo === 'comercio') ? "registro_comercio.html" : "cliente.html";
-        })
-        .catch(e => alert("Error: " + e.message));
-    }
-
-    function logout() {
-        firebase.auth().signOut().then(() => { window.location.href = "auth.html"; });
-    }
-</script>
-
-</body>
-</html>
+            console.log("Rol guardado: " + tipo);
+            if (tipo === 'comercio') {
+                window.location.href = "registro_comercio.html
