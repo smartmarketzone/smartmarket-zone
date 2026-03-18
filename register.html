@@ -2,22 +2,27 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Registro - SmartMarket</title>
     <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800&display=swap" rel="stylesheet">
 </head>
 <body class="auth-body">
 
 <div class="card">
-    <h2 class="logo">Crear Cuenta</h2>
-    <p class="slogan">Únete a la zona inteligente</p>
+    <div class="logo-icon">🛒</div>
+    <h1 class="logo">Smart<span>Market</span></h1>
+    <p class="slogan">Crea tu cuenta gratis</p>
 
-    <input type="email" id="regEmail" placeholder="Correo electrónico">
-    <input type="password" id="regPass" placeholder="Contraseña (mín. 6 caracteres)">
+    <input type="email" id="regEmail" placeholder="Correo electrónico" inputmode="email">
+    <input type="password" id="regPass" placeholder="Contraseña (6+ caracteres)">
 
-    <button class="btn-primary" onclick="register()">Registrarse</button>
+    <button type="button" class="btn-primary" id="btnRegistro" onclick="register()">
+        Registrarse ahora
+    </button>
     
-    <p style="margin-top:15px; font-size:13px;">
-        ¿Ya tienes cuenta? <a href="login.html" style="color:#1e88e5;">Inicia sesión</a>
+    <p style="margin-top:20px; font-size:14px; color: #666;">
+        ¿Ya tienes cuenta? <a href="login.html" style="color:#1e88e5; font-weight:bold; text-decoration:none;">Inicia Sesión</a>
     </p>
 </div>
 
