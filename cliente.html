@@ -3,37 +3,186 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SmartMarket - Zona Cliente</title>
+    <title>Mi Perfil - SmartMarket</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
-        body {
-            margin: 0; padding: 0; font-family: 'Montserrat', sans-serif;
-            background: #0f2027; color: white; min-height: 100vh;
-            display: flex; flex-direction: column;
+        :root { --blue: #1e88e5; --cyan: #4fc3f7; --dark: #0f2027; --yellow: #ffeb3b; --red: #f44336; }
+        
+        /* Fondo base para que no se vea vacío */
+        body { 
+            margin: 0; font-family: 'Montserrat', sans-serif; 
+            background: var(--dark); color: white; min-height: 100vh; 
+            padding-bottom: 90px;
         }
 
-        /* CABECERA CON IMAGEN DE FONDO */
-        .header-perfil {
-            background: linear-gradient(rgba(15, 32, 39, 0.8), rgba(15, 32, 39, 0.9)), 
-                        url('https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=1000&q=80');
-            background-size: cover; background-position: center;
-            padding: 50px 20px; text-align: center; border-bottom: 3px solid #4fc3f7;
+        .header-user { 
+            background: linear-gradient(45deg, #1e88e5, #4fc3f7); 
+            padding: 40px 20px; text-align: center; 
+            border-radius: 0 0 30px 30px; box-shadow: 0 10px 20px rgba(0,0,0,0.3); 
         }
-        .header-perfil h1 { font-weight: 900; font-size: 24px; margin: 0; color: #4fc3f7; text-transform: uppercase; }
-        .header-perfil p { font-size: 11px; opacity: 0.8; margin-top: 5px; letter-spacing: 1px; }
 
-        .container { padding: 20px; flex-grow: 1; display: flex; flex-direction: column; align-items: center; }
-
-        /* BOTÓN DE BÚSQUEDA RÁPIDA */
-        .search-shortcut {
-            width: 100%; max-width: 400px; background: white; border-radius: 15px;
-            padding: 15px; display: flex; align-items: center; gap: 12px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.4); margin-top: -35px; cursor: pointer;
-            border: none; outline: none; transition: 0.2s;
+        .user-tabs { display: flex; overflow-x: auto; padding: 15px; gap: 10px; }
+        .u-tab { 
+            background: rgba(255,255,255,0.05); padding: 12px 20px; 
+            border-radius: 15px; font-size: 11px; font-weight: 900; 
+            white-space: nowrap; cursor: pointer; border: 1px solid rgba(255,255,255,0.1); 
         }
-        .search-shortcut:active { transform: scale(0.98); }
-        .search-shortcut span { color: #555; font-weight: 700; font-size: 14px; }
+        .u-tab.active { background: var(--yellow); color: #000; }
 
-        /* SECCIONES DE CONTENIDO */
-        .section-box { width: 100%; max-width: 450px; margin-top: 35px; }
-        .section-box h2 { font-size: 13px; font-weight: 900; color: #ffeb3b; text-transform: uppercase; margin-bottom: 12px; letter
+        .section-content { display: none; padding: 0 20px; animation: fadeIn 0.3s ease; }
+        .section-content.active { display: block; }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .item-card { 
+            background: rgba(255,255,255,0.07); border-radius: 15px; 
+            padding: 20px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.1); 
+        }
+
+        .btn-go { 
+            background: var(--blue); color: white; border: none; 
+            padding: 14px; border-radius: 12px; width: 100%; 
+            font-weight: 900; cursor: pointer; margin-top: 10px; 
+        }
+
+        /* Nav Inferior */
+        .bottom-nav { 
+            position: fixed; bottom: 0; left: 0; right: 0; height: 75px; 
+            background: #0b171c; border-top: 2px solid var(--cyan); 
+            display: flex; justify-content: space-around; align-items: center; z-index: 2000; 
+        }
+        .nav-item { 
+            text-align: center; color: rgba(255,255,255,0.4); 
+            text-decoration: none; font-size: 10px; font-weight: 900; 
+            display: flex; flex-direction: column; align-items: center; 
+        }
+        .nav-item.active { color: var(--cyan); }
+    </style>
+</head>
+<body>
+
+<div class="header-user">
+    <h1 id="userName" style="margin:0; font-size:20px; font-weight:900;">MI CUENTA</h1>
+    <p id="userEmailSub" style="font-size:10px; opacity:0.8; margin-top:5px;">Cargando perfil...</p>
+</div>
+
+<div class="user-tabs">
+    <div class="u-tab active" onclick="verTab('tab-perfil', this)">👤 MI PERFIL</div>
+    <div class="u-tab" onclick="verTab('tab-buscar', this)">🔍 BUSCAR MARCAS</div>
+    <div class="u-tab" onclick="verTab('tab-favs', this)">⭐ FAVORITOS</div>
+</div>
+
+<div id="tab-perfil" class="section-content active">
+    <div class="item-card">
+        <label style="font-size:10px; color:var(--cyan); font-weight:900;">NOMBRE</label>
+        <div id="p-nombre" style="font-size:16px; font-weight:700; margin-bottom:15px;">...</div>
+        
+        <label style="font-size:10px; color:var(--cyan); font-weight:900;">CORREO</label>
+        <div id="p-correo" style="font-size:16px; font-weight:700; margin-bottom:15px;">...</div>
+
+        <button class="btn-go" style="background:var(--red);" onclick="cerrarSesion()">CERRAR SESIÓN</button>
+    </div>
+
+    <div class="item-card">
+        <h3 style="margin-top:0; color:var(--yellow); font-size:14px;">SEGURIDAD</h3>
+        <p style="font-size:12px; opacity:0.7;">Recibe un enlace para cambiar tu contraseña.</p>
+        <button class="btn-go" onclick="resetPass()">CAMBIAR CONTRASEÑA</button>
+    </div>
+</div>
+
+<div id="tab-buscar" class="section-content">
+    <input type="text" id="inputBuscar" placeholder="Ej: Polar, Harina, Arroz..." 
+           style="width:100%; padding:15px; border-radius:12px; border:none; margin-bottom:20px; font-weight:700;" oninput="buscarGlobal()">
+    <div id="res-busqueda"></div>
+</div>
+
+<div id="tab-favs" class="section-content">
+    <div id="lista-favs" style="text-align:center; opacity:0.5; margin-top:30px;">
+        Aún no tienes tiendas favoritas guardadas.
+    </div>
+</div>
+
+<nav class="bottom-nav">
+    <a href="index.html" class="nav-item"><span>📍</span>MAPA</a>
+    <a href="cliente.html" class="nav-item active"><span>👤</span>PERFIL</a>
+</nav>
+
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+
+<script>
+    const firebaseConfig = {
+        apiKey: "AIzaSyA6tYooh4CtX7ww9GRyXWhuakl2nLovtsY",
+        authDomain: "smartmarket-zone-e7559.firebaseapp.com",
+        projectId: "smartmarket-zone-e7559"
+    };
+    if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    // 1. Monitor de Sesión
+    auth.onAuthStateChanged(async (user) => {
+        if (user) {
+            document.getElementById('p-correo').innerText = user.email;
+            document.getElementById('userEmailSub').innerText = user.email;
+            
+            // Traer datos de Firestore
+            try {
+                const doc = await db.collection("usuarios").doc(user.uid).get();
+                if(doc.exists) {
+                    const data = doc.data();
+                    document.getElementById('userName').innerText = "HOLA, " + data.nombre.toUpperCase();
+                    document.getElementById('p-nombre').innerText = data.nombre;
+                }
+            } catch (e) { console.log("Error cargando perfil", e); }
+        } else {
+            window.location.href = "auth.html";
+        }
+    });
+
+    // 2. Navegación de pestañas
+    function verTab(id, el) {
+        document.querySelectorAll('.section-content').forEach(s => s.classList.remove('active'));
+        document.querySelectorAll('.u-tab').forEach(t => t.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+        el.classList.add('active');
+    }
+
+    // 3. Funciones de Usuario
+    function cerrarSesion() { auth.signOut().then(() => window.location.href="auth.html"); }
+    
+    function resetPass() {
+        const email = auth.currentUser.email;
+        auth.sendPasswordResetEmail(email).then(() => alert("✅ Revisa tu correo para cambiar la clave."));
+    }
+
+    // 4. Buscador
+    async function buscarGlobal() {
+        const txt = document.getElementById('inputBuscar').value.toLowerCase();
+        const res = document.getElementById('res-busqueda');
+        if(txt.length < 2) { res.innerHTML = ""; return; }
+
+        const prods = await db.collection("productos").get();
+        res.innerHTML = "";
+        
+        prods.forEach(async (docP) => {
+            const p = docP.data();
+            if(p.nombre.toLowerCase().includes(txt)) {
+                const local = await db.collection("comercios").doc(p.comercioID).get();
+                const lData = local.data();
+                res.innerHTML += `
+                    <div class="item-card">
+                        <div style="display:flex; justify-content:space-between;">
+                            <b style="color:var(--cyan)">${p.nombre}</b>
+                            <b style="color:var(--yellow)">Bs. ${p.precio}</b>
+                        </div>
+                        <p style="font-size:11px;">Tienda: ${lData.nombre}</p>
+                        <button class="btn-go" onclick="location.href='index.html'">VER EN MAPA</button>
+                    </div>`;
+            }
+        });
+    }
+</script>
+</body>
+</html>
