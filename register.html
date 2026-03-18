@@ -2,25 +2,27 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Registro - SmartMarket</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro SmartMarket</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body class="auth-body">
 
 <div class="card">
     <h1 class="logo">Smart<span>Market</span></h1>
-    <p class="slogan">Crea tu cuenta</p>
+    <p>Crear cuenta nueva</p>
 
-    <input type="email" id="correoInput" placeholder="Correo electrónico" inputmode="email">
-    <input type="password" id="claveInput" placeholder="Contraseña (mín. 6 caracteres)">
-
-    <button type="button" class="btn-primary" id="btnRegistro">
-        Registrarse
-    </button>
+    <form id="formRegistro">
+        <input type="email" name="email" placeholder="Correo electrónico" required>
+        <input type="password" name="password" placeholder="Contraseña (6+ caracteres)" required>
+        
+        <button type="submit" class="btn-primary" id="btnAccion">
+            REGISTRARSE
+        </button>
+    </form>
     
     <p style="margin-top:20px; font-size:14px;">
-        ¿Ya tienes cuenta? <a href="login.html" style="color:#1e88e5;">Inicia sesión</a>
+        <a href="login.html" style="color:#1e88e5;">Ya tengo cuenta</a>
     </p>
 </div>
 
@@ -29,7 +31,7 @@
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
 
 <script>
-    // Configuración de tu proyecto
+    // Tu configuración (Verificada)
     const firebaseConfig = {
         apiKey: "AIzaSyA6tYooh4CtX7ww9GRyXWhuakl2nLovtsY",
         authDomain: "smartmarket-zone-e7559.firebaseapp.com",
@@ -40,38 +42,36 @@
         firebase.initializeApp(firebaseConfig);
     }
 
-    // Escuchamos el clic
-    document.getElementById('btnRegistro').addEventListener('click', function() {
-        // LEEMOS LOS IDS QUE PUSIMOS ARRIBA
-        const email = document.getElementById("correoInput").value.trim();
-        const password = document.getElementById("claveInput").value.trim();
+    // EL TRUCO FINAL: FormData
+    document.getElementById('formRegistro').addEventListener('submit', function(e) {
+        e.preventDefault(); // Detiene el refresco de página
 
-        console.log("Datos capturados:", email, password); // Esto sale en la consola del PC
+        const datos = new FormData(this);
+        const email = datos.get('email').trim();
+        const password = datos.get('password').trim();
+
+        // Si esto sale, es que el navegador leyó bien los campos
+        console.log("Datos listos:", email);
 
         if (!email || !password) {
-            alert("⚠️ Por favor, escribe tu correo y clave");
+            alert("El navegador no logra leer los datos. Por favor, limpia el historial (Caché).");
             return;
         }
 
-        if (password.length < 6) {
-            alert("⚠️ La clave debe tener al menos 6 números o letras");
-            return;
-        }
-
-        const btn = document.getElementById('btnRegistro');
-        btn.innerText = "Creando cuenta...";
-        btn.disabled = true;
+        const boton = document.getElementById('btnAccion');
+        boton.innerText = "Cargando...";
+        boton.disabled = true;
 
         firebase.auth().createUserWithEmailAndPassword(email, password)
-        .then((userCredential) => {
-            alert("✅ ¡Cuenta creada con éxito!");
-            window.location.href = "tipo.html";
-        })
-        .catch((error) => {
-            btn.innerText = "Registrarse";
-            btn.disabled = false;
-            alert("❌ ERROR: " + error.message);
-        });
+            .then(() => {
+                alert("¡Cuenta creada!");
+                window.location.href = "tipo.html";
+            })
+            .catch((error) => {
+                boton.innerText = "REGISTRARSE";
+                boton.disabled = false;
+                alert("Error de Firebase: " + error.message);
+            });
     });
 </script>
 
