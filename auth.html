@@ -3,89 +3,91 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SmartMarket - Entrar</title>
+    <title>SmartMarket Venezuela - Acceso</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
+        :root { --blue: #1e88e5; --cyan: #4fc3f7; --dark: #0f2027; --yellow: #ffeb3b; }
         body {
             margin: 0; padding: 0; font-family: 'Montserrat', sans-serif;
-            background: #0f2027; color: white;
+            background: var(--dark); color: white;
             height: 100vh; display: flex; align-items: center; justify-content: center;
+            background: radial-gradient(circle at center, #1e3c72 0%, #0f2027 100%);
         }
 
         .auth-card {
-            background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(15px);
-            padding: 40px 30px; border-radius: 25px; border: 1px solid rgba(255, 255, 255, 0.1);
-            width: 90%; max-width: 380px; box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(20px);
+            padding: 40px 30px; border-radius: 30px; border: 1px solid rgba(255, 255, 255, 0.1);
+            width: 90%; max-width: 400px; box-shadow: 0 25px 50px rgba(0,0,0,0.6);
             text-align: center;
         }
 
-        h1 { font-weight: 900; color: #4fc3f7; margin-bottom: 10px; font-size: 24px; }
-        p { font-size: 11px; opacity: 0.7; margin-bottom: 25px; }
+        h1 { font-weight: 900; color: var(--cyan); margin-bottom: 5px; font-size: 26px; letter-spacing: -1px; }
+        p { font-size: 11px; opacity: 0.7; margin-bottom: 30px; text-transform: uppercase; letter-spacing: 1px; }
 
-        .input-group { margin-bottom: 15px; text-align: left; position: relative; }
-        label { display: block; font-size: 10px; font-weight: 900; color: #4fc3f7; margin-bottom: 5px; text-transform: uppercase; }
+        .input-group { margin-bottom: 20px; text-align: left; position: relative; }
+        label { display: block; font-size: 10px; font-weight: 900; color: var(--cyan); margin-bottom: 8px; text-transform: uppercase; }
         
         input, select {
-            width: 100%; padding: 12px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.2);
-            background: rgba(0,0,0,0.3); color: white; font-family: 'Montserrat'; outline: none; box-sizing: border-box;
-            transition: 0.3s;
+            width: 100%; padding: 14px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(0,0,0,0.4); color: white; font-family: 'Montserrat'; outline: none; box-sizing: border-box;
+            transition: 0.3s; font-size: 14px;
         }
 
-        input:focus { border-color: #4fc3f7; background: rgba(0,0,0,0.5); }
+        input:focus { border-color: var(--yellow); box-shadow: 0 0 15px rgba(255, 235, 59, 0.2); }
 
-        /* Icono del Ojo para la Clave */
         .eye-icon {
-            position: absolute; right: 12px; top: 32px; 
-            cursor: pointer; color: #4fc3f7; font-size: 18px;
-            user-select: none; z-index: 10;
+            position: absolute; right: 15px; top: 38px; 
+            cursor: pointer; color: var(--cyan); font-size: 20px;
+            z-index: 10; user-select: none;
         }
 
         .btn-auth {
-            width: 100%; padding: 15px; border-radius: 12px; border: none;
-            background: #1e88e5; color: white; font-weight: 900; cursor: pointer;
-            margin-top: 10px; transition: 0.3s; text-transform: uppercase;
+            width: 100%; padding: 16px; border-radius: 15px; border: none;
+            background: var(--blue); color: white; font-weight: 900; cursor: pointer;
+            margin-top: 15px; transition: 0.4s; text-transform: uppercase;
+            box-shadow: 0 10px 20px rgba(30, 136, 229, 0.3);
         }
-        .btn-auth:hover { background: #1565c0; transform: translateY(-2px); }
+        .btn-auth:hover { background: #1565c0; transform: translateY(-3px); box-shadow: 0 15px 25px rgba(30, 136, 229, 0.5); }
 
-        .toggle-text { font-size: 11px; margin-top: 20px; cursor: pointer; color: #ffeb3b; font-weight: 700; text-decoration: underline; }
+        .toggle-text { font-size: 11px; margin-top: 25px; cursor: pointer; color: var(--yellow); font-weight: 800; text-decoration: underline; }
         
-        #extraFields { display: none; margin-bottom: 15px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px; }
+        #extraFields { display: none; margin-bottom: 20px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.1); }
     </style>
 </head>
 <body>
 
 <div class="auth-card">
-    <h1 id="authTitle">HOLA DE NUEVO</h1>
-    <p id="authDesc">Inicia sesión para continuar en San Joaquín</p>
+    <h1 id="authTitle">BIENVENIDO</h1>
+    <p id="authDesc">Accede a la red comercial de Venezuela</p>
 
     <div id="extraFields">
         <div class="input-group">
-            <label>Nombre Completo</label>
-            <input type="text" id="userName" placeholder="Ej: Juan Pérez">
+            <label>Tu Nombre Real</label>
+            <input type="text" id="userName" placeholder="Ej: Gabriel Castro">
         </div>
         <div class="input-group">
-            <label>Tipo de Usuario</label>
+            <label>¿Qué buscas hoy?</label>
             <select id="userType">
-                <option value="persona">Soy Persona (Comprador)</option>
-                <option value="comercio">Soy Comercio (Vendedor)</option>
+                <option value="persona">Soy Cliente (Quiero comprar)</option>
+                <option value="comercio">Soy Comercio (Quiero vender)</option>
             </select>
         </div>
     </div>
 
     <div class="input-group">
         <label>Correo Electrónico</label>
-        <input type="email" id="userEmail" placeholder="correo@ejemplo.com">
+        <input type="email" id="userEmail" placeholder="tu@correo.com">
     </div>
 
     <div class="input-group">
         <label>Contraseña</label>
-        <input type="password" id="userPass" placeholder="••••••••" style="padding-right: 45px;">
+        <input type="password" id="userPass" placeholder="••••••••" style="padding-right: 50px;">
         <span class="eye-icon" id="toggleEye" onclick="mostrarClave()">👁️</span>
     </div>
 
-    <button class="btn-auth" id="btnMain" onclick="authAccion()">Entrar</button>
+    <button class="btn-auth" id="btnMain" onclick="authAccion()">Entrar al Sistema</button>
 
-    <div class="toggle-text" id="btnToggle" onclick="toggleAuth()">¿No tienes cuenta? Regístrate aquí</div>
+    <div class="toggle-text" id="btnToggle" onclick="toggleAuth()">¿Nuevo en la app? Crea tu cuenta</div>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
@@ -103,8 +105,8 @@
     const db = firebase.firestore();
 
     let esRegistro = false;
+    const ADMIN_EMAIL = "gabriel01cvenus@gmail.com";
 
-    // Función para ver/ocultar clave
     function mostrarClave() {
         const passInput = document.getElementById('userPass');
         const eyeIcon = document.getElementById('toggleEye');
@@ -117,13 +119,12 @@
         }
     }
 
-    // Cambiar entre Login y Registro
     function toggleAuth() {
         esRegistro = !esRegistro;
-        document.getElementById('authTitle').innerText = esRegistro ? "CREAR CUENTA" : "HOLA DE NUEVO";
-        document.getElementById('authDesc').innerText = esRegistro ? "Únete a la red comercial de San Joaquín" : "Inicia sesión para continuar";
-        document.getElementById('btnMain').innerText = esRegistro ? "Registrarme" : "Entrar";
-        document.getElementById('btnToggle').innerText = esRegistro ? "¿Ya tienes cuenta? Inicia sesión" : "¿No tienes cuenta? Regístrate aquí";
+        document.getElementById('authTitle').innerText = esRegistro ? "NUEVA CUENTA" : "BIENVENIDO";
+        document.getElementById('authDesc').innerText = esRegistro ? "Regístrate en SmartMarket" : "Accede a la red de Venezuela";
+        document.getElementById('btnMain').innerText = esRegistro ? "Registrarme" : "Entrar al Sistema";
+        document.getElementById('btnToggle').innerText = esRegistro ? "¿Ya tienes cuenta? Inicia sesión" : "¿Nuevo en la app? Crea tu cuenta";
         document.getElementById('extraFields').style.display = esRegistro ? "block" : "none";
     }
 
@@ -133,59 +134,43 @@
         const nombre = document.getElementById('userName').value.trim();
         const tipo = document.getElementById('userType').value;
 
-        if (!email || !pass) return alert("⚠️ Por favor, ingresa correo y contraseña.");
-        if (esRegistro && !nombre) return alert("⚠️ Por favor, ingresa tu nombre.");
+        if (!email || !pass) return alert("⚠️ Ingresa correo y contraseña.");
 
         try {
             if (esRegistro) {
-                // PROCESO DE REGISTRO
+                if (!nombre) return alert("⚠️ Escribe tu nombre para el registro.");
                 const userCredential = await auth.createUserWithEmailAndPassword(email, pass);
-                const user = userCredential.user;
-                
-                // Guardar perfil extendido en Firestore
-                await db.collection("usuarios").doc(user.uid).set({
+                await db.collection("usuarios").doc(userCredential.user.uid).set({
                     nombre: nombre,
                     email: email,
                     tipo: tipo,
                     creado: new Date()
                 });
-
-                alert("✅ ¡Cuenta creada con éxito!");
-
-                // Redirección inteligente al registrarse
-                if (tipo === "comercio") {
-                    window.location.href = "registro_comercio.html";
-                } else {
-                    window.location.href = "index.html";
-                }
-
+                redirigir(email, tipo);
             } else {
-                // PROCESO DE LOGIN
                 const userCredential = await auth.signInWithEmailAndPassword(email, pass);
-                const user = userCredential.user;
-
-                // Verificar qué tipo de usuario es para mandarlo a su sitio
-                const doc = await db.collection("usuarios").doc(user.uid).get();
-                
+                const doc = await db.collection("usuarios").doc(userCredential.user.uid).get();
                 if (doc.exists) {
-                    const data = doc.data();
-                    if (data.tipo === "comercio") {
-                        window.location.href = "comercio.html";
-                    } else {
-                        window.location.href = "index.html";
-                    }
+                    redirigir(email, doc.data().tipo);
                 } else {
-                    // Si no tiene perfil creado aún (usuarios viejos), mandarlo al mapa
-                    window.location.href = "index.html";
+                    redirigir(email, "persona");
                 }
             }
         } catch (error) {
-            let mensaje = "Error en la autenticación";
-            if (error.code === "auth/weak-password") mensaje = "La contraseña debe tener al menos 6 caracteres.";
-            if (error.code === "auth/email-already-in-use") mensaje = "Este correo ya está registrado.";
-            if (error.code === "auth/user-not-found") mensaje = "Usuario no encontrado.";
-            if (error.code === "auth/wrong-password") mensaje = "Contraseña incorrecta.";
-            alert("❌ " + mensaje);
+            alert("❌ Error: " + error.message);
+        }
+    }
+
+    function redirigir(email, tipo) {
+        // LÓGICA DE REDIRECCIÓN MAESTRA
+        if (email === ADMIN_EMAIL) {
+            window.location.href = "admin.html";
+        } else if (tipo === "comercio") {
+            // Si es comercio pero no tiene local registrado, debería ir a registro_comercio
+            // Por simplicidad, lo mandamos al panel y el panel decidirá
+            window.location.href = "comercio.html";
+        } else {
+            window.location.href = "index.html";
         }
     }
 </script>
