@@ -3,35 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registro SmartMarket</title>
+    <title>Diagnóstico SmartMarket</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body class="auth-body">
 
 <div class="card">
     <h1 class="logo">Smart<span>Market</span></h1>
-    <p>Crear cuenta nueva</p>
+    <p>Prueba de Registro</p>
 
-    <form id="formRegistro">
-        <input type="email" name="email" placeholder="Correo electrónico" required>
-        <input type="password" name="password" placeholder="Contraseña (6+ caracteres)" required>
-        
-        <button type="submit" class="btn-primary" id="btnAccion">
-            REGISTRARSE
-        </button>
-    </form>
-    
-    <p style="margin-top:20px; font-size:14px;">
-        <a href="login.html" style="color:#1e88e5;">Ya tengo cuenta</a>
-    </p>
+    <input type="email" id="testEmail" placeholder="Correo electrónico">
+    <input type="password" id="testPass" placeholder="Contraseña">
+
+    <button type="button" class="btn-primary" onclick="probarRegistro()">
+        REGISTRARSE AHORA
+    </button>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
 
 <script>
-    // Tu configuración (Verificada)
     const firebaseConfig = {
         apiKey: "AIzaSyA6tYooh4CtX7ww9GRyXWhuakl2nLovtsY",
         authDomain: "smartmarket-zone-e7559.firebaseapp.com",
@@ -42,37 +34,35 @@
         firebase.initializeApp(firebaseConfig);
     }
 
-    // EL TRUCO FINAL: FormData
-    document.getElementById('formRegistro').addEventListener('submit', function(e) {
-        e.preventDefault(); // Detiene el refresco de página
+    function probarRegistro() {
+        // Capturamos los datos
+        const correo = document.getElementById("testEmail").value.trim();
+        const clave = document.getElementById("testPass").value.trim();
 
-        const datos = new FormData(this);
-        const email = datos.get('email').trim();
-        const password = datos.get('password').trim();
+        // --- DIAGNÓSTICO ---
+        // Esto nos dirá qué está leyendo el navegador realmente
+        alert("El navegador leyó esto:\nCorreo: [" + correo + "]\nClave: [" + clave + "]");
 
-        // Si esto sale, es que el navegador leyó bien los campos
-        console.log("Datos listos:", email);
-
-        if (!email || !password) {
-            alert("El navegador no logra leer los datos. Por favor, limpia el historial (Caché).");
+        if (correo === "" || clave === "") {
+            alert("❌ Error: El navegador dice que los campos están vacíos.");
             return;
         }
 
-        const boton = document.getElementById('btnAccion');
-        boton.innerText = "Cargando...";
-        boton.disabled = true;
+        if (clave.length < 6) {
+            alert("❌ La clave debe tener al menos 6 caracteres.");
+            return;
+        }
 
-        firebase.auth().createUserWithEmailAndPassword(email, password)
+        // Si pasó las pruebas, intentamos Firebase
+        firebase.auth().createUserWithEmailAndPassword(correo, clave)
             .then(() => {
-                alert("¡Cuenta creada!");
+                alert("✅ ¡ÉXITO! Cuenta creada.");
                 window.location.href = "tipo.html";
             })
             .catch((error) => {
-                boton.innerText = "REGISTRARSE";
-                boton.disabled = false;
-                alert("Error de Firebase: " + error.message);
+                alert("❌ ERROR DE FIREBASE: " + error.message);
             });
-    });
+    }
 </script>
 
 </body>
