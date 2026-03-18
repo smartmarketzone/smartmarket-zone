@@ -2,75 +2,93 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Mi Perfil - SmartMarket VZLA</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Perfil | SmartMarket</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
-        :root { --blue: #1e88e5; --cyan: #4fc3f7; --dark: #050a0e; --yellow: #ffeb3b; --red: #ff5252; }
-        body { margin: 0; font-family: 'Montserrat', sans-serif; background: var(--dark); color: white; padding-bottom: 90px; }
+        :root { --accent: #00f2fe; --bg: #0a0f12; --card: #161c20; --text: #e0e0e0; }
+        body { margin: 0; background: var(--bg); font-family: 'Poppins', sans-serif; color: var(--text); padding-bottom: 80px; }
+
+        /* CABECERA DE PERFIL */
+        .profile-header { 
+            background: linear-gradient(180deg, #1e88e5 0%, var(--bg) 100%); 
+            padding: 40px 20px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .avatar { 
+            width: 100px; height: 100px; background: var(--card); border-radius: 50%; 
+            margin: 0 auto 15px; border: 3px solid var(--accent); display: flex;
+            align-items: center; justify-content: center; font-size: 40px;
+            box-shadow: 0 0 20px rgba(0, 242, 254, 0.3);
+        }
+
+        .user-info h2 { margin: 0; font-weight: 800; letter-spacing: -1px; }
+        .user-info p { margin: 5px 0; opacity: 0.6; font-size: 13px; }
+
+        /* ESTADÍSTICAS RÁPIDAS */
+        .stats { display: flex; justify-content: center; gap: 20px; margin-top: 20px; }
+        .stat-item { background: rgba(255,255,255,0.03); padding: 10px 20px; border-radius: 15px; text-align: center; border: 1px solid rgba(255,255,255,0.05); }
+        .stat-item b { display: block; color: var(--accent); font-size: 18px; }
+        .stat-item span { font-size: 10px; text-transform: uppercase; opacity: 0.5; }
+
+        /* SECCIONES */
+        .section-title { padding: 25px 20px 10px; font-size: 14px; font-weight: 800; color: var(--accent); text-transform: uppercase; letter-spacing: 1px; }
         
-        .user-header { background: linear-gradient(135deg, #1e88e5, #00d2ff); padding: 40px 20px; text-align: center; border-radius: 0 0 30px 30px; box-shadow: 0 10px 25px rgba(0,0,0,0.4); }
-        .user-header h1 { margin: 0; font-size: 22px; font-weight: 900; text-transform: uppercase; }
+        .list-container { padding: 0 20px; }
+        .item-card { 
+            background: var(--card); padding: 15px; border-radius: 18px; 
+            margin-bottom: 12px; display: flex; align-items: center; gap: 15px;
+            border: 1px solid rgba(255,255,255,0.03); transition: 0.3s;
+        }
+        .item-card:active { transform: scale(0.97); background: #1c252a; }
+        .item-icon { width: 45px; height: 45px; background: rgba(0, 242, 254, 0.1); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; }
 
-        .tabs-user { display: flex; overflow-x: auto; padding: 15px; gap: 10px; background: rgba(0,0,0,0.2); }
-        .tab-u { padding: 12px 20px; border-radius: 15px; background: rgba(255,255,255,0.05); font-size: 11px; font-weight: 900; cursor: pointer; white-space: nowrap; border: 1px solid rgba(255,255,255,0.1); }
-        .tab-u.active { background: var(--yellow); color: #000; border-color: var(--yellow); }
+        /* NAVEGACIÓN INFERIOR (IGUAL AL INDEX) */
+        .nav-bar { position: fixed; bottom: 0; width: 100%; height: 70px; background: rgba(10, 15, 18, 0.95); backdrop-filter: blur(10px); display: flex; justify-content: space-around; align-items: center; border-top: 1px solid rgba(255,255,255,0.05); }
+        .nav-btn { color: rgba(255,255,255,0.4); text-decoration: none; text-align: center; font-size: 10px; flex: 1; }
+        .nav-btn.active { color: var(--accent); }
+        .nav-btn span { display: block; font-size: 20px; }
 
-        .section { display: none; padding: 20px; animation: slideUp 0.4s ease; }
-        .section.active { display: block; }
-
-        .search-bar-u { width: 100%; padding: 15px; border-radius: 12px; border: none; background: white; color: #333; font-weight: 700; font-family: 'Montserrat'; margin-bottom: 20px; }
-
-        .card-u { background: rgba(255,255,255,0.05); border-radius: 18px; padding: 20px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.1); }
-        .card-u h3 { margin: 0; color: var(--cyan); font-size: 15px; }
-        .card-u p { font-size: 12px; opacity: 0.7; margin: 5px 0; }
-        .price-tag { color: var(--yellow); font-weight: 900; font-size: 18px; }
-
-        .btn-u { width: 100%; padding: 12px; border-radius: 10px; border: none; font-weight: 900; cursor: pointer; margin-top: 10px; text-transform: uppercase; font-size: 11px; }
-
-        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; height: 75px; background: #0b171c; border-top: 2px solid var(--cyan); display: flex; justify-content: space-around; align-items: center; z-index: 2000; }
-        .nav-item { text-align: center; color: rgba(255,255,255,0.4); text-decoration: none; font-size: 10px; font-weight: 900; display: flex; flex-direction: column; align-items: center; }
-        .nav-item.active { color: var(--cyan); }
-
-        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .btn-logout { margin: 30px 20px; padding: 15px; border-radius: 15px; border: 1px solid #ff5252; background: none; color: #ff5252; width: calc(100% - 40px); font-weight: 800; cursor: pointer; }
     </style>
 </head>
 <body>
 
-<div class="user-header">
-    <h1 id="uNombre">HOLA, VECINO</h1>
-    <p id="uCorreo" style="font-size: 11px; opacity: 0.8; margin-top: 5px;">...</p>
-</div>
-
-<div class="tabs-user">
-    <div class="tab-u active" onclick="switchU('perfil', this)">👤 MI PERFIL</div>
-    <div class="tab-u" onclick="switchU('buscar', this)">🔍 BUSCADOR</div>
-    <div class="tab-u" onclick="switchU('favs', this)">⭐ FAVORITOS</div>
-</div>
-
-<div id="perfil" class="section active">
-    <div class="card-u">
-        <label style="font-size:10px; color:var(--cyan); font-weight:900;">NOMBRE REGISTRADO</label>
-        <div id="infoNombre" style="font-size:18px; font-weight:700; margin-bottom:15px;">...</div>
-        <button class="btn-u" style="background:var(--cyan); color:#000;" onclick="resetClave()">Cambiar Contraseña</button>
-        <button class="btn-u" style="background:var(--red); color:#fff;" onclick="salir()">Cerrar Sesión</button>
+<div class="profile-header">
+    <div class="avatar">👤</div>
+    <div class="user-info">
+        <h2 id="u-nombre">Cargando...</h2>
+        <p id="u-email">---</p>
+    </div>
+    <div class="stats">
+        <div class="stat-item"><b id="count-favs">0</b><span>Favoritos</span></div>
+        <div class="stat-item"><b id="u-tipo">Cliente</b><span>Rango</span></div>
     </div>
 </div>
 
-<div id="buscar" class="section">
-    <input type="text" id="inputBusca" class="search-bar-u" placeholder="Busca marca o producto..." oninput="busquedaReal()">
-    <div id="resultadosBusca"></div>
+<div class="section-title">⭐ Mis Tiendas Favoritas</div>
+<div class="list-container" id="fav-list">
+    <p style="opacity:0.3; font-size:12px;">Aún no has guardado ninguna tienda.</p>
 </div>
 
-<div id="favs" class="section">
-    <div id="listaFavs">
-        <p style="text-align:center; opacity:0.5;">No tienes favoritos guardados.</p>
+<div class="section-title">🛠️ Opciones de Cuenta</div>
+<div class="list-container">
+    <div class="item-card">
+        <div class="item-icon">📝</div>
+        <div><b style="font-size:14px;">Editar Perfil</b><br><small style="opacity:0.5;">Cambia tu nombre o foto</small></div>
+    </div>
+    <div class="item-card" onclick="window.location.href='index.html'">
+        <div class="item-icon">🛒</div>
+        <div><b style="font-size:14px;">Buscar Productos</b><br><small style="opacity:0.5;">Ir al mercado global</small></div>
     </div>
 </div>
 
-<nav class="bottom-nav">
-    <a href="index.html" class="nav-item"><span>📍</span>MAPA</a>
-    <a href="cliente.html" class="nav-item active"><span>👤</span>PERFIL</a>
+<button class="btn-logout" onclick="logout()">CERRAR SESIÓN</button>
+
+<nav class="nav-bar">
+    <a href="index.html" class="nav-btn"><span>📍</span>MAPA</a>
+    <a href="cliente.html" class="nav-btn active"><span>👤</span>PERFIL</a>
+    <a href="registro_comercio.html" id="nav-reg" class="nav-btn" style="display:none;"><span>🏪</span>REGISTRAR</a>
+    <a href="comercio.html" id="nav-pan" class="nav-btn" style="display:none;"><span>📊</span>PANEL</a>
 </nav>
 
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
@@ -85,80 +103,42 @@
     };
     if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
-    let uid = null;
+    const auth = firebase.auth();
 
-    firebase.auth().onAuthStateChanged(async (user) => {
+    auth.onAuthStateChanged(async (user) => {
         if (user) {
-            uid = user.uid;
-            document.getElementById('uCorreo').innerText = user.email;
-            const doc = await db.collection("usuarios").doc(uid).get();
-            if(doc.exists) {
-                document.getElementById('uNombre').innerText = "HOLA, " + doc.data().nombre.toUpperCase();
-                document.getElementById('infoNombre').innerText = doc.data().nombre;
+            document.getElementById('u-email').innerText = user.email;
+            
+            // Acceso Maestro Gabriel
+            const isAdmin = user.email === "gabriel01cvenus@gmail.com";
+            
+            const doc = await db.collection("usuarios").doc(user.uid).get();
+            if (doc.exists) {
+                const data = doc.data();
+                document.getElementById('u-nombre').innerText = data.nombre || "Usuario";
+                document.getElementById('u-tipo').innerText = isAdmin ? "ADMIN" : data.tipo.toUpperCase();
+                
+                // Mostrar botones de gestión si es Gabriel o Comercio
+                if (isAdmin || data.tipo === "comercio") {
+                    document.getElementById('nav-reg').style.display = 'block';
+                    document.getElementById('nav-pan').style.display = 'block';
+                }
             }
-            cargarFavs();
-        } else { window.location.href = "auth.html"; }
+            loadFavorites(user.uid);
+        } else {
+            window.location.href = "auth.html";
+        }
     });
 
-    async function busquedaReal() {
-        const txt = document.getElementById('inputBusca').value.toLowerCase();
-        const res = document.getElementById('resultadosBusca');
-        if(txt.length < 2) { res.innerHTML = ""; return; }
-
-        const prods = await db.collection("productos").get();
-        res.innerHTML = "";
-        
-        prods.forEach(async (docP) => {
-            const p = docP.data();
-            if(p.nombre.toLowerCase().includes(txt)) {
-                const local = await db.collection("comercios").doc(p.comercioID).get();
-                res.innerHTML += `
-                    <div class="card-u">
-                        <div style="display:flex; justify-content:space-between;">
-                            <h3>${p.nombre}</h3>
-                            <span class="price-tag">Bs. ${p.precio.toFixed(2)}</span>
-                        </div>
-                        <p>Tienda: <b>${local.data().nombre}</b></p>
-                        <button class="btn-u" style="background:var(--blue); color:white;" onclick="verEnMapa(${local.data().lat}, ${local.data().lng})">Ir a la tienda 📍</button>
-                    </div>`;
-            }
-        });
+    async function loadFavorites(uid) {
+        // Aquí conectaremos luego con la colección de "favoritos"
+        // Por ahora dejamos el diseño listo
+        console.log("Cargando favoritos de:", uid);
     }
 
-    function cargarFavs() {
-        db.collection("usuarios").doc(uid).collection("favoritos").onSnapshot(async snap => {
-            const cont = document.getElementById('listaFavs');
-            cont.innerHTML = "";
-            if(snap.empty) cont.innerHTML = "<p style='text-align:center; opacity:0.5;'>Aún no tienes favoritos.</p>";
-            
-            snap.forEach(async (docF) => {
-                const com = await db.collection("comercios").doc(docF.data().idComercio).get();
-                const d = com.data();
-                cont.innerHTML += `
-                    <div class="card-u" style="border-left: 4px solid var(--yellow);">
-                        <h3>${d.nombre.toUpperCase()}</h3>
-                        <p>Ubicación: Venezuela</p>
-                        <button class="btn-u" style="background:var(--yellow); color:#000;" onclick="verEnMapa(${d.lat}, ${d.lng})">Ver en Mapa</button>
-                    </div>`;
-            });
-        });
+    function logout() {
+        auth.signOut().then(() => window.location.href = "auth.html");
     }
-
-    function verEnMapa(lat, lng) {
-        sessionStorage.setItem('targetLat', lat);
-        sessionStorage.setItem('targetLng', lng);
-        window.location.href = "index.html";
-    }
-
-    function switchU(id, el) {
-        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-        document.querySelectorAll('.tab-u').forEach(t => t.classList.remove('active'));
-        document.getElementById(id).classList.add('active');
-        el.classList.add('active');
-    }
-
-    function salir() { firebase.auth().signOut().then(() => window.location.href="auth.html"); }
-    function resetClave() { firebase.auth().sendPasswordResetEmail(firebase.auth().currentUser.email).then(() => alert("✅ Link enviado a tu correo")); }
 </script>
 </body>
 </html>
