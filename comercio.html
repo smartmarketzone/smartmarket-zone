@@ -4,11 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Panel Comercio - SmartMarket VZLA</title>
+    <link rel="icon" href="https://fav.farm/📊">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
         :root { --blue: #1e88e5; --cyan: #4fc3f7; --dark: #050a0e; --yellow: #ffeb3b; --red: #ff5252; --card: rgba(255,255,255,0.05); }
         body { margin: 0; font-family: 'Montserrat', sans-serif; background: var(--dark); color: white; padding-bottom: 90px; }
         
+        /* Pantalla de carga mientras verifica */
+        #loading-screen { position: fixed; top:0; left:0; width:100%; height:100%; background: var(--dark); z-index: 5000; display: flex; align-items: center; justify-content: center; }
+
         .header { background: #0b171c; padding: 25px; text-align: center; border-bottom: 2px solid var(--cyan); }
         .header h1 { margin: 0; font-size: 20px; color: var(--cyan); text-transform: uppercase; letter-spacing: 1px; }
 
@@ -21,23 +25,24 @@
 
         .card { background: var(--card); border-radius: 20px; padding: 20px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 20px; }
         label { display: block; font-size: 10px; font-weight: 900; color: var(--cyan); margin-bottom: 8px; }
-        input { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.5); color: white; outline: none; box-sizing: border-box; font-family: 'Montserrat'; }
+        input { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.5); color: white; outline: none; box-sizing: border-box; font-family: 'Montserrat'; margin-bottom: 10px; }
         
         .btn-main { width: 100%; background: var(--blue); color: white; border: none; padding: 15px; border-radius: 12px; font-weight: 900; cursor: pointer; margin-top: 15px; text-transform: uppercase; }
         
-        /* Lista de Productos */
         .p-item { background: rgba(255,255,255,0.03); padding: 15px; border-radius: 15px; margin-bottom: 10px; border-left: 4px solid var(--cyan); display: flex; justify-content: space-between; align-items: center; }
         .p-info h3 { margin: 0; font-size: 14px; text-transform: uppercase; }
         .p-info b { color: var(--yellow); font-size: 16px; }
         .btn-del { background: var(--red); border: none; color: white; padding: 8px; border-radius: 8px; font-size: 10px; font-weight: 900; }
 
         .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; height: 75px; background: #0b171c; border-top: 2px solid var(--cyan); display: flex; justify-content: space-around; align-items: center; z-index: 2000; }
-        .nav-item { text-align: center; color: rgba(255,255,255,0.4); text-decoration: none; font-size: 10px; font-weight: 900; display: flex; flex-direction: column; align-items: center; }
+        .nav-item { text-align: center; color: rgba(255,255,255,0.4); text-decoration: none; font-size: 10px; font-weight: 900; display: flex; flex-direction: column; align-items: center; flex:1; }
         .nav-item.active { color: var(--cyan); }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
+
+<div id="loading-screen">Verificando Credenciales...</div>
 
 <div class="header">
     <h1 id="nombreLocal">MI COMERCIO</h1>
@@ -53,7 +58,7 @@
     <div class="card">
         <label>Producto / Marca</label>
         <input type="text" id="pNombre" placeholder="Ej: Harina Pan 1kg">
-        <div style="display:flex; gap:10px; margin-top:10px;">
+        <div style="display:flex; gap:10px;">
             <div style="flex:1;"><label>Precio Bs.</label><input type="number" id="pPrecio" placeholder="0.00"></div>
             <div style="flex:1;"><label>Stock</label><input type="number" id="pStock" placeholder="Cant."></div>
         </div>
@@ -64,10 +69,9 @@
 
 <div id="ajustes" class="content">
     <div class="card">
-        <label>Ubicación GPS</label>
+        <label>Ubicación GPS Detectada</label>
         <input type="text" id="locGPS" readonly style="opacity: 0.6;">
-        <label style="margin-top:15px;">Seguridad</label>
-        <button class="btn-main" style="background: var(--cyan); color: #000;" onclick="cambiarClave()">Enviar Link Cambio de Clave</button>
+        <button class="btn-main" style="background: var(--cyan); color: #000;" onclick="resetClave()">Cambiar Contraseña</button>
         <button class="btn-main" style="background: var(--red); margin-top:10px;" onclick="cerrarSesion()">Cerrar Sesión</button>
     </div>
 </div>
@@ -91,18 +95,40 @@
     const db = firebase.firestore();
     let userUID = null;
 
+    // --- EL PORTERO CORREGIDO ---
     firebase.auth().onAuthStateChanged(async (user) => {
         if (user) {
             userUID = user.uid;
-            const docU = await db.collection("usuarios").doc(user.uid).get();
-            if(!docU.exists || docU.data().tipo !== "comercio") {
-                window.location.href = "index.html"; 
-                return;
+            try {
+                // Esperamos la respuesta de Firestore antes de cualquier cosa
+                const docU = await db.collection("usuarios").doc(userUID).get();
+                
+                if (docU.exists) {
+                    const data = docU.data();
+                    
+                    // Verificación estricta de tipo
+                    if (data.tipo === "comercio") {
+                        // Acceso permitido
+                        document.getElementById('loading-screen').style.display = 'none';
+                        document.getElementById('correoLocal').innerText = user.email;
+                        cargarDatosLocal();
+                        cargarLista();
+                    } else {
+                        // Es una persona normal, mandarla al mapa
+                        window.location.href = "index.html";
+                    }
+                } else {
+                    // El usuario no tiene perfil en la base de datos
+                    window.location.href = "auth.html";
+                }
+            } catch (error) {
+                console.error("Error al verificar:", error);
+                window.location.href = "index.html";
             }
-            document.getElementById('correoLocal').innerText = user.email;
-            cargarDatosLocal();
-            cargarLista();
-        } else { window.location.href = "auth.html"; }
+        } else {
+            // No ha iniciado sesión
+            window.location.href = "auth.html";
+        }
     });
 
     async function cargarDatosLocal() {
@@ -118,7 +144,7 @@
         const precio = parseFloat(document.getElementById('pPrecio').value);
         const stock = parseInt(document.getElementById('pStock').value);
 
-        if(!nombre || isNaN(precio)) return alert("⚠️ Datos incompletos");
+        if(!nombre || isNaN(precio)) return alert("⚠️ Completa los datos");
 
         await db.collection("productos").add({
             nombre, precio, stock, comercioID: userUID, fecha: new Date()
@@ -130,7 +156,7 @@
     }
 
     function cargarLista() {
-        db.collection("productos").where("comercioID", "==", userUID).onSnapshot(snap => {
+        db.collection("productos").where("comercioID", "==", userUID).orderBy("fecha", "desc").onSnapshot(snap => {
             const cont = document.getElementById('listaProductos');
             cont.innerHTML = "";
             snap.forEach(doc => {
@@ -154,9 +180,9 @@
         el.classList.add('active');
     }
 
-    function eliminarP(id) { if(confirm("¿Eliminar producto?")) db.collection("productos").doc(id).delete(); }
+    function eliminarP(id) { if(confirm("¿Eliminar?")) db.collection("productos").doc(id).delete(); }
     function cerrarSesion() { firebase.auth().signOut().then(() => window.location.href="auth.html"); }
-    function cambiarClave() { firebase.auth().sendPasswordResetEmail(firebase.auth().currentUser.email).then(() => alert("✅ Correo enviado")); }
+    function resetClave() { firebase.auth().sendPasswordResetEmail(firebase.auth().currentUser.email).then(() => alert("✅ Correo enviado")); }
 </script>
 </body>
 </html>
