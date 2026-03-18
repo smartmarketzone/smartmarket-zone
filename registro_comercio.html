@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Registrar Comercio</title>
+<link rel="stylesheet" href="style.css">
+
+<style>
+#map{
+height:250px;
+margin-top:10px;
+border-radius:10px;
+}
+</style>
+
+</head>
+
+<body class="auth-body">
+
+<div class="card">
+
+<h2>Datos del Comercio</h2>
+
+<input type="text" id="nombreComercio" placeholder="Nombre del comercio">
+<input type="text" id="direccion" placeholder="Dirección">
+
+<p>Selecciona tu ubicación:</p>
+<div id="map"></div>
+
+<button onclick="guardarComercio()">Guardar y continuar</button>
+
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+
+<script src="auth.js"></script>
+
+<!-- GOOGLE MAPS -->
+<script src="https://maps.googleapis.com/maps/api/js?key=TU_API_KEY"></script>
+
+<script>
+let map;
+let marcador;
+let lat = null;
+let lng = null;
+
+function initMap(){
+
+map = new google.maps.Map(document.getElementById("map"), {
+center: {lat:10.162, lng:-68.007}, // Carabobo aprox
+zoom: 12
+});
+
+map.addListener("click", function(e){
+
+lat = e.latLng.lat();
+lng = e.latLng.lng();
+
+if(marcador){
+marcador.setMap(null);
+}
+
+marcador = new google.maps.Marker({
+position: e.latLng,
+map: map
+});
+
+});
+
+}
+
+function guardarComercio(){
+
+let nombre = document.getElementById("nombreComercio").value;
+let direccion = document.getElementById("direccion").value;
+
+let user = firebase.auth().currentUser;
+
+if(!lat || !lng){
+alert("Selecciona ubicación en el mapa");
+return;
+}
+
+db.collection("comercios").doc(user.uid).set({
+nombre: nombre,
+direccion: direccion,
+lat: lat,
+lng: lng
+})
+.then(()=>{
+window.location.href = "comercio.html";
+})
+.catch(err=>{
+alert("Error al guardar comercio");
+console.error(err);
+});
+
+}
+
+window.onload = initMap;
+</script>
+
+</body>
+</html>
