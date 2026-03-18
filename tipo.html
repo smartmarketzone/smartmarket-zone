@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SmartMarket - Perfil</title>
+    <title>SmartMarket - Selección de Perfil</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
         body {
@@ -16,68 +16,68 @@
         }
 
         .card {
-            background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 20px; padding: 30px 20px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px; padding: 35px 20px; box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
             width: 85%; max-width: 360px; text-align: center; color: white;
         }
 
-        .logo { font-weight: 900; font-size: 26px; margin-bottom: 5px; }
+        .logo { font-weight: 900; font-size: 28px; margin-bottom: 5px; }
         .logo span { color: #4fc3f7; }
-        .slogan { font-size: 11px; opacity: 0.9; margin-bottom: 25px; text-transform: uppercase; letter-spacing: 1px; }
+        .slogan { font-size: 11px; opacity: 0.9; margin-bottom: 30px; text-transform: uppercase; letter-spacing: 1px; }
 
-        .role-container { display: flex; flex-direction: column; gap: 15px; }
+        .role-container { display: flex; flex-direction: column; gap: 18px; }
 
         .role-card {
-            background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 15px; padding: 15px; cursor: pointer; transition: 0.3s;
+            background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px; padding: 20px; cursor: pointer; transition: 0.3s;
             display: flex; flex-direction: column; align-items: center;
         }
 
-        .role-card:active { transform: scale(0.97); background: rgba(30, 136, 229, 0.4); }
+        .role-card:active { transform: scale(0.96); background: rgba(30, 136, 229, 0.5); }
 
         .role-tag {
             background: #ffeb3b; color: #000; font-size: 10px;
-            font-weight: 900; padding: 3px 12px; border-radius: 4px; margin-bottom: 8px;
+            font-weight: 900; padding: 4px 14px; border-radius: 5px; margin-bottom: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
         }
 
-        .role-icon { font-size: 35px; margin-bottom: 5px; }
-        h3 { margin: 0; font-size: 18px; }
-        .role-card p { font-size: 12px; opacity: 0.8; margin-top: 5px; }
+        .role-icon { font-size: 40px; margin-bottom: 8px; }
+        h3 { margin: 0; font-size: 19px; font-weight: 700; }
+        .role-card p { font-size: 12px; opacity: 0.8; margin-top: 8px; line-height: 1.4; }
 
-        .logout-box { margin-top: 25px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.1); }
-        .logout-btn { font-size: 12px; color: #4fc3f7; text-decoration: none; cursor: pointer; font-weight: bold; }
-        
-        /* Pantalla de carga */
-        #loader { display: none; margin-top: 10px; font-size: 12px; color: #ffeb3b; }
+        #loader { display: none; margin-top: 15px; font-size: 13px; color: #ffeb3b; font-weight: bold; }
+
+        .logout-box { margin-top: 30px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.1); }
+        .logout-btn { font-size: 12px; color: #4fc3f7; cursor: pointer; font-weight: bold; text-decoration: underline; }
     </style>
 </head>
 <body>
 
 <div class="card">
     <div class="logo">SMART<span>MARKET</span></div>
-    <p class="slogan">Selecciona tu perfil</p>
+    <p class="slogan">Selecciona tu perfil de usuario</p>
 
     <div class="role-container">
         <div class="role-card" onclick="seleccionarRol('comercio')">
             <span class="role-tag">COMERCIO</span> 
-            <span class="role-icon">📍🏪</span>
+            <span class="role-icon">🏪</span>
             <h3>Soy un Comercio</h3>
-            <p>Ubica tu negocio en el mapa y vende más.</p>
+            <p>Registra tu local en el mapa y publica tus productos.</p>
         </div>
 
         <div class="role-card" onclick="seleccionarRol('cliente')">
             <span class="role-tag">PERSONA</span>
-            <span class="role-icon">🛰️🛍️</span>
+            <span class="role-icon">🛍️</span>
             <h3>Soy un Cliente</h3>
-            <p>Encuentra productos cerca de tu ubicación.</p>
+            <p>Encuentra tiendas y ofertas cerca de tu ubicación.</p>
         </div>
     </div>
 
-    <div id="loader">Guardando perfil...</div>
+    <div id="loader">Cargando perfil...</div>
 
     <div class="logout-box">
-        <span class="logout-btn" onclick="logout()">← Cerrar sesión e ir al inicio</span>
+        <span class="logout-btn" onclick="logout()">Cerrar sesión</span>
     </div>
 </div>
 
@@ -96,35 +96,61 @@
     const auth = firebase.auth();
     const db = firebase.firestore();
 
-    // 1. EL OBSERVADOR: Mantiene la sesión viva
-    let usuarioActivo = null;
+    let usuarioActual = null;
+
+    // OBSERVADOR DE SESIÓN: Crucial para que no te regrese al login
     auth.onAuthStateChanged((user) => {
         if (user) {
-            usuarioActivo = user;
-            console.log("Usuario detectado:", user.email);
+            usuarioActual = user;
+            console.log("Sesión activa:", user.email);
         } else {
-            console.log("No hay usuario, redirigiendo...");
-            // Solo redirige si no estamos en proceso de carga
-            if(!window.isProcessing) window.location.href = "auth.html";
+            // Solo redirigir si el usuario realmente cerró sesión
+            if (!window.isRedirecting) {
+                window.location.href = "auth.html";
+            }
         }
     });
 
     function seleccionarRol(tipo) {
-        if (!usuarioActivo) {
-            alert("Espera un momento a que cargue tu sesión...");
+        if (!usuarioActual) {
+            alert("Estamos verificando tu cuenta, intenta de nuevo en 2 segundos...");
             return;
         }
 
-        window.isProcessing = true;
+        // Bloqueamos la UI para evitar múltiples clics
         document.getElementById('loader').style.display = "block";
+        window.isRedirecting = true;
 
-        // Guardamos en Firestore
-        db.collection("usuarios").doc(usuarioActivo.uid).set({
-            email: usuarioActivo.email,
+        // Guardamos la elección (Pase lo que pase con la DB, redirigimos)
+        db.collection("usuarios").doc(usuarioActual.uid).set({
+            email: usuarioActual.email,
             tipo: tipo,
-            actualizado: firebase.firestore.FieldValue.serverTimestamp()
+            ultimaActualizacion: firebase.firestore.FieldValue.serverTimestamp()
         }, { merge: true })
         .then(() => {
-            console.log("Rol guardado: " + tipo);
-            if (tipo === 'comercio') {
-                window.location.href = "registro_comercio.html
+            irAPagina(tipo);
+        })
+        .catch(error => {
+            console.error("Error al guardar en Firestore:", error);
+            // Si las reglas de Firebase fallan, igual dejamos pasar al usuario
+            irAPagina(tipo);
+        });
+    }
+
+    function irAPagina(tipo) {
+        if (tipo === 'comercio') {
+            window.location.href = "registro_comercio.html";
+        } else {
+            window.location.href = "cliente.html";
+        }
+    }
+
+    function logout() {
+        auth.signOut().then(() => {
+            window.location.href = "auth.html";
+        });
+    }
+</script>
+
+</body>
+</html>
