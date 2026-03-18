@@ -5,31 +5,75 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Registro - SmartMarket</title>
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800&display=swap" rel="stylesheet">
 </head>
 <body class="auth-body">
 
 <div class="card">
-    <div class="logo-icon">🛒</div>
     <h1 class="logo">Smart<span>Market</span></h1>
-    <p class="slogan">Crea tu cuenta gratis</p>
+    <p class="slogan">Crea tu cuenta</p>
 
-    <input type="email" id="regEmail" placeholder="Correo electrónico" inputmode="email">
-    <input type="password" id="regPass" placeholder="Contraseña (6+ caracteres)">
+    <input type="email" id="correoInput" placeholder="Correo electrónico" inputmode="email">
+    <input type="password" id="claveInput" placeholder="Contraseña (mín. 6 caracteres)">
 
-    <button type="button" class="btn-primary" id="btnRegistro" onclick="register()">
-        Registrarse ahora
+    <button type="button" class="btn-primary" id="btnRegistro">
+        Registrarse
     </button>
     
-    <p style="margin-top:20px; font-size:14px; color: #666;">
-        ¿Ya tienes cuenta? <a href="login.html" style="color:#1e88e5; font-weight:bold; text-decoration:none;">Inicia Sesión</a>
+    <p style="margin-top:20px; font-size:14px;">
+        ¿Ya tienes cuenta? <a href="login.html" style="color:#1e88e5;">Inicia sesión</a>
     </p>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
-<script src="auth.js"></script>
+
+<script>
+    // Configuración de tu proyecto
+    const firebaseConfig = {
+        apiKey: "AIzaSyA6tYooh4CtX7ww9GRyXWhuakl2nLovtsY",
+        authDomain: "smartmarket-zone-e7559.firebaseapp.com",
+        projectId: "smartmarket-zone-e7559"
+    };
+
+    if (!firebase.apps.length) {
+        firebase.initializeApp(firebaseConfig);
+    }
+
+    // Escuchamos el clic
+    document.getElementById('btnRegistro').addEventListener('click', function() {
+        // LEEMOS LOS IDS QUE PUSIMOS ARRIBA
+        const email = document.getElementById("correoInput").value.trim();
+        const password = document.getElementById("claveInput").value.trim();
+
+        console.log("Datos capturados:", email, password); // Esto sale en la consola del PC
+
+        if (!email || !password) {
+            alert("⚠️ Por favor, escribe tu correo y clave");
+            return;
+        }
+
+        if (password.length < 6) {
+            alert("⚠️ La clave debe tener al menos 6 números o letras");
+            return;
+        }
+
+        const btn = document.getElementById('btnRegistro');
+        btn.innerText = "Creando cuenta...";
+        btn.disabled = true;
+
+        firebase.auth().createUserWithEmailAndPassword(email, password)
+        .then((userCredential) => {
+            alert("✅ ¡Cuenta creada con éxito!");
+            window.location.href = "tipo.html";
+        })
+        .catch((error) => {
+            btn.innerText = "Registrarse";
+            btn.disabled = false;
+            alert("❌ ERROR: " + error.message);
+        });
+    });
+</script>
 
 </body>
 </html>
