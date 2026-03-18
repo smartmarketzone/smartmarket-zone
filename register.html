@@ -1,15 +1,30 @@
 <!DOCTYPE html>
-<html>
-<body>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Registro - SmartMarket</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="auth-body">
 
-<h2>Registro</h2>
+<div class="card">
+    <h2 class="logo">Crear Cuenta</h2>
+    <p class="slogan">Únete a la zona inteligente</p>
 
-<input type="email" id="email" placeholder="Correo"><br>
-<input type="password" id="password" placeholder="Contraseña"><br>
+    <input type="email" id="regEmail" placeholder="Correo electrónico">
+    <input type="password" id="regPass" placeholder="Contraseña (mín. 6 caracteres)">
 
-<button onclick="register()">Registrarse</button>
+    <button class="btn-primary" onclick="register()">Registrarse</button>
+    
+    <p style="margin-top:15px; font-size:13px;">
+        ¿Ya tienes cuenta? <a href="login.html" style="color:#1e88e5;">Inicia sesión</a>
+    </p>
+</div>
 
-<script type="module" src="auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+<script src="auth.js"></script>
 
 </body>
 </html>
