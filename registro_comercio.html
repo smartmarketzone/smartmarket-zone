@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SmartMarket - Registro Pro</title>
+    <title>SmartMarket - Registro de Comercio</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
@@ -32,22 +32,21 @@
             border-radius: 8px; padding: 10px; color: white; box-sizing: border-box; outline: none; font-family: 'Montserrat';
         }
 
-        /* DISEÑO DE HORARIOS EN FILA */
-        .horarios-row { display: flex; gap: 10px; margin-bottom: 12px; }
-        .horarios-row div { flex: 1; }
+        .row { display: flex; gap: 10px; margin-bottom: 12px; }
+        .row div { flex: 1; }
 
-        /* DISEÑO DEL MAPA Y BOTÓN GPS */
+        /* CONTENEDOR DE MAPA */
         .map-container { position: relative; margin: 10px 0; border-radius: 12px; overflow: hidden; border: 2px solid #1e88e5; }
         #map { height: 200px; width: 100%; z-index: 1; }
         
+        /* BOTÓN GPS FLOTANTE SOBRE EL MAPA */
         .btn-gps {
             position: absolute; top: 10px; right: 10px; z-index: 1000;
             background: #ffffff; color: #1e88e5; border: none; border-radius: 50%;
             width: 40px; height: 40px; cursor: pointer; font-size: 20px;
             box-shadow: 0 4px 10px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center;
-            transition: 0.3s;
         }
-        .btn-gps:active { transform: scale(0.9); background: #4fc3f7; color: white; }
+        .btn-gps:active { transform: scale(0.9); background: #4fc3f7; }
 
         .btn-save {
             width: 100%; background: #1e88e5; color: white; border: none;
@@ -63,24 +62,42 @@
 <body>
 
 <div class="card">
-    <h2>REGISTRO DE COMERCIO 🏪</h2>
+    <h2>CONFIGURAR COMERCIO 🏪</h2>
     
     <div class="input-group">
         <label>Nombre del Negocio</label>
-        <input type="text" id="nombreNegocio" placeholder="Ej: Super Market La Bendición">
+        <input type="text" id="nombreNegocio" placeholder="Ej: Bodega El Éxito">
     </div>
 
-    <div class="horarios-row">
+    <div class="row">
         <div class="input-group">
             <label>Apertura</label>
-            <input type="time" id="horaAbre" value="08:00">
+            <input type="time" id="abre" value="08:00">
         </div>
         <div class="input-group">
             <label>Cierre</label>
-            <input type="time" id="horaCierra" value="18:00">
+            <input type="time" id="cierra" value="18:00">
         </div>
     </div>
 
     <div class="input-group">
-        <label>Dirección Física (Se llena al usar el mapa)</label>
-        <textarea id="direccionNegocio" rows="2" placeholder
+        <label>Dirección (Manual o por Mapa)</label>
+        <textarea id="direccionNegocio" rows="2" placeholder="Toca el mapa o usa el GPS para llenar esto..."></textarea>
+    </div>
+
+    <div class="input-group">
+        <label>Ubicación en Mapa</label>
+        <p class="info-gps">📍 Toca tu local o usa el botón blanco 🎯</p>
+        <div class="map-container">
+            <div id="map"></div>
+            <button class="btn-gps" onclick="usarGPS()" title="Ubicación Actual">🎯</button>
+        </div>
+    </div>
+
+    <button class="btn-save" id="btnFinalizar" onclick="guardarComercio()">Guardar y Continuar</button>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.
