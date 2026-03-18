@@ -3,89 +3,86 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SmartMarket VZLA - Mapa</title>
-    <link rel="icon" href="https://fav.farm/🛒">
+    <title>SmartMarket San Joaquín</title>
+    
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
+    
     <style>
         :root { --blue: #1e88e5; --cyan: #00d2ff; --dark: #050a0e; --yellow: #ffeb3b; }
-        html, body { height: 100vh; width: 100vw; margin: 0; padding: 0; background: #000; overflow: hidden; font-family: 'Montserrat', sans-serif; color: white; }
         
-        /* CONTENEDOR DEL MAPA (A prueba de fallos) */
-        #map-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; background: #050a0e; }
-        #map { width: 100%; height: 100%; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        
+        html, body { 
+            height: 100%; width: 100%; margin: 0; padding: 0; 
+            background-color: var(--dark) !important; 
+            font-family: 'Montserrat', sans-serif; color: white; overflow: hidden;
+        }
 
-        /* MAGIA CYBERPUNK: Filtro para oscurecer el mapa de OpenStreetMap */
+        /* CAPA DEL MAPA CON FILTRO NEÓN */
+        #map { 
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
+            z-index: 10; background: #000;
+        }
         .leaflet-tile { filter: invert(100%) hue-rotate(180deg) brightness(95%) contrast(90%); }
+        .leaflet-container { background: #050a0e !important; }
 
-        /* BUSCADOR EFECTO CRISTAL */
-        .search-container { position: absolute; top: 20px; left: 50%; transform: translateX(-50%); z-index: 1000; width: 90%; max-width: 450px; }
+        /* INTERFAZ SUPERIOR (BUSCADOR) */
+        .search-container { 
+            position: fixed; top: 20px; left: 50%; transform: translateX(-50%); 
+            z-index: 1000; width: 90%; max-width: 450px; 
+        }
         .search-box { 
             width: 100%; padding: 15px 25px; border-radius: 30px; 
-            background: rgba(5, 10, 14, 0.7); backdrop-filter: blur(15px);
-            border: 1px solid var(--cyan); color: white;
-            box-shadow: 0 10px 30px rgba(0, 210, 255, 0.2); font-weight: 800; outline: none; box-sizing: border-box;
+            background: rgba(11, 23, 28, 0.85); backdrop-filter: blur(15px);
+            border: 1px solid var(--cyan); color: white; font-weight: 800; outline: none;
+            box-shadow: 0 0 25px rgba(0, 210, 255, 0.3);
         }
-        .search-box::placeholder { color: rgba(255,255,255,0.6); }
 
-        /* MODAL EFECTO CRISTAL */
+        /* MODAL DESLIZABLE */
         #store-modal { 
             position: fixed; bottom: -100%; left: 0; width: 100%; height: 65vh; 
-            background: rgba(11, 23, 28, 0.85); backdrop-filter: blur(20px);
+            background: rgba(5, 10, 14, 0.9); backdrop-filter: blur(20px);
             border-top: 2px solid var(--cyan); border-radius: 30px 30px 0 0; 
-            z-index: 3000; transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.1); 
-            padding: 30px 25px; box-sizing: border-box; box-shadow: 0 -10px 40px rgba(0,0,0,0.8); overflow-y: auto; 
+            z-index: 3000; transition: transform 0.4s cubic-bezier(0.1, 0.7, 0.1, 1); 
+            padding: 25px; box-shadow: 0 -10px 40px rgba(0,0,0,0.8); overflow-y: auto;
         }
-        #store-modal.active { bottom: 0; }
-        
-        .modal-drag { width: 50px; height: 5px; background: rgba(255,255,255,0.3); border-radius: 10px; margin: -10px auto 20px; }
-        
-        /* NAVEGACIÓN INFERIOR NEÓN */
+        #store-modal.active { transform: translateY(-100%); bottom: 0; }
+
+        /* NAVEGACIÓN INFERIOR */
         .bottom-nav { 
             position: fixed; bottom: 0; left: 0; right: 0; height: 80px; 
-            background: rgba(5, 10, 14, 0.9); backdrop-filter: blur(15px);
-            border-top: 1px solid rgba(0, 210, 255, 0.3); box-shadow: 0 -5px 20px rgba(0,0,0,0.5);
-            display: flex; justify-content: space-around; align-items: center; z-index: 2000; padding-bottom: env(safe-area-inset-bottom);
+            background: rgba(5, 10, 14, 0.95); backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(0, 210, 255, 0.3);
+            display: flex; justify-content: space-around; align-items: center; z-index: 2000;
         }
-        .nav-item { text-align: center; color: rgba(255,255,255,0.4); text-decoration: none; font-size: 10px; font-weight: 900; flex: 1; display: flex; flex-direction: column; transition: 0.3s; }
-        .nav-item.active { color: var(--cyan); text-shadow: 0 0 10px rgba(0, 210, 255, 0.5); }
-        .nav-item span { font-size: 20px; margin-bottom: 5px; filter: grayscale(100%); transition: 0.3s; }
-        .nav-item.active span { filter: grayscale(0%); }
-        
-        /* ELEMENTOS DEL INVENTARIO */
-        .inventory-item { display: flex; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid rgba(255,255,255,0.1); font-size: 14px; }
-        .inventory-item:last-child { border-bottom: none; }
-        
-        .btn-neon { width: 100%; padding: 15px; margin-top: 20px; border-radius: 15px; border: none; background: linear-gradient(90deg, var(--blue), var(--cyan)); color: white; font-weight: 900; cursor: pointer; text-transform: uppercase; box-shadow: 0 5px 15px rgba(0, 210, 255, 0.3); }
+        .nav-item { text-align: center; color: rgba(255,255,255,0.4); text-decoration: none; font-size: 10px; font-weight: 900; flex: 1; transition: 0.3s; }
+        .nav-item.active { color: var(--cyan); text-shadow: 0 0 10px var(--cyan); }
+        .nav-item span { display: block; font-size: 22px; margin-bottom: 4px; }
+
+        .inventory-item { display: flex; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .btn-action { width: 100%; padding: 16px; border-radius: 15px; border: none; background: linear-gradient(90deg, var(--blue), var(--cyan)); color: white; font-weight: 900; margin-top: 20px; cursor: pointer; text-transform: uppercase; }
     </style>
 </head>
 <body>
 
 <div class="search-container">
-    <input type="text" id="buscador" class="search-box" placeholder="🔍 Buscar Tiendas o Productos..." oninput="filtrarMapa()">
+    <input type="text" id="buscador" class="search-box" placeholder="🔍 Buscar Tienda o Producto..." oninput="filtrarMapa()">
 </div>
 
-<div id="map-container">
-    <div id="map"></div>
-</div>
+<div id="map"></div>
 
 <div id="store-modal">
-    <div class="modal-drag" onclick="cerrarDetalle()"></div>
-    <span style="font-size:10px; background:var(--yellow); color:black; padding:4px 10px; border-radius:20px; font-weight:900;">TIENDA VERIFICADA</span>
-    <h2 id="store-name" style="color:var(--cyan); margin: 10px 0; text-transform: uppercase; font-size: 24px; letter-spacing: -1px;">NOMBRE DE TIENDA</h2>
-    
-    <div style="margin-top:25px; background: rgba(0,0,0,0.3); padding: 15px; border-radius: 15px; border: 1px solid rgba(255,255,255,0.05);">
-        <h3 style="margin-top:0; font-size: 12px; color: rgba(255,255,255,0.5);">INVENTARIO ACTUAL</h3>
-        <div id="modal-products"></div>
-    </div>
-    
-    <button id="btn-gps" class="btn-neon">🚗 TRAZAR RUTA GPS</button>
+    <div onclick="cerrarDetalle()" style="width:40px; height:5px; background:rgba(255,255,255,0.3); margin: 0 auto 20px; border-radius:10px; cursor:pointer;"></div>
+    <h2 id="store-name" style="color:var(--cyan); margin:0; text-transform: uppercase; letter-spacing: 1px;">NOMBRE</h2>
+    <div id="modal-products" style="margin-top:20px;"></div>
+    <button id="btn-gps" class="btn-action">TRAZAR RUTA GPS 🚗</button>
 </div>
 
 <nav class="bottom-nav">
     <a href="index.html" class="nav-item active"><span>📍</span>MAPA</a>
     <a href="cliente.html" class="nav-item"><span>👤</span>PERFIL</a>
-    <a href="registro_comercio.html" id="nav-reg" class="nav-item" style="display:none;"><span>🏪</span>UBICACIÓN</a>
+    <a href="registro_comercio.html" id="nav-reg" class="nav-item" style="display:none;"><span>🏪</span>REGISTRAR</a>
     <a href="comercio.html" id="nav-pan" class="nav-item" style="display:none;"><span>📊</span>PANEL</a>
 </nav>
 
@@ -102,60 +99,52 @@
     };
     if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
-
     let map, marcadores = [];
 
-    // --- LÓGICA DE ROLES Y ACCESO MAESTRO (ADMIN) ---
+    // --- ACCESO MAESTRO PARA GABRIEL ---
     firebase.auth().onAuthStateChanged(async (user) => {
         if (user) {
-            // 👇👇👇 ¡AQUÍ ESTÁ EL SECRETO! 👇👇👇
-            // BORRA "TU_CORREO_AQUI@gmail.com" Y PON TU CORREO REAL ENTRE LAS COMILLAS
-            const correosAdmin = ["gabriel01cvenus@gmail.com"]; 
-            // 👆👆👆👆👆👆👆👆👆👆👆👆👆👆👆👆👆👆👆👆
-
+            console.log("Usuario detectado:", user.email);
+            // ACCESO TOTAL PARA TU CORREO
+            const admins = ["gabriel01cvenus@gmail.com"]; 
+            
             const doc = await db.collection("usuarios").doc(user.uid).get();
-            let tieneAcceso = false;
+            let esAdminOComercio = admins.includes(user.email);
 
-            // Verificamos si es comercio en la DB o si su correo está en la lista Admin
             if (doc.exists && (doc.data().tipo === "comercio" || doc.data().tipo === "admin")) {
-                tieneAcceso = true;
-            } else if (correosAdmin.includes(user.email)) {
-                tieneAcceso = true; // Acceso forzado por correo
+                esAdminOComercio = true;
             }
 
-            if (tieneAcceso) {
-                document.getElementById('nav-reg').style.display = 'flex';
-                document.getElementById('nav-pan').style.display = 'flex';
-                console.log("🔥 Permisos de Comercio/Admin concedidos para:", user.email);
-            } else {
-                console.log("👤 Modo Cliente activado para:", user.email);
+            if (esAdminOComercio) {
+                document.getElementById('nav-reg').style.display = 'block';
+                document.getElementById('nav-pan').style.display = 'block';
+                console.log("Modo Gestión activado para Gabriel.");
             }
         }
     });
 
-    // --- INICIALIZACIÓN DEL MAPA A PRUEBA DE FALLOS ---
-    function iniciarMapa() {
-        try {
-            console.log("Iniciando motor de mapas...");
-            map = L.map('map', { zoomControl: false }).setView([10.29, -67.79], 14);
-            
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
-            
-            // Forzamos el recálculo del tamaño para evitar la pantalla negra
-            setTimeout(() => { map.invalidateSize(); }, 800);
-            
-            cargarComercios();
-        } catch (error) {
-            console.error("Error al cargar el mapa:", error);
-            alert("Hubo un problema cargando los gráficos del mapa. Intenta recargar la página.");
-        }
+    // --- INICIALIZACIÓN DE MAPA ---
+    function init() {
+        if (map) return;
+        
+        // Coordenadas San Joaquín, Carabobo
+        map = L.map('map', { zoomControl: false, attributionControl: false }).setView([10.267, -67.788], 14);
+        
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+
+        // Forzamos el redibujado para evitar el cuadro negro
+        setTimeout(() => { 
+            map.invalidateSize();
+            console.log("Mapa sincronizado con la interfaz.");
+        }, 600);
+
+        cargarComercios();
     }
 
     async function cargarComercios(filtro = "") {
         marcadores.forEach(m => map.removeLayer(m));
         marcadores = [];
         const snap = await db.collection("comercios").get();
-        
         snap.forEach(doc => {
             const data = doc.data();
             if(filtro === "" || data.nombre.toLowerCase().includes(filtro.toLowerCase())) {
@@ -172,27 +161,19 @@
     }
 
     async function cargarProds(id) {
-        const cont = document.getElementById('modal-products');
-        cont.innerHTML = "<p style='color:var(--cyan); font-weight:bold;'>Cargando datos de la red...</p>";
-        const snap = await db.collection("productos").where("comercioID", "==", id).get();
-        cont.innerHTML = "";
-        
-        if(snap.empty) cont.innerHTML = "<p style='opacity:0.5'>Inventario no disponible.</p>";
-        
-        snap.forEach(p => {
-            cont.innerHTML += `<div class="inventory-item">
-                <span style="font-weight:700;">${p.data().nombre}</span> 
-                <b style="color:var(--yellow); font-size:16px;">Bs. ${p.data().precio.toFixed(2)}</b>
-            </div>`;
+        const c = document.getElementById('modal-products');
+        c.innerHTML = "<p style='color:var(--cyan)'>Consultando red...</p>";
+        const s = await db.collection("productos").where("comercioID", "==", id).get();
+        c.innerHTML = s.empty ? "<p style='opacity:0.5'>Sin stock publicado.</p>" : "";
+        s.forEach(p => {
+            c.innerHTML += `<div class="inventory-item"><span>${p.data().nombre}</span><b style="color:var(--yellow)">Bs. ${p.data().precio}</b></div>`;
         });
     }
 
     function cerrarDetalle() { document.getElementById('store-modal').classList.remove('active'); }
     function filtrarMapa() { cargarComercios(document.getElementById('buscador').value); }
 
-    // El truco definitivo para que el mapa no se quede negro:
-    // Esperamos a que la ventana esté 100% dibujada antes de lanzar Leaflet
-    window.addEventListener('load', iniciarMapa);
+    window.onload = init;
 </script>
 </body>
 </html>
