@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SmartMarket - Mapa San Joaquín</title>
+    <title>SmartMarket - San Joaquín</title>
     
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
@@ -11,19 +11,21 @@
     <style>
         body { margin: 0; font-family: 'Montserrat', sans-serif; background: #0f2027; color: white; overflow: hidden; }
         
+        /* BUSCADOR */
         .search-container {
             position: absolute; top: 15px; left: 50%; transform: translateX(-50%);
             z-index: 1000; width: 90%; max-width: 400px;
         }
         .search-box {
             width: 100%; padding: 12px 20px; border-radius: 25px; border: none;
-            background: rgba(255, 255, 255, 0.95); box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-            font-size: 14px; outline: none; font-weight: 700; text-align: center;
+            background: rgba(255, 255, 255, 0.95); box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+            font-size: 14px; outline: none; font-weight: 800; text-align: center; color: #333;
         }
 
+        /* MAPA */
         #map { height: calc(100vh - 70px); width: 100%; z-index: 1; }
 
-        /* NAVEGACIÓN INFERIOR CORREGIDA */
+        /* NAVEGACIÓN INFERIOR (CONECTADA A TUS ARCHIVOS) */
         .bottom-nav {
             position: fixed; bottom: 0; left: 0; right: 0;
             height: 70px; background: #0f2027; border-top: 2px solid #4fc3f7;
@@ -37,12 +39,16 @@
         .nav-item.active { color: #4fc3f7; }
         .nav-icon { font-size: 20px; }
 
-        /* ESTILO POPUPS */
-        .leaflet-popup-content-wrapper { background: #162a33 !important; color: white !important; border-radius: 12px; }
+        /* ESTILO DE LAS VENTANAS DEL MAPA */
+        .leaflet-popup-content-wrapper { 
+            background: #162a33 !important; 
+            color: white !important; 
+            border-radius: 12px; 
+            border: 1px solid #4fc3f7;
+        }
+        .leaflet-popup-tip { background: #4fc3f7 !important; }
         .p-price { color: #ffeb3b; font-weight: 900; }
-        .status { font-size: 10px; font-weight: 900; padding: 2px 5px; border-radius: 4px; }
-        .open { background: #4caf50; }
-        .closed { background: #f44336; }
+        .p-row { display: flex; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.1); padding: 5px 0; font-size: 12px; }
     </style>
 </head>
 <body>
@@ -73,6 +79,7 @@
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
 
 <script>
+    // Tu Configuración de Firebase
     const firebaseConfig = {
         apiKey: "AIzaSyA6tYooh4CtX7ww9GRyXWhuakl2nLovtsY",
         authDomain: "smartmarket-zone-e7559.firebaseapp.com",
@@ -81,43 +88,62 @@
     if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
+    // Centrar mapa en San Joaquín
     const map = L.map('map', { zoomControl: false }).setView([10.2644, -67.7915], 14);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
 
     let marcadores = [];
 
+    // Cargar los locales en el mapa
     async function cargarMapa(termino = "") {
+        // Limpiar mapa antes de recargar
         marcadores.forEach(m => map.removeLayer(m));
         marcadores = [];
 
-        const locales = await db.collection("comercios").get();
-        locales.forEach(async (docL) => {
+        const localesSnap = await db.collection("comercios").get();
+        
+        localesSnap.forEach(async (docL) => {
             const dataL = docL.data();
-            const prods = await db.collection("productos").where("comercioID", "==", docL.id).get();
-            
-            let htmlP = "";
-            let match = false;
+            const comID = docL.id;
 
-            prods.forEach(docP => {
+            // Obtener productos de este comercio
+            const prodsSnap = await db.collection("productos").where("comercioID", "==", comID).get();
+            
+            let listaHtml = "";
+            let coincideBusqueda = false;
+
+            prodsSnap.forEach(docP => {
                 const p = docP.data();
                 if(termino === "" || p.nombre.toLowerCase().includes(termino.toLowerCase())) {
-                    match = true;
-                    htmlP += `<div style="display:flex; justify-content:space-between; font-size:11px; margin-top:5px;">
-                                <span>${p.nombre}</span>
-                                <span class="p-price">Bs. ${new Intl.NumberFormat('de-DE').format(p.precio)}</span>
-                              </div>`;
+                    coincideBusqueda = true;
+                    listaHtml += `
+                        <div class="p-row">
+                            <span>${p.nombre}</span>
+                            <span class="p-price">Bs. ${new Intl.NumberFormat('de-DE', {minimumFractionDigits: 2}).format(p.precio)}</span>
+                        </div>`;
                 }
             });
 
-            if(match || termino === "") {
+            // Si el producto está en este local o no hay búsqueda, poner marcador
+            if (coincideBusqueda || termino === "") {
                 const marker = L.marker([dataL.lat, dataL.lng]).addTo(map);
-                marker.bindPopup(`<b>${dataL.nombre}</b><br>${htmlP}`);
+                marker.bindPopup(`
+                    <b style="color:#4fc3f7; text-transform:uppercase;">${dataL.nombre}</b>
+                    <div style="margin-top:10px; min-width:180px;">
+                        ${listaHtml || '<p style="font-size:10px; opacity:0.5;">Sin productos registrados</p>'}
+                    </div>
+                `);
                 marcadores.push(marker);
             }
         });
     }
 
-    function filtrarMapa() { cargarMapa(document.getElementById('buscador').value); }
+    function filtrarMapa() {
+        const input = document.getElementById('buscador').value;
+        cargarMapa(input);
+    }
+
+    // Carga inicial al abrir la página
     window.onload = () => cargarMapa();
 </script>
 </body>
