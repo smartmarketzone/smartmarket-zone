@@ -1,59 +1,182 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
-<title>Panel Comercio</title>
-<link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SmartMarket - Panel de Comercio</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0; padding: 0; font-family: 'Montserrat', sans-serif;
+            background: linear-gradient(rgba(15, 32, 39, 0.85), rgba(30, 136, 229, 0.75)), 
+                        url('https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
+            background-size: cover; background-attachment: fixed; color: white;
+            display: flex; flex-direction: column; align-items: center; min-height: 100vh;
+        }
+
+        .header { width: 100%; padding: 20px; text-align: center; }
+        .header h1 { font-weight: 900; font-size: 24px; color: #4fc3f7; margin: 0; }
+        .header p { font-size: 12px; opacity: 0.8; text-transform: uppercase; letter-spacing: 1px; }
+
+        .card-form {
+            background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 25px; padding: 25px; width: 90%; max-width: 450px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.5); margin-bottom: 30px;
+        }
+
+        h2 { font-size: 18px; margin-bottom: 20px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; }
+
+        .input-group { margin-bottom: 15px; text-align: left; }
+        label { display: block; font-size: 10px; margin-bottom: 5px; opacity: 0.8; font-weight: bold; text-transform: uppercase; }
+        
+        input, textarea, select {
+            width: 100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px; padding: 12px; color: white; box-sizing: border-box; outline: none; font-family: 'Montserrat';
+        }
+
+        /* Estilo para el Precio en Bolívares */
+        .price-container { position: relative; display: flex; align-items: center; }
+        .price-container span { position: absolute; left: 12px; font-weight: 900; color: #4fc3f7; }
+        .price-container input { padding-left: 45px; font-weight: 900; font-size: 18px; color: #ffeb3b; }
+
+        .btn-upload {
+            width: 100%; background: #1e88e5; color: white; border: none;
+            padding: 16px; border-radius: 12px; font-weight: 900; cursor: pointer;
+            transition: 0.3s; text-transform: uppercase; margin-top: 10px;
+            box-shadow: 0 5px 15px rgba(30, 136, 229, 0.4);
+        }
+        .btn-upload:active { transform: scale(0.96); }
+
+        /* LISTA DE PRODUCTOS (TARJETAS PROFESIONALES) */
+        .products-grid { width: 90%; max-width: 500px; display: grid; gap: 20px; padding-bottom: 50px; }
+        
+        .product-card {
+            background: rgba(0, 0, 0, 0.4); border-radius: 20px; padding: 15px;
+            border-left: 5px solid #4fc3f7; display: flex; justify-content: space-between; align-items: center;
+        }
+        .product-info h3 { margin: 0; font-size: 18px; color: #fff; }
+        .product-info p { margin: 5px 0; font-size: 12px; opacity: 0.7; }
+        .product-price { font-weight: 900; color: #ffeb3b; font-size: 20px; text-align: right; }
+        .product-price small { font-size: 10px; display: block; color: #fff; opacity: 0.6; }
+
+    </style>
 </head>
+<body>
 
-<body class="auth-body">
-
-<div class="card">
-
-<h2>Agregar Producto</h2>
-
-<input type="text" id="nombre" placeholder="Nombre del producto">
-<input type="number" id="precio" placeholder="Precio">
-<input type="text" id="descripcion" placeholder="Descripción">
-
-<button onclick="guardarProducto()">Guardar Producto</button>
-
+<div class="header">
+    <h1 id="nombreLocal">MI COMERCIO</h1>
+    <p>Panel de Gestión de Productos</p>
 </div>
+
+<div class="card-form">
+    <h2>📦 REGISTRAR PRODUCTO</h2>
+    
+    <div class="input-group">
+        <label>Nombre del Producto</label>
+        <input type="text" id="nombreProd" placeholder="Ej: Harina Pan 1kg">
+    </div>
+
+    <div class="input-group">
+        <label>Descripción Corta</label>
+        <textarea id="descProd" rows="2" placeholder="Ej: Harina de maíz precocida blanca..."></textarea>
+    </div>
+
+    <div class="input-group">
+        <label>Precio de Venta (Bs.)</label>
+        <div class="price-container">
+            <span>Bs.</span>
+            <input type="number" id="precioProd" placeholder="0.00" step="0.01">
+        </div>
+    </div>
+
+    <button class="btn-upload" onclick="subirProducto()">Publicar Producto</button>
+</div>
+
+<div class="header">
+    <h1 style="font-size: 18px;">MIS PRODUCTOS PUBLICADOS</h1>
+</div>
+
+<div class="products-grid" id="listaProductos">
+    </div>
 
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
 
-<script src="auth.js"></script>
-
 <script>
-function guardarProducto(){
+    const firebaseConfig = {
+        apiKey: "AIzaSyA6tYooh4CtX7ww9GRyXWhuakl2nLovtsY",
+        authDomain: "smartmarket-zone-e7559.firebaseapp.com",
+        projectId: "smartmarket-zone-e7559"
+    };
+    if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
 
-let nombre = document.getElementById("nombre").value;
-let precio = document.getElementById("precio").value;
-let descripcion = document.getElementById("descripcion").value;
+    let userUID = "";
 
-let user = firebase.auth().currentUser;
+    // Verificar sesión y cargar nombre del local
+    firebase.auth().onAuthStateChanged(user => {
+        if (user) {
+            userUID = user.uid;
+            cargarDatosLocal();
+            escucharProductos();
+        } else {
+            window.location.href = "auth.html";
+        }
+    });
 
-if(!user){
-alert("Debes iniciar sesión");
-return;
-}
+    function cargarDatosLocal() {
+        db.collection("comercios").doc(userUID).get().then(doc => {
+            if (doc.exists) {
+                document.getElementById('nombreLocal').innerText = doc.data().nombre.toUpperCase();
+            }
+        });
+    }
 
-db.collection("productos").add({
-nombre: nombre,
-precio: precio,
-descripcion: descripcion,
-usuario: user.uid
-})
-.then(() => {
-alert("Producto guardado");
-})
-.catch(error => {
-alert("Error al guardar");
-console.error(error);
-});
+    function subirProducto() {
+        const nombre = document.getElementById('nombreProd').value.trim();
+        const desc = document.getElementById('descProd').value.trim();
+        const precio = document.getElementById('precioProd').value;
 
-}
+        if (!nombre || !precio) return alert("Nombre y Precio son obligatorios");
+
+        db.collection("productos").add({
+            nombre: nombre,
+            descripcion: desc,
+            precio: parseFloat(precio),
+            comercioID: userUID,
+            fecha: firebase.firestore.FieldValue.serverTimestamp()
+        }).then(() => {
+            alert("✅ Producto publicado");
+            document.getElementById('nombreProd').value = "";
+            document.getElementById('descProd').value = "";
+            document.getElementById('precioProd').value = "";
+        });
+    }
+
+    function escucharProductos() {
+        db.collection("productos").where("comercioID", "==", userUID)
+        .onSnapshot(snapshot => {
+            const lista = document.getElementById('listaProductos');
+            lista.innerHTML = "";
+            snapshot.forEach(doc => {
+                const p = doc.data();
+                lista.innerHTML += `
+                    <div class="product-card">
+                        <div class="product-info">
+                            <h3>${p.nombre}</h3>
+                            <p>${p.descripcion}</p>
+                        </div>
+                        <div class="product-price">
+                            <small>Precio</small>
+                            Bs. ${p.precio.toLocaleString('es-VE', {minimumFractionDigits: 2})}
+                        </div>
+                    </div>
+                `;
+            });
+        });
+    }
 </script>
 
 </body>
