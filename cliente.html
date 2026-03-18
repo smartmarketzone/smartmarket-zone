@@ -4,51 +4,52 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mi Perfil | SmartMarket</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
-        :root { --accent: #00f2fe; --bg: #0a0f12; --card: #161c20; --text: #e0e0e0; }
-        body { margin: 0; background: var(--bg); font-family: 'Poppins', sans-serif; color: var(--text); padding-bottom: 80px; }
+        :root { --primary: #1a73e8; --bg: #f8f9fa; --text: #202124; --card: #ffffff; }
+        body { margin: 0; background: var(--bg); font-family: 'Outfit', sans-serif; color: var(--text); padding-bottom: 90px; }
 
-        /* CABECERA DE PERFIL */
+        /* CABECERA ESTILO GOOGLE */
         .profile-header { 
-            background: linear-gradient(180deg, #1e88e5 0%, var(--bg) 100%); 
-            padding: 40px 20px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.05);
+            background: white; padding: 40px 20px; text-align: center; 
+            border-bottom: 1px solid #dadce0; box-shadow: 0 2px 4px rgba(0,0,0,0.05);
         }
         .avatar { 
-            width: 100px; height: 100px; background: var(--card); border-radius: 50%; 
-            margin: 0 auto 15px; border: 3px solid var(--accent); display: flex;
-            align-items: center; justify-content: center; font-size: 40px;
-            box-shadow: 0 0 20px rgba(0, 242, 254, 0.3);
+            width: 90px; height: 90px; background: #e8f0fe; border-radius: 50%; 
+            margin: 0 auto 15px; display: flex; align-items: center; justify-content: center; 
+            font-size: 40px; color: var(--primary); border: 2px solid var(--primary);
         }
 
-        .user-info h2 { margin: 0; font-weight: 800; letter-spacing: -1px; }
-        .user-info p { margin: 5px 0; opacity: 0.6; font-size: 13px; }
+        .user-info h2 { margin: 0; font-weight: 700; color: var(--text); }
+        .user-info p { margin: 5px 0; color: #5f6368; font-size: 14px; }
 
-        /* ESTADÍSTICAS RÁPIDAS */
-        .stats { display: flex; justify-content: center; gap: 20px; margin-top: 20px; }
-        .stat-item { background: rgba(255,255,255,0.03); padding: 10px 20px; border-radius: 15px; text-align: center; border: 1px solid rgba(255,255,255,0.05); }
-        .stat-item b { display: block; color: var(--accent); font-size: 18px; }
-        .stat-item span { font-size: 10px; text-transform: uppercase; opacity: 0.5; }
-
-        /* SECCIONES */
-        .section-title { padding: 25px 20px 10px; font-size: 14px; font-weight: 800; color: var(--accent); text-transform: uppercase; letter-spacing: 1px; }
+        /* SECCIONES DE CLIENTE */
+        .content-body { padding: 20px; }
+        .section-label { font-size: 12px; font-weight: 800; color: #70757a; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px; }
         
-        .list-container { padding: 0 20px; }
-        .item-card { 
-            background: var(--card); padding: 15px; border-radius: 18px; 
-            margin-bottom: 12px; display: flex; align-items: center; gap: 15px;
-            border: 1px solid rgba(255,255,255,0.03); transition: 0.3s;
+        .menu-item { 
+            background: var(--card); padding: 16px; border-radius: 16px; 
+            margin-bottom: 10px; display: flex; align-items: center; gap: 15px;
+            border: 1px solid #dfe1e5; transition: background 0.2s; cursor: pointer;
         }
-        .item-card:active { transform: scale(0.97); background: #1c252a; }
-        .item-icon { width: 45px; height: 45px; background: rgba(0, 242, 254, 0.1); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; }
+        .menu-item:active { background: #f1f3f4; }
+        .menu-icon { font-size: 20px; width: 30px; text-align: center; }
 
-        /* NAVEGACIÓN INFERIOR (IGUAL AL INDEX) */
-        .nav-bar { position: fixed; bottom: 0; width: 100%; height: 70px; background: rgba(10, 15, 18, 0.95); backdrop-filter: blur(10px); display: flex; justify-content: space-around; align-items: center; border-top: 1px solid rgba(255,255,255,0.05); }
-        .nav-btn { color: rgba(255,255,255,0.4); text-decoration: none; text-align: center; font-size: 10px; flex: 1; }
-        .nav-btn.active { color: var(--accent); }
-        .nav-btn span { display: block; font-size: 20px; }
+        /* NAVEGACIÓN INFERIOR CLARA */
+        .nav-bar { 
+            position: fixed; bottom: 0; width: 100%; height: 70px; 
+            background: white; display: flex; justify-content: space-around; 
+            align-items: center; border-top: 1px solid #dadce0; z-index: 1000;
+        }
+        .nav-btn { color: #5f6368; text-decoration: none; text-align: center; font-size: 11px; font-weight: 500; flex: 1; }
+        .nav-btn.active { color: var(--primary); }
+        .nav-btn span { display: block; font-size: 22px; margin-bottom: 2px; }
 
-        .btn-logout { margin: 30px 20px; padding: 15px; border-radius: 15px; border: 1px solid #ff5252; background: none; color: #ff5252; width: calc(100% - 40px); font-weight: 800; cursor: pointer; }
+        .btn-signout { 
+            margin: 20px; padding: 15px; border-radius: 12px; border: 1px solid #dadce0; 
+            background: white; color: #d93025; width: calc(100% - 40px); 
+            font-weight: 700; cursor: pointer; font-size: 14px;
+        }
     </style>
 </head>
 <body>
@@ -56,39 +57,38 @@
 <div class="profile-header">
     <div class="avatar">👤</div>
     <div class="user-info">
-        <h2 id="u-nombre">Cargando...</h2>
-        <p id="u-email">---</p>
-    </div>
-    <div class="stats">
-        <div class="stat-item"><b id="count-favs">0</b><span>Favoritos</span></div>
-        <div class="stat-item"><b id="u-tipo">Cliente</b><span>Rango</span></div>
+        <h2 id="u-name">Cargando...</h2>
+        <p id="u-mail">---</p>
     </div>
 </div>
 
-<div class="section-title">⭐ Mis Tiendas Favoritas</div>
-<div class="list-container" id="fav-list">
-    <p style="opacity:0.3; font-size:12px;">Aún no has guardado ninguna tienda.</p>
+<div class="content-body">
+    <div class="section-label">Actividad del Usuario</div>
+    
+    <div class="menu-item">
+        <div class="menu-icon">⭐</div>
+        <div><b>Tiendas Favoritas</b><br><small style="color:#70757a;">Tus comercios guardados</small></div>
+    </div>
+
+    <div class="menu-item" onclick="window.location.href='index.html'">
+        <div class="menu-icon">🔍</div>
+        <div><b>Buscar Productos</b><br><small style="color:#70757a;">Explorar San Joaquín</small></div>
+    </div>
+
+    <div class="section-label">Ajustes</div>
+    <div class="menu-item">
+        <div class="menu-icon">⚙️</div>
+        <div><b>Configuración</b><br><small style="color:#70757a;">Editar mis datos personales</small></div>
+    </div>
 </div>
 
-<div class="section-title">🛠️ Opciones de Cuenta</div>
-<div class="list-container">
-    <div class="item-card">
-        <div class="item-icon">📝</div>
-        <div><b style="font-size:14px;">Editar Perfil</b><br><small style="opacity:0.5;">Cambia tu nombre o foto</small></div>
-    </div>
-    <div class="item-card" onclick="window.location.href='index.html'">
-        <div class="item-icon">🛒</div>
-        <div><b style="font-size:14px;">Buscar Productos</b><br><small style="opacity:0.5;">Ir al mercado global</small></div>
-    </div>
-</div>
-
-<button class="btn-logout" onclick="logout()">CERRAR SESIÓN</button>
+<button class="btn-signout" onclick="logout()">Cerrar Sesión</button>
 
 <nav class="nav-bar">
-    <a href="index.html" class="nav-btn"><span>📍</span>MAPA</a>
-    <a href="cliente.html" class="nav-btn active"><span>👤</span>PERFIL</a>
-    <a href="registro_comercio.html" id="nav-reg" class="nav-btn" style="display:none;"><span>🏪</span>REGISTRAR</a>
-    <a href="comercio.html" id="nav-pan" class="nav-btn" style="display:none;"><span>📊</span>PANEL</a>
+    <a href="index.html" class="nav-btn"><span>📍</span>Explorar</a>
+    <a href="cliente.html" class="nav-btn active"><span>👤</span>Perfil</a>
+    <a href="registro_comercio.html" id="nav-reg" class="nav-btn" style="display:none;"><span>🏪</span>Registrar</a>
+    <a href="comercio.html" id="nav-pan" class="nav-btn" style="display:none;"><span>📊</span>Panel</a>
 </nav>
 
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
@@ -107,34 +107,26 @@
 
     auth.onAuthStateChanged(async (user) => {
         if (user) {
-            document.getElementById('u-email').innerText = user.email;
+            document.getElementById('u-mail').innerText = user.email;
             
-            // Acceso Maestro Gabriel
-            const isAdmin = user.email === "gabriel01cvenus@gmail.com";
-            
+            // Lógica de acceso maestro (Gabriel Admin)
+            const adminEmail = "gabriel01cvenus@gmail.com";
             const doc = await db.collection("usuarios").doc(user.uid).get();
+            
             if (doc.exists) {
                 const data = doc.data();
-                document.getElementById('u-nombre').innerText = data.nombre || "Usuario";
-                document.getElementById('u-tipo').innerText = isAdmin ? "ADMIN" : data.tipo.toUpperCase();
+                document.getElementById('u-name').innerText = data.nombre || "Usuario";
                 
-                // Mostrar botones de gestión si es Gabriel o Comercio
-                if (isAdmin || data.tipo === "comercio") {
+                // Solo mostrar gestión si es Gabriel o tipo comercio
+                if (user.email === adminEmail || data.tipo === "comercio") {
                     document.getElementById('nav-reg').style.display = 'block';
                     document.getElementById('nav-pan').style.display = 'block';
                 }
             }
-            loadFavorites(user.uid);
         } else {
             window.location.href = "auth.html";
         }
     });
-
-    async function loadFavorites(uid) {
-        // Aquí conectaremos luego con la colección de "favoritos"
-        // Por ahora dejamos el diseño listo
-        console.log("Cargando favoritos de:", uid);
-    }
 
     function logout() {
         auth.signOut().then(() => window.location.href = "auth.html");
