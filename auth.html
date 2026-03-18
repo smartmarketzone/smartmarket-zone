@@ -2,110 +2,188 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SmartMarket Zone - Autenticación</title>
-    <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SmartMarket Zone - Acceso</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #1e88e5;
+            --accent: #4fc3f7;
+            --glass: rgba(255, 255, 255, 0.1);
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Montserrat', sans-serif;
+            /* MISMO FONDO DE MAPA PARA COHERENCIA */
+            background: linear-gradient(rgba(15, 32, 39, 0.85), rgba(30, 136, 229, 0.75)), 
+                        url('https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 25px;
+            padding: 40px 25px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+            width: 85%;
+            max-width: 380px;
+            text-align: center;
+            color: white;
+        }
+
+        .logo { font-weight: 900; font-size: 30px; margin-bottom: 5px; letter-spacing: -1px; }
+        .logo span { color: var(--accent); }
+        .slogan { font-size: 11px; opacity: 0.8; margin-bottom: 30px; text-transform: uppercase; letter-spacing: 2px; }
+
+        /* SELECTOR DE MODO (LOGIN/REGISTRO) */
+        .tab-container {
+            display: flex;
+            background: rgba(0,0,0,0.2);
+            border-radius: 50px;
+            margin-bottom: 25px;
+            padding: 5px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .tab {
+            flex: 1;
+            padding: 10px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 700;
+            transition: 0.3s;
+        }
+        .tab.active { background: var(--primary); color: white; box-shadow: 0 4px 15px rgba(30,136,229,0.4); }
+
+        /* INPUTS MODERNOS */
+        .input-group {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+        input {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 14px 15px;
+            color: white;
+            font-family: 'Montserrat', sans-serif;
+            box-sizing: border-box;
+            transition: 0.3s;
+            outline: none;
+        }
+        input:focus { border-color: var(--accent); background: rgba(0,0,0,0.4); }
+
+        .btn-primary {
+            width: 100%;
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 12px;
+            font-weight: 900;
+            font-size: 15px;
+            text-transform: uppercase;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: 0.3s;
+            box-shadow: 0 8px 20px rgba(30, 136, 229, 0.3);
+        }
+        .btn-primary:active { transform: scale(0.96); opacity: 0.9; }
+
+        #msgError { color: #ff8a80; font-size: 12px; margin-top: 15px; min-height: 18px; }
+    </style>
 </head>
-<body class="auth-body">
+<body>
 
 <div class="card">
-    <h1 class="logo">SMARTMARKET <span>ZONE</span></h1>
-    <p class="slogan">COMPRA Y VENDE CERCA DE TI</p>
+    <div class="logo">SMART<span>MARKET</span></div>
+    <p class="slogan">Tu ciudad en un mapa</p>
 
-    <div style="margin-bottom: 20px;">
-        <button type="button" onclick="cambiarModo('login')" style="width: 45%; background: #ccc; display: inline-block;" id="btnTabLogin">Iniciar sesión</button>
-        <button type="button" onclick="cambiarModo('registro')" style="width: 45%; background: #eee; display: inline-block;" id="btnTabRegistro">Registrarse</button>
+    <div class="tab-container">
+        <div id="tabL" class="tab active" onclick="setModo('login')">ENTRAR</div>
+        <div id="tabR" class="tab" onclick="setModo('registro')">UNIRSE</div>
     </div>
 
-    <h2 id="tituloAccion">Iniciar Sesión</h2>
+    <h2 id="formTitle" style="font-size: 18px; margin-bottom: 20px;">Bienvenido</h2>
 
-    <input type="email" id="correoPrincipal" placeholder="Correo electrónico">
-    <input type="password" id="clavePrincipal" placeholder="Contraseña">
+    <div class="input-group">
+        <input type="email" id="email" placeholder="Correo electrónico">
+    </div>
+    <div class="input-group">
+        <input type="password" id="pass" placeholder="Contraseña">
+    </div>
 
-    <button type="button" class="btn-primary" id="btnAccionPrincipal" onclick="procesar()">
-        Entrar
-    </button>
+    <button class="btn-primary" id="mainBtn" onclick="ejecutar()">Ingresar</button>
+    
+    <div id="msgError"></div>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
 
 <script>
-    // 1. Configuración de tu proyecto (Verificada de tus archivos)
     const firebaseConfig = {
         apiKey: "AIzaSyA6tYooh4CtX7ww9GRyXWhuakl2nLovtsY",
         authDomain: "smartmarket-zone-e7559.firebaseapp.com",
         projectId: "smartmarket-zone-e7559"
     };
+    if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
 
-    if (!firebase.apps.length) {
-        firebase.initializeApp(firebaseConfig);
+    let modo = 'login';
+
+    function setModo(m) {
+        modo = m;
+        document.getElementById('tabL').className = (m === 'login') ? 'tab active' : 'tab';
+        document.getElementById('tabR').className = (m === 'registro') ? 'tab active' : 'tab';
+        document.getElementById('formTitle').innerText = (m === 'login') ? 'Bienvenido de nuevo' : 'Crea tu cuenta';
+        document.getElementById('mainBtn').innerText = (m === 'login') ? 'Ingresar' : 'Registrarse';
     }
 
-    let modoActual = 'login';
+    function ejecutar() {
+        const email = document.getElementById('email').value.trim();
+        const pass = document.getElementById('pass').value.trim();
+        const err = document.getElementById('msgError');
+        err.innerText = "";
 
-    // Función para cambiar visualmente entre Login y Registro
-    function cambiarModo(modo) {
-        modoActual = modo;
-        const btnAccion = document.getElementById("btnAccionPrincipal");
-        const titulo = document.getElementById("tituloAccion");
-        
-        if (modo === 'login') {
-            titulo.innerText = "Iniciar Sesión";
-            btnAccion.innerText = "Entrar";
-            document.getElementById("btnTabLogin").style.background = "#ccc";
-            document.getElementById("btnTabRegistro").style.background = "#eee";
-        } else {
-            titulo.innerText = "Crear Cuenta";
-            btnAccion.innerText = "Registrarse";
-            document.getElementById("btnTabLogin").style.background = "#eee";
-            document.getElementById("btnTabRegistro").style.background = "#ccc";
-        }
-    }
+        if(!email || !pass) { err.innerText = "⚠️ Completa los campos"; return; }
 
-    // LA FUNCIÓN QUE HACE EL TRABAJO
-    function procesar() {
-        const email = document.getElementById("correoPrincipal").value.trim();
-        const password = document.getElementById("clavePrincipal").value.trim();
-
-        if (email === "" || password === "") {
-            alert("Por favor, completa todos los campos.");
-            return;
-        }
-
-        const btn = document.getElementById("btnAccionPrincipal");
-        btn.innerText = "Procesando...";
+        const btn = document.getElementById('mainBtn');
+        btn.innerText = "Cargando...";
         btn.disabled = true;
 
-        if (modoActual === 'login') {
-            // Lógica de Login
-            firebase.auth().signInWithEmailAndPassword(email, password)
-                .then(() => {
-                    window.location.href = "tipo.html";
-                })
-                .catch(error => {
-                    alert("Error: " + error.message);
-                    btn.innerText = "Entrar";
+        if(modo === 'login') {
+            firebase.auth().signInWithEmailAndPassword(email, pass)
+                .then(() => window.location.href = "tipo.html")
+                .catch(e => { 
+                    err.innerText = "Error: Datos incorrectos"; 
+                    btn.innerText = "Ingresar"; 
                     btn.disabled = false;
                 });
         } else {
-            // Lógica de Registro
-            if(password.length < 6) {
-                alert("La contraseña debe tener al menos 6 caracteres.");
-                btn.innerText = "Registrarse";
-                btn.disabled = false;
-                return;
+            if(pass.length < 6) { 
+                err.innerText = "Mínimo 6 caracteres"; 
+                btn.innerText = "Registrarse"; 
+                btn.disabled = false; 
+                return; 
             }
-            firebase.auth().createUserWithEmailAndPassword(email, password)
-                .then(() => {
-                    alert("¡Cuenta creada!");
-                    window.location.href = "tipo.html";
-                })
-                .catch(error => {
-                    alert("Error: " + error.message);
-                    btn.innerText = "Registrarse";
+            firebase.auth().createUserWithEmailAndPassword(email, pass)
+                .then(() => window.location.href = "tipo.html")
+                .catch(e => { 
+                    err.innerText = "Error: El correo ya existe"; 
+                    btn.innerText = "Registrarse"; 
                     btn.disabled = false;
                 });
         }
