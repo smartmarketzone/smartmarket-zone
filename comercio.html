@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SmartMarket - Panel de Comercio</title>
+    <title>SmartMarket - Gestión de Stock</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
         body {
@@ -15,89 +15,98 @@
         }
 
         .header { width: 100%; padding: 20px; text-align: center; }
-        .header h1 { font-weight: 900; font-size: 24px; color: #4fc3f7; margin: 0; }
-        .header p { font-size: 12px; opacity: 0.8; text-transform: uppercase; letter-spacing: 1px; }
+        .header h1 { font-weight: 900; font-size: 22px; color: #4fc3f7; margin: 0; }
 
         .card-form {
             background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(15px);
             -webkit-backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 25px; padding: 25px; width: 90%; max-width: 450px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.5); margin-bottom: 30px;
+            border-radius: 25px; padding: 20px; width: 90%; max-width: 450px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.5); margin-bottom: 25px;
         }
 
-        h2 { font-size: 18px; margin-bottom: 20px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; }
-
-        .input-group { margin-bottom: 15px; text-align: left; }
-        label { display: block; font-size: 10px; margin-bottom: 5px; opacity: 0.8; font-weight: bold; text-transform: uppercase; }
+        .input-group { margin-bottom: 12px; text-align: left; }
+        label { display: block; font-size: 10px; margin-bottom: 4px; opacity: 0.8; font-weight: bold; text-transform: uppercase; }
         
-        input, textarea, select {
+        input, textarea {
             width: 100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 12px; padding: 12px; color: white; box-sizing: border-box; outline: none; font-family: 'Montserrat';
+            border-radius: 10px; padding: 12px; color: white; box-sizing: border-box; outline: none; font-family: 'Montserrat';
         }
 
-        /* Estilo para el Precio en Bolívares */
-        .price-container { position: relative; display: flex; align-items: center; }
-        .price-container span { position: absolute; left: 12px; font-weight: 900; color: #4fc3f7; }
-        .price-container input { padding-left: 45px; font-weight: 900; font-size: 18px; color: #ffeb3b; }
+        .flex-row { display: flex; gap: 10px; }
+        .flex-row div { flex: 1; }
 
-        .btn-upload {
+        .price-box { position: relative; }
+        .price-box span { position: absolute; left: 10px; top: 11px; font-weight: 900; color: #4fc3f7; font-size: 14px; }
+        .price-box input { padding-left: 35px; color: #ffeb3b; font-weight: 900; }
+
+        .btn-add {
             width: 100%; background: #1e88e5; color: white; border: none;
-            padding: 16px; border-radius: 12px; font-weight: 900; cursor: pointer;
-            transition: 0.3s; text-transform: uppercase; margin-top: 10px;
-            box-shadow: 0 5px 15px rgba(30, 136, 229, 0.4);
+            padding: 15px; border-radius: 12px; font-weight: 900; cursor: pointer;
+            text-transform: uppercase; margin-top: 10px; box-shadow: 0 5px 15px rgba(30, 136, 229, 0.4);
         }
-        .btn-upload:active { transform: scale(0.96); }
 
-        /* LISTA DE PRODUCTOS (TARJETAS PROFESIONALES) */
-        .products-grid { width: 90%; max-width: 500px; display: grid; gap: 20px; padding-bottom: 50px; }
+        /* DISEÑO DE PRODUCTOS CON STOCK */
+        .products-container { width: 92%; max-width: 480px; padding-bottom: 40px; }
         
-        .product-card {
-            background: rgba(0, 0, 0, 0.4); border-radius: 20px; padding: 15px;
-            border-left: 5px solid #4fc3f7; display: flex; justify-content: space-between; align-items: center;
+        .item-card {
+            background: rgba(0, 0, 0, 0.4); border-radius: 18px; padding: 15px;
+            margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center;
+            border-left: 4px solid #4fc3f7; transition: 0.3s;
         }
-        .product-info h3 { margin: 0; font-size: 18px; color: #fff; }
-        .product-info p { margin: 5px 0; font-size: 12px; opacity: 0.7; }
-        .product-price { font-weight: 900; color: #ffeb3b; font-size: 20px; text-align: right; }
-        .product-price small { font-size: 10px; display: block; color: #fff; opacity: 0.6; }
 
+        .item-info h3 { margin: 0; font-size: 16px; text-transform: capitalize; }
+        .item-info p { margin: 3px 0; font-size: 11px; opacity: 0.6; }
+
+        .stock-tag {
+            font-size: 10px; font-weight: 900; padding: 3px 8px; border-radius: 5px;
+            text-transform: uppercase; margin-top: 5px; display: inline-block;
+        }
+
+        /* Colores dinámicos de Stock */
+        .stock-high { background: #4caf50; color: white; } /* Verde */
+        .stock-low { background: #ff9800; color: white; }  /* Naranja */
+        .stock-empty { background: #f44336; color: white; } /* Rojo */
+
+        .item-price { text-align: right; font-weight: 900; color: #ffeb3b; font-size: 18px; }
+        .item-price small { display: block; font-size: 9px; color: #fff; opacity: 0.5; }
     </style>
 </head>
 <body>
 
 <div class="header">
-    <h1 id="nombreLocal">MI COMERCIO</h1>
-    <p>Panel de Gestión de Productos</p>
+    <h1 id="nombreLocal">CARGANDO...</h1>
+    <p style="font-size: 10px; opacity: 0.7;">CONTROL DE INVENTARIO BS.</p>
 </div>
 
 <div class="card-form">
-    <h2>📦 REGISTRAR PRODUCTO</h2>
-    
     <div class="input-group">
-        <label>Nombre del Producto</label>
-        <input type="text" id="nombreProd" placeholder="Ej: Harina Pan 1kg">
+        <label>Producto</label>
+        <input type="text" id="nombreP" placeholder="Ej: Café Molido 500g">
     </div>
 
-    <div class="input-group">
-        <label>Descripción Corta</label>
-        <textarea id="descProd" rows="2" placeholder="Ej: Harina de maíz precocida blanca..."></textarea>
-    </div>
-
-    <div class="input-group">
-        <label>Precio de Venta (Bs.)</label>
-        <div class="price-container">
-            <span>Bs.</span>
-            <input type="number" id="precioProd" placeholder="0.00" step="0.01">
+    <div class="flex-row">
+        <div class="input-group">
+            <label>Precio (Bs.)</label>
+            <div class="price-box">
+                <span>Bs</span>
+                <input type="number" id="precioP" placeholder="0.00">
+            </div>
+        </div>
+        <div class="input-group">
+            <label>Cantidad (Stock)</label>
+            <input type="number" id="stockP" placeholder="Ej: 20">
         </div>
     </div>
 
-    <button class="btn-upload" onclick="subirProducto()">Publicar Producto</button>
+    <div class="input-group">
+        <label>Descripción</label>
+        <input type="text" id="descP" placeholder="Breve detalle del producto">
+    </div>
+
+    <button class="btn-add" onclick="registrar()">Publicar en el Mapa</button>
 </div>
 
-<div class="header">
-    <h1 style="font-size: 18px;">MIS PRODUCTOS PUBLICADOS</h1>
-</div>
-
-<div class="products-grid" id="listaProductos">
+<div class="products-container" id="lista">
     </div>
 
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
@@ -113,64 +122,73 @@
     if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
-    let userUID = "";
+    let myUID = "";
 
-    // Verificar sesión y cargar nombre del local
     firebase.auth().onAuthStateChanged(user => {
         if (user) {
-            userUID = user.uid;
-            cargarDatosLocal();
-            escucharProductos();
+            myUID = user.uid;
+            // Obtener nombre del comercio
+            db.collection("comercios").doc(myUID).get().then(doc => {
+                if(doc.exists) document.getElementById('nombreLocal').innerText = doc.data().nombre;
+            });
+            mostrarProductos();
         } else {
             window.location.href = "auth.html";
         }
     });
 
-    function cargarDatosLocal() {
-        db.collection("comercios").doc(userUID).get().then(doc => {
-            if (doc.exists) {
-                document.getElementById('nombreLocal').innerText = doc.data().nombre.toUpperCase();
-            }
-        });
-    }
+    function registrar() {
+        const nom = document.getElementById('nombreP').value;
+        const pre = document.getElementById('precioP').value;
+        const sto = document.getElementById('stockP').value;
+        const des = document.getElementById('descP').value;
 
-    function subirProducto() {
-        const nombre = document.getElementById('nombreProd').value.trim();
-        const desc = document.getElementById('descProd').value.trim();
-        const precio = document.getElementById('precioProd').value;
-
-        if (!nombre || !precio) return alert("Nombre y Precio son obligatorios");
+        if(!nom || !pre || !sto) return alert("Llena los campos básicos");
 
         db.collection("productos").add({
-            nombre: nombre,
-            descripcion: desc,
-            precio: parseFloat(precio),
-            comercioID: userUID,
+            comercioID: myUID,
+            nombre: nom,
+            precio: parseFloat(pre),
+            stock: parseInt(sto),
+            descripcion: des,
             fecha: firebase.firestore.FieldValue.serverTimestamp()
         }).then(() => {
-            alert("✅ Producto publicado");
-            document.getElementById('nombreProd').value = "";
-            document.getElementById('descProd').value = "";
-            document.getElementById('precioProd').value = "";
+            alert("¡Producto en línea!");
+            document.getElementById('nombreP').value = "";
+            document.getElementById('precioP').value = "";
+            document.getElementById('stockP').value = "";
+            document.getElementById('descP').value = "";
         });
     }
 
-    function escucharProductos() {
-        db.collection("productos").where("comercioID", "==", userUID)
-        .onSnapshot(snapshot => {
-            const lista = document.getElementById('listaProductos');
-            lista.innerHTML = "";
-            snapshot.forEach(doc => {
+    function mostrarProductos() {
+        db.collection("productos").where("comercioID", "==", myUID)
+        .onSnapshot(snap => {
+            const contenedor = document.getElementById('lista');
+            contenedor.innerHTML = "";
+            snap.forEach(doc => {
                 const p = doc.data();
-                lista.innerHTML += `
-                    <div class="product-card">
-                        <div class="product-info">
+                let claseStock = "stock-high";
+                let msgStock = `Stock: ${p.stock} disponibles`;
+
+                if(p.stock <= 0) {
+                    claseStock = "stock-empty";
+                    msgStock = "AGOTADO";
+                } else if(p.stock <= 5) {
+                    claseStock = "stock-low";
+                    msgStock = "¡ÚLTIMAS UNIDADES!";
+                }
+
+                contenedor.innerHTML += `
+                    <div class="item-card">
+                        <div class="item-info">
                             <h3>${p.nombre}</h3>
                             <p>${p.descripcion}</p>
+                            <span class="stock-tag ${claseStock}">${msgStock}</span>
                         </div>
-                        <div class="product-price">
-                            <small>Precio</small>
-                            Bs. ${p.precio.toLocaleString('es-VE', {minimumFractionDigits: 2})}
+                        <div class="item-price">
+                            <small>Bs.</small>
+                            ${parseFloat(p.precio).toLocaleString('es-VE')}
                         </div>
                     </div>
                 `;
