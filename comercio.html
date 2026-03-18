@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SmartMarket - Gestión Total</title>
+    <title>SmartMarket - Mi Inventario</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
         body {
@@ -14,108 +14,115 @@
             display: flex; flex-direction: column; align-items: center; min-height: 100vh;
         }
 
-        .header { width: 100%; padding: 20px; text-align: center; }
-        .header h1 { font-weight: 900; font-size: 22px; color: #4fc3f7; margin: 0; }
+        .header { width: 100%; padding: 25px 0; text-align: center; }
+        .header h1 { font-weight: 900; font-size: 24px; color: #4fc3f7; margin: 0; text-shadow: 0 2px 10px rgba(0,0,0,0.5); }
+        .header p { font-size: 10px; opacity: 0.8; letter-spacing: 2px; }
 
+        /* TARJETA DE REGISTRO (ARRIBA) */
         .card-form {
             background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(15px);
             -webkit-backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 25px; padding: 20px; width: 90%; max-width: 450px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.5); margin-bottom: 25px;
+            border-radius: 20px; padding: 20px; width: 90%; max-width: 450px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.5); margin-bottom: 30px;
         }
 
-        .input-group { margin-bottom: 12px; text-align: left; }
-        label { display: block; font-size: 10px; margin-bottom: 4px; opacity: 0.8; font-weight: bold; text-transform: uppercase; }
+        .input-group { margin-bottom: 15px; text-align: left; }
+        label { display: block; font-size: 10px; margin-bottom: 5px; font-weight: 900; color: #4fc3f7; text-transform: uppercase; }
         
         input, textarea {
-            width: 100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1);
+            width: 100%; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.1);
             border-radius: 10px; padding: 12px; color: white; box-sizing: border-box; outline: none; font-family: 'Montserrat';
         }
 
         .flex-row { display: flex; gap: 10px; }
         .flex-row div { flex: 1; }
 
-        .price-box { position: relative; }
-        .price-box span { position: absolute; left: 10px; top: 11px; font-weight: 900; color: #4fc3f7; }
-        .price-box input { padding-left: 35px; color: #ffeb3b; font-weight: 900; }
+        .price-input { position: relative; }
+        .price-input span { position: absolute; left: 12px; top: 12px; font-weight: 900; color: #4fc3f7; }
+        .price-input input { padding-left: 40px; color: #ffeb3b; font-weight: 900; font-size: 16px; }
 
-        .btn-add {
+        .btn-main {
             width: 100%; background: #1e88e5; color: white; border: none;
-            padding: 15px; border-radius: 12px; font-weight: 900; cursor: pointer;
-            text-transform: uppercase; margin-top: 10px; box-shadow: 0 5px 15px rgba(30, 136, 229, 0.4);
+            padding: 16px; border-radius: 12px; font-weight: 900; cursor: pointer;
+            text-transform: uppercase; transition: 0.3s; margin-top: 10px;
         }
+        .btn-main:active { transform: scale(0.95); }
 
-        /* LISTA DE PRODUCTOS */
-        .products-container { width: 92%; max-width: 480px; padding-bottom: 40px; }
+        /* LISTADO DE PRODUCTOS (ABAJO) */
+        .list-header { width: 90%; max-width: 450px; margin-bottom: 15px; border-bottom: 1px solid rgba(79, 195, 247, 0.3); padding-bottom: 5px; }
+        .products-list { width: 90%; max-width: 450px; padding-bottom: 50px; }
         
-        .item-card {
-            background: rgba(0, 0, 0, 0.5); border-radius: 18px; padding: 15px;
-            margin-bottom: 15px; border-left: 4px solid #4fc3f7;
-            display: flex; flex-direction: column; gap: 10px;
+        .product-card {
+            background: rgba(0, 0, 0, 0.5); border-radius: 15px; padding: 15px;
+            margin-bottom: 15px; border-left: 4px solid #4fc3f7; display: flex; flex-direction: column;
         }
 
-        .item-main { display: flex; justify-content: space-between; align-items: flex-start; }
-        .item-info h3 { margin: 0; font-size: 16px; color: #4fc3f7; }
-        .item-info p { margin: 3px 0; font-size: 11px; opacity: 0.6; }
+        .prod-top { display: flex; justify-content: space-between; align-items: flex-start; }
+        .prod-info h3 { margin: 0; font-size: 17px; color: #fff; }
+        .prod-info p { margin: 4px 0; font-size: 11px; opacity: 0.6; line-height: 1.3; }
 
-        .stock-tag {
-            font-size: 9px; font-weight: 900; padding: 3px 8px; border-radius: 5px;
-            text-transform: uppercase; display: inline-block; margin-top: 5px;
+        .prod-price { text-align: right; font-weight: 900; color: #ffeb3b; font-size: 19px; }
+        .prod-price small { display: block; font-size: 9px; color: #fff; opacity: 0.5; }
+
+        .stock-pill {
+            display: inline-block; padding: 3px 8px; border-radius: 6px; font-size: 9px;
+            font-weight: 900; text-transform: uppercase; margin-top: 8px;
         }
-        .stock-high { background: #4caf50; }
-        .stock-low { background: #ff9800; }
-        .stock-empty { background: #f44336; }
-
-        .item-price { text-align: right; font-weight: 900; color: #ffeb3b; font-size: 18px; }
+        .s-ok { background: #4caf50; }
+        .s-low { background: #ff9800; }
+        .s-none { background: #f44336; }
 
         /* BOTONES DE ACCIÓN */
-        .item-actions {
-            display: flex; justify-content: flex-end; gap: 10px;
-            border-top: 1px solid rgba(255,255,255,0.1); padding-top: 10px;
+        .prod-actions {
+            margin-top: 12px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.1);
+            display: flex; gap: 10px; justify-content: flex-end;
         }
-        .btn-action {
+        .btn-act {
             background: rgba(255,255,255,0.1); border: none; color: white;
-            padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px;
-            display: flex; align-items: center; gap: 5px; transition: 0.3s;
+            padding: 7px 12px; border-radius: 6px; cursor: pointer; font-size: 11px; font-weight: 700;
         }
-        .btn-edit:hover { background: #1e88e5; }
-        .btn-delete:hover { background: #f44336; }
-
+        .b-edit:hover { background: #1e88e5; }
+        .b-del:hover { background: #d32f2f; }
     </style>
 </head>
 <body>
 
 <div class="header">
-    <h1 id="nombreLocal">MI NEGOCIO</h1>
-    <p style="font-size: 10px;">GESTIÓN DE INVENTARIO</p>
+    <h1 id="localName">MI COMERCIO</h1>
+    <p>PANEL DE CONTROL DE PRODUCTOS</p>
 </div>
 
 <div class="card-form">
-    <input type="hidden" id="editID"> <div class="input-group">
-        <label>Producto</label>
-        <input type="text" id="nombreP" placeholder="Ej: Harina Pan">
+    <input type="hidden" id="prodID"> <div class="input-group">
+        <label>¿Qué vas a vender hoy?</label>
+        <input type="text" id="pNombre" placeholder="Ej: Pan Salado (6 unidades)">
     </div>
 
     <div class="flex-row">
         <div class="input-group">
             <label>Precio (Bs.)</label>
-            <div class="price-box"><span>Bs</span><input type="number" id="precioP" step="0.01"></div>
+            <div class="price-input"><span>Bs</span><input type="number" id="pPrecio" step="0.01"></div>
         </div>
         <div class="input-group">
-            <label>Stock</label>
-            <input type="number" id="stockP" placeholder="Cant.">
+            <label>Unidades en Stock</label>
+            <input type="number" id="pStock" placeholder="0">
         </div>
     </div>
 
     <div class="input-group">
-        <label>Descripción</label>
-        <input type="text" id="descP">
+        <label>Breve Descripción</label>
+        <textarea id="pDesc" rows="2" placeholder="Ej: Recién horneado, calientito..."></textarea>
     </div>
 
-    <button class="btn-add" id="btnGuardar" onclick="guardarProducto()">Publicar Producto</button>
+    <button class="btn-main" id="btnAccion" onclick="procesar()">Publicar Producto</button>
 </div>
 
-<div class="products-container" id="lista"></div>
+<div class="list-header">
+    <span style="font-weight: 900; font-size: 13px;">📦 MI INVENTARIO PUBLICADO</span>
+</div>
+
+<div class="products-list" id="lista">
+    </div>
 
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
@@ -129,92 +136,90 @@
     };
     if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
-    let myUID = "";
+    let uid = "";
 
     firebase.auth().onAuthStateChanged(user => {
         if (user) {
-            myUID = user.uid;
-            db.collection("comercios").doc(myUID).get().then(doc => {
-                if(doc.exists) document.getElementById('nombreLocal').innerText = doc.data().nombre;
+            uid = user.uid;
+            // Cargar nombre del comercio
+            db.collection("comercios").doc(uid).get().then(doc => {
+                if(doc.exists) document.getElementById('localName').innerText = doc.data().nombre.toUpperCase();
             });
-            mostrarProductos();
+            cargarLista();
         } else { window.location.href = "auth.html"; }
     });
 
-    function guardarProducto() {
-        const id = document.getElementById('editID').value;
-        const data = {
-            comercioID: myUID,
-            nombre: document.getElementById('nombreP').value,
-            precio: parseFloat(document.getElementById('precioP').value),
-            stock: parseInt(document.getElementById('stockP').value),
-            descripcion: document.getElementById('descP').value,
-            fecha: firebase.firestore.FieldValue.serverTimestamp()
-        };
+    function procesar() {
+        const id = document.getElementById('prodID').value;
+        const nombre = document.getElementById('pNombre').value.trim();
+        const precio = parseFloat(document.getElementById('pPrecio').value);
+        const stock = parseInt(document.getElementById('pStock').value);
+        const desc = document.getElementById('pDesc').value.trim();
 
-        if(!data.nombre || isNaN(data.precio)) return alert("Datos incompletos");
+        if(!nombre || isNaN(precio) || isNaN(stock)) return alert("⚠️ Completa los datos básicos.");
+
+        const datos = { nombre, precio, stock, descripcion: desc, comercioID: uid, fecha: firebase.firestore.FieldValue.serverTimestamp() };
 
         if(id) {
-            // EDITAR
-            db.collection("productos").doc(id).update(data).then(() => limpiar());
+            db.collection("productos").doc(id).update(datos).then(() => limpiar());
         } else {
-            // NUEVO
-            db.collection("productos").add(data).then(() => limpiar());
+            db.collection("productos").add(datos).then(() => limpiar());
         }
     }
 
     function limpiar() {
-        document.getElementById('editID').value = "";
-        document.getElementById('nombreP').value = "";
-        document.getElementById('precioP').value = "";
-        document.getElementById('stockP').value = "";
-        document.getElementById('descP').value = "";
-        document.getElementById('btnGuardar').innerText = "Publicar Producto";
+        document.getElementById('prodID').value = "";
+        document.getElementById('pNombre').value = "";
+        document.getElementById('pPrecio').value = "";
+        document.getElementById('pStock').value = "";
+        document.getElementById('pDesc').value = "";
+        document.getElementById('btnAccion').innerText = "Publicar Producto";
     }
 
-    function editar(id, n, p, s, d) {
-        document.getElementById('editID').value = id;
-        document.getElementById('nombreP').value = n;
-        document.getElementById('precioP').value = p;
-        document.getElementById('stockP').value = s;
-        document.getElementById('descP').value = d;
-        document.getElementById('btnGuardar').innerText = "Actualizar Cambios";
-        window.scrollTo(0,0);
-    }
-
-    function eliminar(id) {
-        if(confirm("¿Seguro que quieres borrar este producto?")) {
-            db.collection("productos").doc(id).delete();
-        }
-    }
-
-    function mostrarProductos() {
-        db.collection("productos").where("comercioID", "==", myUID)
+    function cargarLista() {
+        db.collection("productos").where("comercioID", "==", uid).orderBy("fecha", "desc")
         .onSnapshot(snap => {
             const lista = document.getElementById('lista');
             lista.innerHTML = "";
             snap.forEach(doc => {
                 const p = doc.data();
                 const id = doc.id;
-                let c = p.stock > 5 ? 'stock-high' : (p.stock > 0 ? 'stock-low' : 'stock-empty');
-                
+                let stockClase = p.stock > 10 ? 's-ok' : (p.stock > 0 ? 's-low' : 's-none');
+                let stockMsg = p.stock > 0 ? `Stock: ${p.stock}` : "AGOTADO";
+
                 lista.innerHTML += `
-                    <div class="item-card">
-                        <div class="item-main">
-                            <div class="item-info">
+                    <div class="product-card">
+                        <div class="prod-top">
+                            <div class="prod-info">
                                 <h3>${p.nombre}</h3>
                                 <p>${p.descripcion}</p>
-                                <span class="stock-tag ${c}">Stock: ${p.stock}</span>
+                                <span class="stock-pill ${stockClase}">${stockMsg}</span>
                             </div>
-                            <div class="item-price">Bs. ${p.precio.toLocaleString('es-VE')}</div>
+                            <div class="prod-price"><small>Bs.</small>${p.precio.toLocaleString('es-VE')}</div>
                         </div>
-                        <div class="item-actions">
-                            <button class="btn-action btn-edit" onclick="editar('${id}','${p.nombre}',${p.precio},${p.stock},'${p.descripcion}')">✏️ Editar</button>
-                            <button class="btn-action btn-delete" onclick="eliminar('${id}')">🗑️ Borrar</button>
+                        <div class="prod-actions">
+                            <button class="btn-act b-edit" onclick="prepararEdicion('${id}','${p.nombre}',${p.precio},${p.stock},'${p.descripcion}')">✏️ Editar</button>
+                            <button class="btn-act b-del" onclick="borrar('${id}')">🗑️ Borrar</button>
                         </div>
                     </div>`;
             });
         });
+    }
+
+    function prepararEdicion(id, n, p, s, d) {
+        document.getElementById('prodID').value = id;
+        document.getElementById('pNombre').value = n;
+        document.getElementById('pPrecio').value = p;
+        document.getElementById('pStock').value = s;
+        document.getElementById('pDesc').value = d;
+        document.getElementById('btnAccion').innerText = "Actualizar Cambios";
+        window.scrollTo({top: 0, behavior: 'smooth'});
+    }
+
+    function borrar(id) {
+        if(confirm("¿Eliminar este producto permanentemente?")) {
+            db.collection("productos").doc(id).delete();
+        }
     }
 </script>
 </body>
