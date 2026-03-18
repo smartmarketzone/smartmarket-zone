@@ -9,90 +9,86 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;900&display=swap" rel="stylesheet">
     
     <style>
-        :root { --neon: #00ffcc; --pink: #ff007f; --royal: #6200ea; --dark: #020508; }
+        :root { --primary: #1a73e8; --neon: #00ffcc; --dark: #202124; --bg-light: #f8f9fa; }
         
-        body, html { margin: 0; padding: 0; height: 100%; background: var(--dark); font-family: 'Outfit', sans-serif; color: white; overflow: hidden; }
+        body, html { margin: 0; padding: 0; height: 100%; background: var(--bg-light); font-family: 'Outfit', sans-serif; overflow: hidden; }
 
-        /* EL MAPA LLAMATIVO (COLORES SATURADOS) */
-        #map { position: absolute; top: 0; bottom: 0; width: 100%; z-index: 1; }
-        
-        /* Filtro de color para máxima atracción visual */
-        .leaflet-tile { 
-            filter: invert(100%) hue-rotate(170deg) brightness(1.2) contrast(1.1) saturate(1.8); 
+        /* EL MAPA ESTILO GOOGLE (Sin filtros oscuros) */
+        #map { position: absolute; top: 0; bottom: 0; width: 100%; z-index: 1; background: #e5e3df; }
+
+        /* UI SUPERIOR: BUSCADOR FLOTANTE */
+        .ui-top { position: fixed; top: 15px; width: 100%; z-index: 1000; padding: 0 12px; box-sizing: border-box; }
+        .search-container { 
+            background: white; border-radius: 28px; padding: 12px 20px; 
+            display: flex; align-items: center; box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+            border: 1px solid #dfe1e5;
+        }
+        .search-container input { 
+            background: none; border: none; width: 100%; outline: none; 
+            font-size: 16px; color: #202124; font-weight: 500;
         }
 
-        /* BUSCADOR ESTILO FLOTANTE */
-        .ui-top { position: fixed; top: 20px; width: 100%; z-index: 1000; padding: 0 15px; box-sizing: border-box; }
-        .search-glass { 
-            background: rgba(2, 5, 8, 0.8); backdrop-filter: blur(12px);
-            border-radius: 20px; padding: 15px 20px; border: 2px solid var(--neon);
-            box-shadow: 0 0 20px rgba(0, 255, 204, 0.4); display: flex; align-items: center;
-        }
-        .search-glass input { background: none; border: none; color: white; width: 100%; outline: none; font-size: 16px; font-weight: 700; }
-
-        /* CHIPS DE CATEGORÍAS DE COLORES */
-        .category-scroll { display: flex; gap: 10px; margin-top: 15px; overflow-x: auto; padding-bottom: 5px; scrollbar-width: none; }
+        /* CHIPS DE CATEGORÍAS */
+        .category-scroll { display: flex; gap: 8px; margin-top: 12px; overflow-x: auto; padding-bottom: 5px; scrollbar-width: none; }
         .chip { 
-            padding: 10px 18px; border-radius: 15px; font-size: 12px; font-weight: 900; 
-            white-space: nowrap; text-transform: uppercase; border: none;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            padding: 8px 16px; border-radius: 20px; font-size: 13px; font-weight: 600; 
+            white-space: nowrap; border: 1px solid #dadce0; background: white; color: #3c4043;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1); cursor: pointer;
         }
-        .c-food { background: #ff4757; color: white; }
-        .c-health { background: #2ed573; color: white; }
-        .c-fav { background: #ffa502; color: white; }
+        .chip.active { background: var(--primary); color: white; border-color: var(--primary); }
 
-        /* MODAL DE TIENDA COLORIDO */
+        /* MODAL DE TIENDA (ESTILO GOOGLE MAPS) */
         #store-modal { 
-            position: fixed; bottom: -100%; left: 0; width: 100%; height: 70vh; 
-            background: #0a0e14; border-radius: 35px 35px 0 0; z-index: 3000; 
-            transition: 0.5s cubic-bezier(0.1, 0.8, 0.2, 1); padding: 30px;
-            box-shadow: 0 -15px 50px rgba(0, 255, 204, 0.2); 
+            position: fixed; bottom: -100%; left: 0; width: 100%; height: 65vh; 
+            background: white; border-radius: 24px 24px 0 0; z-index: 3000; 
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1); padding: 24px;
+            box-shadow: 0 -4px 12px rgba(0,0,0,0.15); overflow-y: auto; color: #202124;
         }
-        #store-modal.active { bottom: 0; }
+        #store-modal.active { transform: translateY(-100%); bottom: 0; }
+        .drag-line { width: 36px; height: 4px; background: #e8eaed; border-radius: 2px; margin: -8px auto 20px; }
 
+        /* NAVEGACIÓN INFERIOR */
         .nav-bar { 
-            position: fixed; bottom: 0; width: 100%; height: 75px; 
-            background: #020508; display: flex; justify-content: space-around; 
-            align-items: center; z-index: 2000; border-top: 2px solid var(--neon);
+            position: fixed; bottom: 0; width: 100%; height: 70px; 
+            background: white; display: flex; justify-content: space-around; 
+            align-items: center; z-index: 2000; border-top: 1px solid #f1f3f4;
         }
-        .nav-btn { color: rgba(255,255,255,0.3); text-decoration: none; font-size: 10px; font-weight: 900; text-align: center; }
-        .nav-btn.active { color: var(--neon); transform: scale(1.1); }
-        .nav-btn i { display: block; font-size: 24px; margin-bottom: 5px; }
+        .nav-btn { color: #5f6368; text-decoration: none; font-size: 11px; font-weight: 500; text-align: center; display: flex; flex-direction: column; }
+        .nav-btn.active { color: var(--primary); }
+        .nav-btn span { font-size: 22px; margin-bottom: 2px; }
 
-        .prod-card { 
-            background: rgba(255,255,255,0.05); padding: 15px; border-radius: 15px; 
-            margin-bottom: 10px; border-left: 4px solid var(--neon); display: flex; justify-content: space-between;
-        }
+        .prod-card { background: #f8f9fa; padding: 14px; border-radius: 12px; margin-bottom: 8px; display: flex; justify-content: space-between; border: 1px solid #e8eaed; }
+        .btn-gps { width: 100%; padding: 16px; background: var(--primary); color: white; border: none; border-radius: 25px; font-weight: 700; font-size: 15px; margin-top: 15px; cursor: pointer; }
     </style>
 </head>
 <body>
 
 <div class="ui-top">
-    <div class="search-glass">
-        <input type="text" id="find" placeholder="🚀 ¿Qué buscas hoy en San Joaquín?" oninput="buscar()">
+    <div class="search-container">
+        <input type="text" id="find" placeholder="Buscar aquí..." oninput="buscar()">
     </div>
     <div class="category-scroll">
-        <button class="chip c-food" onclick="filter('comida')">🍔 COMIDA</button>
-        <button class="chip c-health" onclick="filter('salud')">💊 FARMACIA</button>
-        <button class="chip c-fav" onclick="favs()">⭐ FAVORITOS</button>
+        <div class="chip" onclick="filter('comida')">🍴 Comida</div>
+        <div class="chip" onclick="filter('salud')">💊 Farmacia</div>
+        <div class="chip" onclick="filter('tienda')">🛒 Tiendas</div>
     </div>
 </div>
 
 <div id="map"></div>
 
 <div id="store-modal">
-    <div onclick="closeM()" style="width:50px; height:6px; background:rgba(255,255,255,0.2); margin: -10px auto 25px; border-radius:10px;"></div>
-    <h2 id="m-name" style="margin:0; font-size:28px; color:var(--neon); font-weight:900;">TIENDA</h2>
-    <p style="color:#ff007f; font-weight:800; font-size:12px;">📍 UBICACIÓN VERIFICADA</p>
-    <div id="m-list" style="margin-top:20px; max-height: 250px; overflow-y:auto;"></div>
-    <button onclick="gps()" style="width:100%; padding:18px; background:var(--neon); color:black; border:none; border-radius:18px; font-weight:900; font-size:16px; margin-top:20px;">LLEVAME AQUÍ 🚗</button>
+    <div class="drag-line" onclick="closeM()"></div>
+    <h2 id="m-name" style="margin:0; font-size:24px; color:#202124; font-weight:700;">Nombre Tienda</h2>
+    <p style="color:#1a73e8; font-weight:600; font-size:13px; margin: 4px 0 20px;">Abierto ahora • San Joaquín</p>
+    <div id="m-list"></div>
+    <button class="btn-gps" onclick="gps()">CÓMO LLEGAR</button>
 </div>
 
 <nav class="nav-bar">
-    <a href="index.html" class="nav-btn active"><span>📍</span>MAPA</a>
-    <a href="cliente.html" class="nav-btn"><span>👤</span>PERFIL</a>
-    <a href="registro_comercio.html" id="nav-reg" class="nav-btn" style="display:none;"><span>🏪</span>REGISTRAR</a>
-    <a href="comercio.html" id="nav-pan" class="nav-btn" style="display:none;"><span>📊</span>PANEL</a>
+    <a href="index.html" class="nav-btn active"><span>📍</span>Explorar</a>
+    <a href="cliente.html" class="nav-btn"><span>👤</span>Perfil</a>
+    <a href="registro_comercio.html" id="nav-reg" class="nav-btn" style="display:none;"><span>🏪</span>Registrar</a>
+    <a href="comercio.html" id="nav-pan" class="nav-btn" style="display:none;"><span>📊</span>Panel</a>
 </nav>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -110,21 +106,27 @@
     const db = firebase.firestore();
     let map, markers = [], cLat, cLng;
 
-    // --- ACCESO GABRIEL (REFORZADO) ---
+    // --- LÓGICA DE ROLES ESTRICTA (GABRIEL ADMIN) ---
     firebase.auth().onAuthStateChanged(async (user) => {
+        const btnReg = document.getElementById('nav-reg');
+        const btnPan = document.getElementById('nav-pan');
         if (user) {
-            const admin = "gabriel01cvenus@gmail.com";
+            const adminEmail = "gabriel01cvenus@gmail.com";
             const doc = await db.collection("usuarios").doc(user.uid).get();
-            if (user.email === admin || (doc.exists && doc.data().tipo === "comercio")) {
-                document.getElementById('nav-reg').style.display = 'block';
-                document.getElementById('nav-pan').style.display = 'block';
-            }
+            let esEspecial = (user.email === adminEmail) || (doc.exists && doc.data().tipo === "comercio");
+            
+            btnReg.style.display = esEspecial ? 'flex' : 'none';
+            btnPan.style.display = esEspecial ? 'flex' : 'none';
+        } else {
+            btnReg.style.display = btnPan.style.display = 'none';
         }
     });
 
+    // --- MOTOR DEL MAPA (VISTA CLARA) ---
     function init() {
         map = L.map('map', { zoomControl: false, attributionControl: false }).setView([10.267, -67.788], 15);
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+        // Usamos un estilo de mapa más limpio y colorido
+        L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png').addTo(map);
         setTimeout(() => map.invalidateSize(), 600);
         load();
     }
@@ -144,14 +146,14 @@
     }
 
     async function openM(id, d) {
-        document.getElementById('m-name').innerText = d.nombre.toUpperCase();
+        document.getElementById('m-name').innerText = d.nombre;
         cLat = d.lat; cLng = d.lng;
         const list = document.getElementById('m-list');
-        list.innerHTML = "Cargando...";
+        list.innerHTML = "Cargando catálogo...";
         const prods = await db.collection("productos").where("comercioID", "==", id).get();
-        list.innerHTML = prods.empty ? "Sin stock." : "";
+        list.innerHTML = prods.empty ? "Sin stock disponible." : "";
         prods.forEach(p => {
-            list.innerHTML += `<div class="prod-card"><span>${p.data().nombre}</span><b style="color:var(--neon)">Bs. ${p.data().precio}</b></div>`;
+            list.innerHTML += `<div class="prod-card"><span>${p.data().nombre}</span><b style="color:#1a73e8">Bs. ${p.data().precio}</b></div>`;
         });
         document.getElementById('store-modal').classList.add('active');
     }
