@@ -2,137 +2,95 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SmartMarket Zone - Acceso</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartMarket - Entrar</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --primary: #1e88e5;
-            --accent: #4fc3f7;
-            --glass: rgba(255, 255, 255, 0.1);
-        }
-
         body {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-family: 'Montserrat', sans-serif;
-            /* MISMO FONDO DE MAPA PARA COHERENCIA */
-            background: linear-gradient(rgba(15, 32, 39, 0.85), rgba(30, 136, 229, 0.75)), 
-                        url('https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
+            margin: 0; padding: 0; font-family: 'Montserrat', sans-serif;
+            background: #0f2027; color: white;
+            height: 100vh; display: flex; align-items: center; justify-content: center;
         }
 
-        .card {
-            background: rgba(255, 255, 255, 0.08);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            border-radius: 25px;
-            padding: 40px 25px;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
-            width: 85%;
-            max-width: 380px;
+        .auth-card {
+            background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(15px);
+            padding: 40px 30px; border-radius: 25px; border: 1px solid rgba(255, 255, 255, 0.1);
+            width: 90%; max-width: 380px; box-shadow: 0 20px 50px rgba(0,0,0,0.5);
             text-align: center;
-            color: white;
         }
 
-        .logo { font-weight: 900; font-size: 30px; margin-bottom: 5px; letter-spacing: -1px; }
-        .logo span { color: var(--accent); }
-        .slogan { font-size: 11px; opacity: 0.8; margin-bottom: 30px; text-transform: uppercase; letter-spacing: 2px; }
+        h1 { font-weight: 900; color: #4fc3f7; margin-bottom: 10px; font-size: 24px; }
+        p { font-size: 11px; opacity: 0.7; margin-bottom: 25px; }
 
-        /* SELECTOR DE MODO (LOGIN/REGISTRO) */
-        .tab-container {
-            display: flex;
-            background: rgba(0,0,0,0.2);
-            border-radius: 50px;
-            margin-bottom: 25px;
-            padding: 5px;
-            border: 1px solid rgba(255,255,255,0.1);
-        }
-        .tab {
-            flex: 1;
-            padding: 10px;
-            border-radius: 50px;
-            cursor: pointer;
-            font-size: 13px;
-            font-weight: 700;
+        .input-group { margin-bottom: 15px; text-align: left; position: relative; }
+        label { display: block; font-size: 10px; font-weight: 900; color: #4fc3f7; margin-bottom: 5px; text-transform: uppercase; }
+        
+        input, select {
+            width: 100%; padding: 12px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.2);
+            background: rgba(0,0,0,0.3); color: white; font-family: 'Montserrat'; outline: none; box-sizing: border-box;
             transition: 0.3s;
         }
-        .tab.active { background: var(--primary); color: white; box-shadow: 0 4px 15px rgba(30,136,229,0.4); }
 
-        /* INPUTS MODERNOS */
-        .input-group {
-            margin-bottom: 15px;
-            text-align: left;
-        }
-        input {
-            width: 100%;
-            background: rgba(0, 0, 0, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            padding: 14px 15px;
-            color: white;
-            font-family: 'Montserrat', sans-serif;
-            box-sizing: border-box;
-            transition: 0.3s;
-            outline: none;
-        }
-        input:focus { border-color: var(--accent); background: rgba(0,0,0,0.4); }
+        input:focus { border-color: #4fc3f7; background: rgba(0,0,0,0.5); }
 
-        .btn-primary {
-            width: 100%;
-            background: var(--primary);
-            color: white;
-            border: none;
-            padding: 15px;
-            border-radius: 12px;
-            font-weight: 900;
-            font-size: 15px;
-            text-transform: uppercase;
-            cursor: pointer;
-            margin-top: 10px;
-            transition: 0.3s;
-            box-shadow: 0 8px 20px rgba(30, 136, 229, 0.3);
+        /* Icono del Ojo para la Clave */
+        .eye-icon {
+            position: absolute; right: 12px; top: 32px; 
+            cursor: pointer; color: #4fc3f7; font-size: 18px;
+            user-select: none; z-index: 10;
         }
-        .btn-primary:active { transform: scale(0.96); opacity: 0.9; }
 
-        #msgError { color: #ff8a80; font-size: 12px; margin-top: 15px; min-height: 18px; }
+        .btn-auth {
+            width: 100%; padding: 15px; border-radius: 12px; border: none;
+            background: #1e88e5; color: white; font-weight: 900; cursor: pointer;
+            margin-top: 10px; transition: 0.3s; text-transform: uppercase;
+        }
+        .btn-auth:hover { background: #1565c0; transform: translateY(-2px); }
+
+        .toggle-text { font-size: 11px; margin-top: 20px; cursor: pointer; color: #ffeb3b; font-weight: 700; text-decoration: underline; }
+        
+        #extraFields { display: none; margin-bottom: 15px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px; }
     </style>
 </head>
 <body>
 
-<div class="card">
-    <div class="logo">SMART<span>MARKET</span></div>
-    <p class="slogan">Tu ciudad en un mapa</p>
+<div class="auth-card">
+    <h1 id="authTitle">HOLA DE NUEVO</h1>
+    <p id="authDesc">Inicia sesión para continuar en San Joaquín</p>
 
-    <div class="tab-container">
-        <div id="tabL" class="tab active" onclick="setModo('login')">ENTRAR</div>
-        <div id="tabR" class="tab" onclick="setModo('registro')">UNIRSE</div>
+    <div id="extraFields">
+        <div class="input-group">
+            <label>Nombre Completo</label>
+            <input type="text" id="userName" placeholder="Ej: Juan Pérez">
+        </div>
+        <div class="input-group">
+            <label>Tipo de Usuario</label>
+            <select id="userType">
+                <option value="persona">Soy Persona (Comprador)</option>
+                <option value="comercio">Soy Comercio (Vendedor)</option>
+            </select>
+        </div>
     </div>
-
-    <h2 id="formTitle" style="font-size: 18px; margin-bottom: 20px;">Bienvenido</h2>
 
     <div class="input-group">
-        <input type="email" id="email" placeholder="Correo electrónico">
-    </div>
-    <div class="input-group">
-        <input type="password" id="pass" placeholder="Contraseña">
+        <label>Correo Electrónico</label>
+        <input type="email" id="userEmail" placeholder="correo@ejemplo.com">
     </div>
 
-    <button class="btn-primary" id="mainBtn" onclick="ejecutar()">Ingresar</button>
-    
-    <div id="msgError"></div>
+    <div class="input-group">
+        <label>Contraseña</label>
+        <input type="password" id="userPass" placeholder="••••••••" style="padding-right: 45px;">
+        <span class="eye-icon" id="toggleEye" onclick="mostrarClave()">👁️</span>
+    </div>
+
+    <button class="btn-auth" id="btnMain" onclick="authAccion()">Entrar</button>
+
+    <div class="toggle-text" id="btnToggle" onclick="toggleAuth()">¿No tienes cuenta? Regístrate aquí</div>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
 
 <script>
     const firebaseConfig = {
@@ -140,52 +98,94 @@
         authDomain: "smartmarket-zone-e7559.firebaseapp.com",
         projectId: "smartmarket-zone-e7559"
     };
-    if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
+    if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
 
-    let modo = 'login';
+    let esRegistro = false;
 
-    function setModo(m) {
-        modo = m;
-        document.getElementById('tabL').className = (m === 'login') ? 'tab active' : 'tab';
-        document.getElementById('tabR').className = (m === 'registro') ? 'tab active' : 'tab';
-        document.getElementById('formTitle').innerText = (m === 'login') ? 'Bienvenido de nuevo' : 'Crea tu cuenta';
-        document.getElementById('mainBtn').innerText = (m === 'login') ? 'Ingresar' : 'Registrarse';
+    // Función para ver/ocultar clave
+    function mostrarClave() {
+        const passInput = document.getElementById('userPass');
+        const eyeIcon = document.getElementById('toggleEye');
+        if (passInput.type === "password") {
+            passInput.type = "text";
+            eyeIcon.innerText = "🔒"; 
+        } else {
+            passInput.type = "password";
+            eyeIcon.innerText = "👁️";
+        }
     }
 
-    function ejecutar() {
-        const email = document.getElementById('email').value.trim();
-        const pass = document.getElementById('pass').value.trim();
-        const err = document.getElementById('msgError');
-        err.innerText = "";
+    // Cambiar entre Login y Registro
+    function toggleAuth() {
+        esRegistro = !esRegistro;
+        document.getElementById('authTitle').innerText = esRegistro ? "CREAR CUENTA" : "HOLA DE NUEVO";
+        document.getElementById('authDesc').innerText = esRegistro ? "Únete a la red comercial de San Joaquín" : "Inicia sesión para continuar";
+        document.getElementById('btnMain').innerText = esRegistro ? "Registrarme" : "Entrar";
+        document.getElementById('btnToggle').innerText = esRegistro ? "¿Ya tienes cuenta? Inicia sesión" : "¿No tienes cuenta? Regístrate aquí";
+        document.getElementById('extraFields').style.display = esRegistro ? "block" : "none";
+    }
 
-        if(!email || !pass) { err.innerText = "⚠️ Completa los campos"; return; }
+    async function authAccion() {
+        const email = document.getElementById('userEmail').value.trim();
+        const pass = document.getElementById('userPass').value.trim();
+        const nombre = document.getElementById('userName').value.trim();
+        const tipo = document.getElementById('userType').value;
 
-        const btn = document.getElementById('mainBtn');
-        btn.innerText = "Cargando...";
-        btn.disabled = true;
+        if (!email || !pass) return alert("⚠️ Por favor, ingresa correo y contraseña.");
+        if (esRegistro && !nombre) return alert("⚠️ Por favor, ingresa tu nombre.");
 
-        if(modo === 'login') {
-            firebase.auth().signInWithEmailAndPassword(email, pass)
-                .then(() => window.location.href = "tipo.html")
-                .catch(e => { 
-                    err.innerText = "Error: Datos incorrectos"; 
-                    btn.innerText = "Ingresar"; 
-                    btn.disabled = false;
+        try {
+            if (esRegistro) {
+                // PROCESO DE REGISTRO
+                const userCredential = await auth.createUserWithEmailAndPassword(email, pass);
+                const user = userCredential.user;
+                
+                // Guardar perfil extendido en Firestore
+                await db.collection("usuarios").doc(user.uid).set({
+                    nombre: nombre,
+                    email: email,
+                    tipo: tipo,
+                    creado: new Date()
                 });
-        } else {
-            if(pass.length < 6) { 
-                err.innerText = "Mínimo 6 caracteres"; 
-                btn.innerText = "Registrarse"; 
-                btn.disabled = false; 
-                return; 
+
+                alert("✅ ¡Cuenta creada con éxito!");
+
+                // Redirección inteligente al registrarse
+                if (tipo === "comercio") {
+                    window.location.href = "registro_comercio.html";
+                } else {
+                    window.location.href = "index.html";
+                }
+
+            } else {
+                // PROCESO DE LOGIN
+                const userCredential = await auth.signInWithEmailAndPassword(email, pass);
+                const user = userCredential.user;
+
+                // Verificar qué tipo de usuario es para mandarlo a su sitio
+                const doc = await db.collection("usuarios").doc(user.uid).get();
+                
+                if (doc.exists) {
+                    const data = doc.data();
+                    if (data.tipo === "comercio") {
+                        window.location.href = "comercio.html";
+                    } else {
+                        window.location.href = "index.html";
+                    }
+                } else {
+                    // Si no tiene perfil creado aún (usuarios viejos), mandarlo al mapa
+                    window.location.href = "index.html";
+                }
             }
-            firebase.auth().createUserWithEmailAndPassword(email, pass)
-                .then(() => window.location.href = "tipo.html")
-                .catch(e => { 
-                    err.innerText = "Error: El correo ya existe"; 
-                    btn.innerText = "Registrarse"; 
-                    btn.disabled = false;
-                });
+        } catch (error) {
+            let mensaje = "Error en la autenticación";
+            if (error.code === "auth/weak-password") mensaje = "La contraseña debe tener al menos 6 caracteres.";
+            if (error.code === "auth/email-already-in-use") mensaje = "Este correo ya está registrado.";
+            if (error.code === "auth/user-not-found") mensaje = "Usuario no encontrado.";
+            if (error.code === "auth/wrong-password") mensaje = "Contraseña incorrecta.";
+            alert("❌ " + mensaje);
         }
     }
 </script>
