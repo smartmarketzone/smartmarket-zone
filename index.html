@@ -2,34 +2,113 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SmartMarket Zone</title>
-    <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SmartMarket Zone - Bienvenido</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Montserrat', sans-serif;
+            /* Mantenemos el fondo de mapa para la identidad de marca */
+            background: linear-gradient(rgba(15, 32, 39, 0.8), rgba(30, 136, 229, 0.7)), 
+                        url('https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
+            background-size: cover;
+            background-position: center;
+            overflow: hidden;
+        }
+
+        .welcome-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 30px;
+            padding: 50px 30px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+            width: 85%;
+            max-width: 400px;
+            text-align: center;
+            color: white;
+            animation: fadeIn 1.2s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .main-icon {
+            font-size: 60px;
+            margin-bottom: 20px;
+            display: inline-block;
+            filter: drop-shadow(0 5px 15px rgba(0,0,0,0.3));
+        }
+
+        .logo-main {
+            font-weight: 900;
+            font-size: 32px;
+            margin-bottom: 10px;
+            letter-spacing: -1px;
+            line-height: 1;
+        }
+        .logo-main span {
+            color: #4fc3f7;
+        }
+
+        .slogan-main {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-bottom: 40px;
+            font-weight: 400;
+            line-height: 1.5;
+        }
+
+        .btn-start {
+            background: #1e88e5;
+            color: white;
+            text-decoration: none;
+            padding: 18px 40px;
+            border-radius: 50px;
+            font-weight: 900;
+            font-size: 16px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: inline-block;
+            transition: 0.3s;
+            box-shadow: 0 10px 20px rgba(30, 136, 229, 0.4);
+        }
+
+        .btn-start:active {
+            transform: scale(0.95);
+            box-shadow: 0 5px 10px rgba(30, 136, 229, 0.2);
+        }
+
+        .footer-text {
+            margin-top: 30px;
+            font-size: 10px;
+            opacity: 0.6;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+    </style>
 </head>
+<body>
 
-<body class="auth-body">
+<div class="welcome-card">
+    <div class="main-icon">🚀</div>
+    <div class="logo-main">SMART<span>MARKET</span> ZONE</div>
+    <p class="slogan-main">Tu mercado local en la palma de tu mano. Encuentra y vende cerca de ti.</p>
 
-<div class="card">
-    <div class="logo-icon">🛒</div>
-    
-    <h1 class="logo">SmartMarket<span>Zone</span></h1>
+    <a href="auth.html" class="btn-start">Comenzar ahora</a>
 
-    <p class="slogan">
-        Tu mercado local en un solo lugar
-    </p>
-
-    <button class="btn-primary" onclick="entrar()">
-        Entrar ahora
-    </button>
+    <div class="footer-text">Conectando tu comunidad</div>
 </div>
-
-<script>
-function entrar(){
-    // Redirige al sistema de autenticación
-    window.location.href = "auth.html"; 
-}
-</script>
 
 </body>
 </html>
