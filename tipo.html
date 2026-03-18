@@ -3,97 +3,112 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SmartMarket - Elige tu Rol</title>
-    <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800&display=swap" rel="stylesheet">
+    <title>SmartMarket - Selección de Perfil</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
-        .role-container {
+        /* 1. FONDO ANIMADO PROFESIONAL */
+        body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            min-height: 100vh;
             display: flex;
-            flex-direction: column;
-            gap: 15px;
-            margin-top: 25px;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Montserrat', sans-serif;
+            background: linear-gradient(-45deg, #0f2027, #203a43, #2c5364, #1e88e5);
+            background-size: 400% 400%;
+            animation: gradientAnimation 15s ease infinite;
+            overflow: hidden;
         }
-        
+
+        @keyframes gradientAnimation {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* 2. TARJETA EFECTO CRISTAL (GLASSMORPHISM) */
+        .card {
+            background: rgba(255, 255, 255, 0.07);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 25px;
+            padding: 35px 25px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            width: 90%;
+            max-width: 380px;
+            text-align: center;
+            color: white;
+        }
+
+        .logo { font-weight: 900; font-size: 28px; margin-bottom: 5px; letter-spacing: -1px; }
+        .logo span { color: #1e88e5; }
+        .slogan { font-size: 13px; opacity: 0.8; margin-bottom: 30px; }
+
+        /* 3. CONTENEDOR DE ROLES */
+        .role-container { display: flex; flex-direction: column; gap: 20px; }
+
         .role-card {
-            background: rgba(255, 255, 255, 0.1);
-            border: 2px solid rgba(255, 255, 255, 0.2);
-            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 18px;
             padding: 20px;
             cursor: pointer;
-            transition: all 0.3s ease;
-            text-align: center;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             display: flex;
             flex-direction: column;
             align-items: center;
-            position: relative; /* Para posicionar la etiqueta */
-        }
-        
-        .role-card:active {
-            transform: scale(0.96);
-            background: rgba(255, 255, 255, 0.2);
+            position: relative;
         }
 
-        /* --- ETIQUETAS NEGRAS CON FONDO RESALTADO --- */
+        /* Efecto al presionar */
+        .role-card:active { transform: scale(0.94); background: rgba(255, 255, 255, 0.15); }
+
+        /* 4. ETIQUETAS NEGRAS RESALTADAS */
         .role-tag {
-            background-color: #ffca28; /* Color amarillo llamativo */
-            color: #000000;            /* Letras NEGRAS como pediste */
+            background: #ffca28; /* Amarillo vibrante */
+            color: #000;         /* LETRAS NEGRAS */
             font-size: 10px;
             font-weight: 900;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            padding: 4px 12px;
-            border-radius: 50px;       /* Forma de píldora */
+            padding: 4px 14px;
+            border-radius: 50px;
             margin-bottom: 12px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            box-shadow: 0 4px 15px rgba(255, 202, 40, 0.3);
+            text-transform: uppercase;
         }
 
-        .role-icon {
-            font-size: 45px;
-            margin-bottom: 10px;
-            display: block;
-        }
-        
-        .role-card h3 {
-            margin: 0;
-            color: #fff;
-            font-size: 18px;
-            font-weight: 700;
-        }
-        
-        .role-card p {
-            margin: 5px 0 0;
-            font-size: 13px;
-            color: #ddd;
-            line-height: 1.4;
-        }
+        .role-icon { font-size: 48px; margin-bottom: 10px; }
+        h3 { margin: 0; font-size: 20px; font-weight: 700; }
+        .role-card p { font-size: 13px; opacity: 0.7; margin: 8px 0 0; line-height: 1.4; }
+
+        .logout { margin-top: 30px; font-size: 12px; opacity: 0.5; cursor: pointer; text-decoration: underline; }
     </style>
 </head>
-<body class="auth-body">
+<body>
 
 <div class="card">
-    <h1 class="logo">Smart<span>Market</span></h1>
+    <div class="logo">SMART<span>MARKET</span></div>
     <p class="slogan">Selecciona tu perfil de usuario</p>
 
     <div class="role-container">
-        
         <div class="role-card" onclick="seleccionarRol('comercio')">
             <span class="role-tag">COMERCIO</span> 
             <span class="role-icon">🏪</span>
             <h3>Soy un Comercio</h3>
-            <p>Vende tus productos y destaca en el mapa.</p>
+            <p>Publica tus productos y llega a más clientes locales.</p>
         </div>
 
         <div class="role-card" onclick="seleccionarRol('cliente')">
             <span class="role-tag">PERSONA</span>
             <span class="role-icon">🛍️</span>
             <h3>Soy un Cliente</h3>
-            <p>Encuentra las mejores ofertas cerca de ti.</p>
+            <p>Explora tiendas cercanas y encuentra las mejores ofertas.</p>
         </div>
     </div>
 
-    <p style="margin-top:25px; font-size:12px; color:#aaa; cursor:pointer;" onclick="firebase.auth().signOut().then(() => window.location.href='auth.html')">
-        <u>Cerrar sesión e ir al inicio</u>
-    </p>
+    <div class="logout" onclick="logout()">Cerrar sesión e ir al inicio</div>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
@@ -107,16 +122,11 @@
         projectId: "smartmarket-zone-e7559"
     };
 
-    if (!firebase.apps.length) {
-        firebase.initializeApp(firebaseConfig);
-    }
+    if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
 
     function seleccionarRol(tipo) {
         const user = firebase.auth().currentUser;
-        if (!user) {
-            window.location.href = "auth.html";
-            return;
-        }
+        if (!user) { window.location.href = "auth.html"; return; }
 
         firebase.firestore().collection("usuarios").doc(user.uid).set({
             email: user.email,
@@ -127,6 +137,10 @@
             window.location.href = (tipo === 'comercio') ? "registro_comercio.html" : "cliente.html";
         })
         .catch(e => alert("Error: " + e.message));
+    }
+
+    function logout() {
+        firebase.auth().signOut().then(() => { window.location.href = "auth.html"; });
     }
 </script>
 
