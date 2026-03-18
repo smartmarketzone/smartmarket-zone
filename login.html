@@ -1,15 +1,35 @@
 <!DOCTYPE html>
-<html>
-<body>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Login - SmartMarket</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800&display=swap" rel="stylesheet">
+</head>
+<body class="auth-body">
 
-<h2>Login</h2>
+<div class="card">
+    <div class="logo-icon">🔑</div>
+    <h1 class="logo">Smart<span>Market</span></h1>
+    <p class="slogan">Ingresa a tu cuenta</p>
 
-<input type="email" id="email"><br>
-<input type="password" id="password"><br>
+    <input type="email" id="regEmail" placeholder="Tu correo electrónico" inputmode="email">
+    <input type="password" id="regPass" placeholder="Tu contraseña">
 
-<button onclick="login()">Entrar</button>
+    <button type="button" class="btn-primary" onclick="login()">
+        Entrar
+    </button>
+    
+    <p style="margin-top:20px; font-size:14px; color: #666;">
+        ¿No tienes cuenta? <a href="register.html" style="color:#1e88e5; font-weight:bold; text-decoration:none;">Regístrate</a>
+    </p>
+</div>
 
-<script type="module" src="auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+<script src="auth.js"></script>
 
 </body>
 </html>
