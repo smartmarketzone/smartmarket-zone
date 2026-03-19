@@ -3,70 +3,98 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cliente - SmartMarket</title>
+<title>SmartMarket - Buscar</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
 
 <style>
-:root { --blue:#1e88e5; --cyan:#4fc3f7; --dark:#0f2027; --yellow:#ffeb3b; --green:#4caf50; }
-
 body {
     margin:0;
-    font-family:'Montserrat';
-    background:var(--dark);
+    font-family:'Montserrat', sans-serif;
+    background:#0f2027;
     color:white;
 }
 
 /* HEADER */
 .header {
-    padding:30px;
+    padding:25px;
+    text-align:center;
     background:linear-gradient(45deg,#1e88e5,#4fc3f7);
 }
 
-.header h1 { margin:0; }
-
-/* BUSCADOR */
-.search {
-    padding:20px;
+.header h1 {
+    margin:0;
+    font-size:18px;
 }
 
-.search input {
+/* BUSCADOR */
+.search-box {
+    width:90%;
+    margin:20px auto;
+}
+
+.search-box input {
     width:100%;
     padding:15px;
-    border-radius:15px;
+    border-radius:12px;
     border:none;
     font-weight:700;
 }
 
 /* RESULTADOS */
-.resultados {
-    padding:15px;
+.result-group {
+    margin:20px;
 }
 
-.card {
-    background:rgba(255,255,255,0.05);
-    padding:15px;
-    border-radius:15px;
+.product-title {
+    font-size:14px;
+    font-weight:900;
+    color:#ffeb3b;
     margin-bottom:10px;
 }
 
-.precio {
-    color:var(--yellow);
+/* CARD */
+.card {
+    background:rgba(255,255,255,0.05);
+    padding:15px;
+    border-radius:12px;
+    margin-bottom:10px;
+    border-left:4px solid #4fc3f7;
+}
+
+.best {
+    border-left:4px solid #4caf50;
+    background:rgba(76,175,80,0.1);
+}
+
+/* STOCK */
+.stock {
+    font-size:10px;
     font-weight:900;
+    padding:4px 8px;
+    border-radius:6px;
 }
 
-.barato {
-    border-left:5px solid var(--green);
-}
+.stock-ok { background:#4caf50; }
+.stock-low { background:#ff9800; }
+.stock-out { background:#f44336; }
 
-button {
+/* NAV */
+.bottom-nav {
+    position:fixed;
+    bottom:0;
     width:100%;
-    padding:10px;
-    margin-top:10px;
-    border:none;
-    border-radius:10px;
-    background:var(--blue);
+    height:70px;
+    background:#0b171c;
+    display:flex;
+    justify-content:space-around;
+    align-items:center;
+}
+
+.nav-item {
     color:white;
+    text-decoration:none;
+    font-size:10px;
 }
 </style>
 </head>
@@ -74,14 +102,19 @@ button {
 <body>
 
 <div class="header">
-    <h1 id="nombre">Cargando...</h1>
+    <h1 id="saludo">BIENVENIDO</h1>
 </div>
 
-<div class="search">
-    <input type="text" id="buscador" placeholder="Buscar arroz, leche, harina..." oninput="buscar()">
+<div class="search-box">
+    <input type="text" id="buscador" placeholder="🔍 Buscar productos..." oninput="buscarInteligente()">
 </div>
 
-<div class="resultados" id="res"></div>
+<div id="resultados"></div>
+
+<nav class="bottom-nav">
+    <a href="mapa.html" class="nav-item">📍 MAPA</a>
+    <a href="cliente.html" class="nav-item">🔍 BUSCAR</a>
+</nav>
 
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
@@ -89,95 +122,98 @@ button {
 
 <script>
 const firebaseConfig = {
- apiKey: "AIzaSyA6tYooh4CtX7ww9GRyXWhuakl2nLovtsY",
- authDomain: "smartmarket-zone-e7559.firebaseapp.com",
- projectId: "smartmarket-zone-e7559"
+    apiKey: "AIzaSyA6tYooh4CtX7ww9GRyXWhuakl2nLovtsY",
+    authDomain: "smartmarket-zone-e7559.firebaseapp.com",
+    projectId: "smartmarket-zone-e7559"
 };
 
 if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
 
 const db = firebase.firestore();
 
-// 🔐 SESIÓN
-firebase.auth().onAuthStateChanged(async user => {
-    if(!user){
-        window.location.href="auth.html";
-        return;
-    }
-
-    const doc = await db.collection("usuarios").doc(user.uid).get();
-
-    if(doc.exists){
-        document.getElementById("nombre").innerText = "HOLA, " + (doc.data().nombre || "CLIENTE");
+/* SESION */
+firebase.auth().onAuthStateChanged(user => {
+    if(user){
+        document.getElementById("saludo").innerText = "Hola, " + user.email;
+    } else {
+        window.location.href = "auth.html";
     }
 });
 
-// 🔍 BÚSQUEDA INTELIGENTE
-async function buscar(){
+/* BUSCADOR INTELIGENTE */
+async function buscarInteligente() {
     const txt = document.getElementById("buscador").value.toLowerCase();
-    const cont = document.getElementById("res");
+    const cont = document.getElementById("resultados");
 
     if(txt.length < 2){
         cont.innerHTML = "";
         return;
     }
 
-    const productos = await db.collection("productos").get();
+    const snap = await db.collection("productos").get();
 
-    let resultados = [];
+    let agrupados = {};
 
-    for(const doc of productos.docs){
+    snap.forEach(doc => {
         const p = doc.data();
 
         if(p.nombre.toLowerCase().includes(txt)){
 
-            const tienda = await db.collection("comercios").doc(p.comercioID).get();
+            if(!agrupados[p.nombre]){
+                agrupados[p.nombre] = [];
+            }
 
-            resultados.push({
-                id: doc.id,
-                nombre: p.nombre,
-                precio: p.precio,
-                stock: p.stock,
-                tienda: tienda.data().nombre,
-                comercioID: p.comercioID
+            agrupados[p.nombre].push({
+                ...p,
+                id: doc.id
             });
         }
-    }
-
-    // 🔥 ORDENAR POR PRECIO (MÁS BARATO PRIMERO)
-    resultados.sort((a,b) => a.precio - b.precio);
+    });
 
     cont.innerHTML = "";
 
-    resultados.forEach((r, index) => {
+    for(const nombre in agrupados){
 
-        let clase = "";
-        let etiqueta = "";
+        let lista = agrupados[nombre];
 
-        // 🥇 MÁS BARATO
-        if(index === 0){
-            clase = "barato";
-            etiqueta = "🔥 MEJOR PRECIO";
+        // ordenar por precio
+        lista.sort((a,b) => a.precio - b.precio);
+
+        let html = `<div class="result-group">
+        <div class="product-title">${nombre}</div>`;
+
+        for(let i=0;i<lista.length;i++){
+
+            const item = lista[i];
+
+            // obtener comercio
+            const docC = await db.collection("comercios").doc(item.comercioID).get();
+            const comercio = docC.data();
+
+            let stockClass = "stock-ok";
+            let stockText = "EN STOCK";
+
+            if(item.stock == 0){
+                stockClass = "stock-out";
+                stockText = "SIN STOCK";
+            }
+            else if(item.stock <= 5){
+                stockClass = "stock-low";
+                stockText = "POCO STOCK";
+            }
+
+            html += `
+            <div class="card ${i===0 ? "best" : ""}">
+                <b>${comercio.nombre}</b><br>
+                💰 Bs. ${item.precio}<br>
+                <span class="stock ${stockClass}">${stockText}</span>
+            </div>`;
         }
 
-        cont.innerHTML += `
-            <div class="card ${clase}">
-                <b>${r.nombre}</b>
-                <div class="precio">Bs. ${r.precio}</div>
-                <p style="font-size:12px;">${r.tienda}</p>
-                <p style="font-size:11px; color:#4caf50;">${etiqueta}</p>
+        html += "</div>";
 
-                <button onclick="verTienda('${r.comercioID}')">
-                    Ver catálogo
-                </button>
-            </div>
-        `;
-    });
-}
-
-// 🏪 IR A TIENDA
-function verTienda(id){
-    window.location.href = "tienda.html?id=" + id;
+        cont.innerHTML += html;
+    }
 }
 </script>
 
