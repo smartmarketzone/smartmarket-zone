@@ -8,250 +8,209 @@
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
 
 <style>
-:root { --blue:#1e88e5; --cyan:#4fc3f7; --dark:#0f2027; --yellow:#ffeb3b; --red:#f44336; --green:#4caf50; }
+:root {
+    --blue:#1e88e5;
+    --cyan:#4fc3f7;
+    --dark:#0f2027;
+    --yellow:#ffeb3b;
+    --red:#f44336;
+    --green:#4caf50;
+}
 
-body {
+body{
     margin:0;
-    font-family:'Montserrat',sans-serif;
+    font-family:'Montserrat';
     background:var(--dark);
     color:white;
-    padding-bottom:80px;
 }
 
 /* HEADER */
-.header {
+.header{
     padding:20px;
     text-align:center;
-    background:linear-gradient(45deg,#1e88e5,#4fc3f7);
+    border-bottom:2px solid var(--cyan);
 }
 
-.header h1 { margin:0; font-size:20px; }
+.header h1{margin:0;font-size:20px;color:var(--cyan);}
+
+/* TABS */
+.tabs{
+    display:flex;
+    margin:10px;
+    gap:10px;
+}
+
+.tab{
+    flex:1;
+    padding:10px;
+    text-align:center;
+    background:rgba(255,255,255,0.05);
+    border-radius:10px;
+    cursor:pointer;
+}
+
+.tab.active{
+    background:var(--blue);
+}
 
 /* FORM */
-.card {
-    margin:15px;
+.card{
     padding:15px;
-    border-radius:15px;
-    background:rgba(255,255,255,0.05);
 }
 
-input {
+input{
     width:100%;
-    padding:12px;
-    margin-top:8px;
-    border:none;
+    padding:10px;
+    margin-bottom:10px;
     border-radius:10px;
+    border:none;
 }
 
-button {
+/* BOTON */
+.btn{
     width:100%;
     padding:12px;
-    margin-top:10px;
+    background:var(--blue);
     border:none;
+    color:white;
     border-radius:10px;
     font-weight:bold;
-    background:var(--blue);
-    color:white;
 }
 
 /* PRODUCTOS */
-.lista {
-    padding:15px;
-}
-
-.prod {
+.producto{
     background:rgba(255,255,255,0.05);
     padding:15px;
+    margin:10px;
     border-radius:15px;
-    margin-bottom:12px;
-    border-left:6px solid var(--green);
 }
 
-.prod h3 { margin:0; }
+.stock-ok{color:var(--green);}
+.stock-low{color:var(--red);}
 
-.precio {
-    color:var(--yellow);
-    font-weight:900;
-}
+.precio{color:var(--yellow); font-weight:bold;}
 
-.stock {
-    margin-top:5px;
-    font-size:12px;
-    font-weight:bold;
-}
-
-/* COLORES DINÁMICOS */
-.stock-alto { color:var(--green); }
-.stock-medio { color:var(--yellow); }
-.stock-bajo { color:var(--red); }
-
-/* BOTONES */
-.actions {
-    display:flex;
-    gap:10px;
-    margin-top:10px;
-}
-
-.actions button {
-    flex:1;
-    font-size:12px;
-}
-
-.btn-delete { background:var(--red); }
 </style>
 </head>
 
 <body>
 
 <div class="header">
-    <h1 id="nombreLocal">Cargando...</h1>
+    <h1 id="nombreLocal">MI COMERCIO</h1>
 </div>
+
+<div class="tabs">
+    <div class="tab active" onclick="cambiarTab('inv',this)">INVENTARIO</div>
+    <div class="tab" onclick="cambiarTab('cat',this)">CATÁLOGO</div>
+</div>
+
+<!-- INVENTARIO -->
+<div id="inv">
 
 <div class="card">
-    <h3>➕ Nuevo Producto</h3>
-
-    <input type="hidden" id="prodID">
-    <input type="text" id="nombre" placeholder="Nombre del producto">
-    <input type="number" id="precio" placeholder="Precio">
-    <input type="number" id="stock" placeholder="Stock">
-
-    <button onclick="guardarProducto()">Guardar Producto</button>
+    <input id="nombre" placeholder="Producto">
+    <input id="precio" type="number" placeholder="Precio">
+    <input id="stock" type="number" placeholder="Stock">
+    <button class="btn" onclick="guardar()">Guardar Producto</button>
 </div>
 
-<div class="lista" id="lista"></div>
+<div id="lista"></div>
+
+</div>
+
+<!-- CATALOGO -->
+<div id="cat" style="display:none;">
+    <div id="catalogo"></div>
+</div>
 
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
 
 <script>
+
 const firebaseConfig = {
-    apiKey: "AIzaSyA6tYooh4CtX7ww9GRyXWhuakl2nLovtsY",
-    authDomain: "smartmarket-zone-e7559.firebaseapp.com",
-    projectId: "smartmarket-zone-e7559"
+ apiKey:"AIzaSyA6tYooh4CtX7ww9GRyXWhuakl2nLovtsY",
+ authDomain:"smartmarket-zone-e7559.firebaseapp.com",
+ projectId:"smartmarket-zone-e7559"
 };
 
-if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
-
+firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
-let uid = "";
 
-// 🔐 CONTROL DE SESIÓN
-firebase.auth().onAuthStateChanged(async user => {
-    if (!user) {
-        window.location.href = "auth.html";
-        return;
-    }
+let uid="";
 
-    uid = user.uid;
-
-    // VALIDAR QUE SEA COMERCIO
-    const doc = await db.collection("usuarios").doc(uid).get();
-
-    if (!doc.exists || doc.data().tipo !== "comercio") {
-        window.location.href = "cliente.html";
-        return;
-    }
-
-    // Cargar nombre del comercio
-    const local = await db.collection("comercios").doc(uid).get();
-    if (local.exists) {
-        document.getElementById("nombreLocal").innerText = local.data().nombre;
-    }
-
-    cargarProductos();
+firebase.auth().onAuthStateChanged(user=>{
+ if(!user){ location.href="auth.html"; return; }
+ uid=user.uid;
+ cargar();
 });
 
-// 📦 GUARDAR PRODUCTO
-async function guardarProducto() {
-    const id = document.getElementById("prodID").value;
-    const nombre = document.getElementById("nombre").value;
-    const precio = parseFloat(document.getElementById("precio").value);
-    const stock = parseInt(document.getElementById("stock").value);
+function cambiarTab(tab,el){
+ document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+ el.classList.add('active');
 
-    if (!nombre || isNaN(precio)) {
-        alert("Completa los datos");
-        return;
-    }
-
-    const data = {
-        nombre,
-        precio,
-        stock,
-        comercioID: uid,
-        fecha: new Date()
-    };
-
-    if (id) {
-        await db.collection("productos").doc(id).update(data);
-    } else {
-        await db.collection("productos").add(data);
-    }
-
-    limpiar();
+ document.getElementById('inv').style.display = tab=="inv"?"block":"none";
+ document.getElementById('cat').style.display = tab=="cat"?"block":"none";
 }
 
-// 📊 CARGAR PRODUCTOS
-function cargarProductos() {
-    db.collection("productos")
-    .where("comercioID","==",uid)
-    .onSnapshot(snap => {
+function guardar(){
+ const n=document.getElementById('nombre').value;
+ const p=parseFloat(document.getElementById('precio').value);
+ const s=parseInt(document.getElementById('stock').value);
 
-        const cont = document.getElementById("lista");
-        cont.innerHTML = "";
+ if(!n || !p) return alert("Completa datos");
 
-        snap.forEach(doc => {
-            const p = doc.data();
+ db.collection("productos").add({
+  nombre:n,
+  precio:p,
+  stock:s,
+  comercioID:uid
+ });
 
-            let claseStock = "stock-alto";
-            let textoStock = "Stock: " + p.stock;
-
-            if (p.stock <= 5) {
-                claseStock = "stock-bajo";
-                textoStock = "⚠️ BAJO (" + p.stock + ")";
-            } else if (p.stock <= 10) {
-                claseStock = "stock-medio";
-                textoStock = "⚠️ Medio (" + p.stock + ")";
-            }
-
-            cont.innerHTML += `
-                <div class="prod">
-                    <h3>${p.nombre}</h3>
-                    <div class="precio">Bs. ${p.precio}</div>
-                    <div class="stock ${claseStock}">${textoStock}</div>
-
-                    <div class="actions">
-                        <button onclick="editar('${doc.id}','${p.nombre}',${p.precio},${p.stock})">Editar</button>
-                        <button class="btn-delete" onclick="eliminar('${doc.id}')">Eliminar</button>
-                    </div>
-                </div>
-            `;
-        });
-    });
+ limpiar();
 }
 
-// ✏️ EDITAR
-function editar(id,n,p,s){
-    document.getElementById("prodID").value=id;
-    document.getElementById("nombre").value=n;
-    document.getElementById("precio").value=p;
-    document.getElementById("stock").value=s;
-}
-
-// 🗑️ ELIMINAR
-function eliminar(id){
-    if(confirm("¿Eliminar producto?")){
-        db.collection("productos").doc(id).delete();
-    }
-}
-
-// 🧹 LIMPIAR
 function limpiar(){
-    document.getElementById("prodID").value="";
-    document.getElementById("nombre").value="";
-    document.getElementById("precio").value="";
-    document.getElementById("stock").value="";
+ document.getElementById('nombre').value="";
+ document.getElementById('precio').value="";
+ document.getElementById('stock').value="";
 }
+
+function cargar(){
+ db.collection("productos").where("comercioID","==",uid)
+ .onSnapshot(snap=>{
+
+  const lista=document.getElementById('lista');
+  const cat=document.getElementById('catalogo');
+
+  lista.innerHTML="";
+  cat.innerHTML="";
+
+  snap.forEach(doc=>{
+   const p=doc.data();
+
+   const stockClass = p.stock <=5 ? "stock-low" : "stock-ok";
+
+   lista.innerHTML+=`
+    <div class="producto">
+     <b>${p.nombre}</b><br>
+     <span class="precio">Bs ${p.precio}</span><br>
+     <span class="${stockClass}">Stock: ${p.stock}</span>
+    </div>
+   `;
+
+   cat.innerHTML+=`
+    <div class="producto">
+     <b>${p.nombre}</b><br>
+     <span class="precio">Bs ${p.precio}</span>
+    </div>
+   `;
+  });
+
+ });
+}
+
 </script>
 
 </body>
