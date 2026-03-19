@@ -1,168 +1,203 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SmartMarket | San Joaquín</title>
-    
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;900&display=swap" rel="stylesheet">
-    
-    <style>
-        :root { --primary: #1a73e8; --neon: #00ffcc; --dark: #202124; --bg-light: #f8f9fa; }
-        
-        body, html { margin: 0; padding: 0; height: 100%; background: var(--bg-light); font-family: 'Outfit', sans-serif; overflow: hidden; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>SmartMarket - Inicio</title>
 
-        /* EL MAPA ESTILO GOOGLE (Sin filtros oscuros) */
-        #map { position: absolute; top: 0; bottom: 0; width: 100%; z-index: 1; background: #e5e3df; }
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
 
-        /* UI SUPERIOR: BUSCADOR FLOTANTE */
-        .ui-top { position: fixed; top: 15px; width: 100%; z-index: 1000; padding: 0 12px; box-sizing: border-box; }
-        .search-container { 
-            background: white; border-radius: 28px; padding: 12px 20px; 
-            display: flex; align-items: center; box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-            border: 1px solid #dfe1e5;
-        }
-        .search-container input { 
-            background: none; border: none; width: 100%; outline: none; 
-            font-size: 16px; color: #202124; font-weight: 500;
-        }
+<style>
+:root { --blue:#1e88e5; --cyan:#4fc3f7; --dark:#0f2027; --yellow:#ffeb3b; }
 
-        /* CHIPS DE CATEGORÍAS */
-        .category-scroll { display: flex; gap: 8px; margin-top: 12px; overflow-x: auto; padding-bottom: 5px; scrollbar-width: none; }
-        .chip { 
-            padding: 8px 16px; border-radius: 20px; font-size: 13px; font-weight: 600; 
-            white-space: nowrap; border: 1px solid #dadce0; background: white; color: #3c4043;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1); cursor: pointer;
-        }
-        .chip.active { background: var(--primary); color: white; border-color: var(--primary); }
+body {
+    margin:0;
+    font-family:'Montserrat',sans-serif;
+    background:var(--dark);
+    color:white;
+}
 
-        /* MODAL DE TIENDA (ESTILO GOOGLE MAPS) */
-        #store-modal { 
-            position: fixed; bottom: -100%; left: 0; width: 100%; height: 65vh; 
-            background: white; border-radius: 24px 24px 0 0; z-index: 3000; 
-            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1); padding: 24px;
-            box-shadow: 0 -4px 12px rgba(0,0,0,0.15); overflow-y: auto; color: #202124;
-        }
-        #store-modal.active { transform: translateY(-100%); bottom: 0; }
-        .drag-line { width: 36px; height: 4px; background: #e8eaed; border-radius: 2px; margin: -8px auto 20px; }
+/* HEADER */
+.header {
+    padding:40px 20px;
+    background:linear-gradient(45deg,#1e88e5,#4fc3f7);
+    border-radius:0 0 30px 30px;
+}
 
-        /* NAVEGACIÓN INFERIOR */
-        .nav-bar { 
-            position: fixed; bottom: 0; width: 100%; height: 70px; 
-            background: white; display: flex; justify-content: space-around; 
-            align-items: center; z-index: 2000; border-top: 1px solid #f1f3f4;
-        }
-        .nav-btn { color: #5f6368; text-decoration: none; font-size: 11px; font-weight: 500; text-align: center; display: flex; flex-direction: column; }
-        .nav-btn.active { color: var(--primary); }
-        .nav-btn span { font-size: 22px; margin-bottom: 2px; }
+.header h1 {
+    margin:0;
+    font-size:22px;
+    font-weight:900;
+}
 
-        .prod-card { background: #f8f9fa; padding: 14px; border-radius: 12px; margin-bottom: 8px; display: flex; justify-content: space-between; border: 1px solid #e8eaed; }
-        .btn-gps { width: 100%; padding: 16px; background: var(--primary); color: white; border: none; border-radius: 25px; font-weight: 700; font-size: 15px; margin-top: 15px; cursor: pointer; }
-    </style>
+.header p {
+    margin-top:5px;
+    font-size:12px;
+    opacity:0.8;
+}
+
+/* BUSCADOR */
+.search-box {
+    margin:20px;
+}
+
+.search-box input {
+    width:100%;
+    padding:15px;
+    border-radius:15px;
+    border:none;
+    font-weight:700;
+    outline:none;
+}
+
+/* OPCIONES */
+.menu {
+    padding:20px;
+    display:flex;
+    flex-direction:column;
+    gap:15px;
+}
+
+.card {
+    background:rgba(255,255,255,0.05);
+    border-radius:15px;
+    padding:20px;
+    border:1px solid rgba(255,255,255,0.1);
+    cursor:pointer;
+}
+
+.card h3 {
+    margin:0;
+    font-size:16px;
+}
+
+.card p {
+    font-size:12px;
+    opacity:0.7;
+}
+
+/* NAV */
+.bottom-nav {
+    position:fixed;
+    bottom:0;
+    left:0;
+    right:0;
+    height:70px;
+    background:#0b171c;
+    border-top:2px solid var(--cyan);
+    display:flex;
+    justify-content:space-around;
+    align-items:center;
+}
+
+.nav-item {
+    text-align:center;
+    color:rgba(255,255,255,0.4);
+    text-decoration:none;
+    font-size:10px;
+    font-weight:900;
+}
+
+.nav-item.active {
+    color:var(--cyan);
+}
+</style>
 </head>
+
 <body>
 
-<div class="ui-top">
-    <div class="search-container">
-        <input type="text" id="find" placeholder="Buscar aquí..." oninput="buscar()">
+<div class="header">
+    <h1 id="saludo">Cargando...</h1>
+    <p>¿Qué deseas buscar hoy?</p>
+</div>
+
+<div class="search-box">
+    <input type="text" placeholder="🔍 Buscar productos o tiendas..." onclick="irBuscar()">
+</div>
+
+<div class="menu">
+    <div class="card" onclick="irMapa()">
+        <h3>📍 Ver tiendas cercanas</h3>
+        <p>Explora negocios cerca de tu ubicación</p>
     </div>
-    <div class="category-scroll">
-        <div class="chip" onclick="filter('comida')">🍴 Comida</div>
-        <div class="chip" onclick="filter('salud')">💊 Farmacia</div>
-        <div class="chip" onclick="filter('tienda')">🛒 Tiendas</div>
+
+    <div class="card" onclick="irFavoritos()">
+        <h3>⭐ Mis favoritos</h3>
+        <p>Accede rápido a tus tiendas guardadas</p>
+    </div>
+
+    <div class="card" onclick="irPerfil()">
+        <h3>👤 Mi perfil</h3>
+        <p>Configura tu cuenta</p>
     </div>
 </div>
 
-<div id="map"></div>
-
-<div id="store-modal">
-    <div class="drag-line" onclick="closeM()"></div>
-    <h2 id="m-name" style="margin:0; font-size:24px; color:#202124; font-weight:700;">Nombre Tienda</h2>
-    <p style="color:#1a73e8; font-weight:600; font-size:13px; margin: 4px 0 20px;">Abierto ahora • San Joaquín</p>
-    <div id="m-list"></div>
-    <button class="btn-gps" onclick="gps()">CÓMO LLEGAR</button>
-</div>
-
-<nav class="nav-bar">
-    <a href="index.html" class="nav-btn active"><span>📍</span>Explorar</a>
-    <a href="cliente.html" class="nav-btn"><span>👤</span>Perfil</a>
-    <a href="registro_comercio.html" id="nav-reg" class="nav-btn" style="display:none;"><span>🏪</span>Registrar</a>
-    <a href="comercio.html" id="nav-pan" class="nav-btn" style="display:none;"><span>📊</span>Panel</a>
+<nav class="bottom-nav">
+    <a href="index.html" class="nav-item active">🏠 INICIO</a>
+    <a href="mapa.html" class="nav-item">📍 MAPA</a>
+    <a href="cliente.html" class="nav-item">👤 PERFIL</a>
 </nav>
 
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
 
 <script>
-    const firebaseConfig = {
-        apiKey: "AIzaSyA6tYooh4CtX7ww9GRyXWhuakl2nLovtsY",
-        authDomain: "smartmarket-zone-e7559.firebaseapp.com",
-        projectId: "smartmarket-zone-e7559"
-    };
-    if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
-    let map, markers = [], cLat, cLng;
+const firebaseConfig = {
+    apiKey: "AIzaSyA6tYooh4CtX7ww9GRyXWhuakl2nLovtsY",
+    authDomain: "smartmarket-zone-e7559.firebaseapp.com",
+    projectId: "smartmarket-zone-e7559"
+};
 
-    // --- LÓGICA DE ROLES ESTRICTA (GABRIEL ADMIN) ---
-    firebase.auth().onAuthStateChanged(async (user) => {
-        const btnReg = document.getElementById('nav-reg');
-        const btnPan = document.getElementById('nav-pan');
-        if (user) {
-            const adminEmail = "gabriel01cvenus@gmail.com";
-            const doc = await db.collection("usuarios").doc(user.uid).get();
-            let esEspecial = (user.email === adminEmail) || (doc.exists && doc.data().tipo === "comercio");
-            
-            btnReg.style.display = esEspecial ? 'flex' : 'none';
-            btnPan.style.display = esEspecial ? 'flex' : 'none';
-        } else {
-            btnReg.style.display = btnPan.style.display = 'none';
-        }
-    });
+if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
 
-    // --- MOTOR DEL MAPA (VISTA CLARA) ---
-    function init() {
-        map = L.map('map', { zoomControl: false, attributionControl: false }).setView([10.267, -67.788], 15);
-        // Usamos un estilo de mapa más limpio y colorido
-        L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png').addTo(map);
-        setTimeout(() => map.invalidateSize(), 600);
-        load();
+const auth = firebase.auth();
+const db = firebase.firestore();
+
+// CONTROL DE SESIÓN + ROL
+auth.onAuthStateChanged(async (user) => {
+    if (!user) {
+        window.location.href = "auth.html";
+        return;
     }
 
-    async function load(f = "") {
-        markers.forEach(m => map.removeLayer(m));
-        markers = [];
-        const snap = await db.collection("comercios").get();
-        snap.forEach(doc => {
-            const d = doc.data();
-            if(f === "" || d.nombre.toLowerCase().includes(f.toLowerCase())) {
-                const m = L.marker([d.lat, d.lng]).addTo(map);
-                m.on('click', () => openM(doc.id, d));
-                markers.push(m);
-            }
-        });
+    const doc = await db.collection("usuarios").doc(user.uid).get();
+
+    if (!doc.exists) {
+        window.location.href = "tipo.html";
+        return;
     }
 
-    async function openM(id, d) {
-        document.getElementById('m-name').innerText = d.nombre;
-        cLat = d.lat; cLng = d.lng;
-        const list = document.getElementById('m-list');
-        list.innerHTML = "Cargando catálogo...";
-        const prods = await db.collection("productos").where("comercioID", "==", id).get();
-        list.innerHTML = prods.empty ? "Sin stock disponible." : "";
-        prods.forEach(p => {
-            list.innerHTML += `<div class="prod-card"><span>${p.data().nombre}</span><b style="color:#1a73e8">Bs. ${p.data().precio}</b></div>`;
-        });
-        document.getElementById('store-modal').classList.add('active');
+    const data = doc.data();
+
+    // 🔥 SI ES COMERCIO → LO SACAMOS
+    if (data.tipo === "comercio") {
+        window.location.href = "comercio.html";
+        return;
     }
 
-    function closeM() { document.getElementById('store-modal').classList.remove('active'); }
-    function buscar() { load(document.getElementById('find').value); }
-    function gps() { window.open(`https://www.google.com/maps/dir/?api=1&destination=${cLat},${cLng}`); }
+    // 👤 CLIENTE
+    const nombre = data.nombre || "USUARIO";
+    document.getElementById("saludo").innerText = "HOLA, " + nombre.toUpperCase();
+});
 
-    window.onload = init;
+// NAVEGACIÓN
+function irMapa() {
+    window.location.href = "mapa.html";
+}
+
+function irPerfil() {
+    window.location.href = "cliente.html";
+}
+
+function irFavoritos() {
+    window.location.href = "cliente.html#tab-favs";
+}
+
+function irBuscar() {
+    window.location.href = "cliente.html#tab-buscar";
+}
 </script>
+
 </body>
 </html>
