@@ -3,105 +3,103 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SmartMarket | Organigrama Nacional</title>
+    <title>SmartMarket | Presentación</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;600;900&display=swap" rel="stylesheet">
     <style>
-        :root { --blue: #1a73e8; --dark: #121212; --gray: #e0e0e0; }
-        body { margin: 0; font-family: 'Outfit', sans-serif; color: var(--dark); background: #ffffff; }
+        :root { --blue: #1a73e8; --dark: #121212; --light: #f8f9fa; }
+        body { margin: 0; font-family: 'Outfit', sans-serif; color: var(--dark); background: white; }
 
-        /* HEADER LIMPIO - SIN AZUL */
-        .header-pro { padding: 80px 20px; text-align: center; background: white; }
-        .header-pro h1 { font-size: 50px; font-weight: 900; margin: 0; color: var(--blue); }
-        .header-pro p { font-size: 18px; color: #5f6368; max-width: 600px; margin: 15px auto; }
+        /* CABECERA LIMPIA */
+        .hero { padding: 60px 20px; text-align: center; }
+        .hero h1 { font-size: 45px; font-weight: 900; color: var(--blue); margin: 0; }
+        .hero p { color: #5f6368; font-size: 18px; max-width: 500px; margin: 10px auto; }
 
-        .container { max-width: 900px; margin: auto; padding: 20px; }
+        .container { max-width: 800px; margin: auto; padding: 20px; }
 
-        /* =========================================
-           ORGANIGRAMA / LINEA DE TIEMPO
-           ========================================= */
-        .organigrama { position: relative; padding-left: 40px; margin-top: 50px; }
-
-        /* La línea que conecta los pasos */
-        .organigrama::before {
-            content: ''; position: absolute; left: 15px; top: 0; bottom: 0;
-            width: 2px; background: var(--blue);
+        /* EL ORGANIGRAMA (LÍNEA DE TIEMPO) */
+        .organigrama { 
+            position: relative; 
+            padding-left: 50px; 
+            margin: 40px 0;
+            border-left: 3px solid var(--blue); /* Esta es la línea del organigrama */
         }
 
-        .paso { position: relative; margin-bottom: 80px; }
-
-        /* El círculo del organigrama */
         .punto {
-            position: absolute; left: -35px; top: 5px;
-            width: 22px; height: 22px; background: white;
+            position: absolute; left: -14px; top: 5px;
+            width: 25px; height: 25px; background: white;
             border: 4px solid var(--blue); border-radius: 50%; z-index: 2;
         }
 
-        .paso-titulo { font-size: 24px; font-weight: 900; margin: 0; color: var(--dark); }
-        .paso-desc { font-size: 16px; color: #5f6368; line-height: 1.5; margin: 10px 0 20px; }
+        .paso { position: relative; margin-bottom: 60px; }
+        .paso h2 { font-size: 26px; font-weight: 900; margin: 0; }
+        .paso p { font-size: 16px; color: #5f6368; margin: 10px 0; line-height: 1.5; }
 
         /* IMAGEN LIBRE (SIN BARRAS) */
-        .img-pro { width: 100%; border-radius: 20px; box-shadow: 0 15px 40px rgba(0,0,0,0.1); }
+        .img-placeholder { 
+            width: 100%; border-radius: 20px; 
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1); 
+            margin-top: 15px;
+        }
 
         /* SECCIÓN COMERCIO (DIFERENTE) */
-        .beneficio-comercio { 
-            background: #f8f9fa; padding: 40px; border-radius: 30px; 
-            margin-top: 50px; border-left: 8px solid var(--blue);
+        .box-comercio { 
+            background: var(--dark); color: white; padding: 40px 30px; 
+            border-radius: 30px; margin-top: 60px;
         }
-        .beneficio-comercio h2 { font-size: 28px; font-weight: 900; margin-top: 0; }
+        .box-comercio h2 { color: var(--blue); font-size: 30px; margin-top: 0; }
+        .item-comercio { margin-bottom: 20px; border-bottom: 1px solid #333; padding-bottom: 10px; }
 
-        /* BOTON FLOTANTE */
-        .btn-entrar {
+        /* BOTÓN FLOTANTE */
+        .btn-go {
             position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
-            width: 90%; max-width: 400px; background: var(--dark); color: white;
-            padding: 20px; border-radius: 50px; border: none; font-weight: 800;
-            font-size: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); cursor: pointer;
+            width: 90%; max-width: 450px; background: var(--blue); color: white;
+            padding: 20px; border: none; border-radius: 50px; font-weight: 800;
+            font-size: 18px; box-shadow: 0 10px 20px rgba(26,115,232,0.4); cursor: pointer;
         }
     </style>
 </head>
 <body>
 
-<div class="header-pro">
+<div class="hero">
     <h1>SmartMarket</h1>
-    <p>La red nacional que conecta inventarios reales con personas reales. Simple, directo y profesional.</p>
+    <p>Conectamos inventarios reales con personas reales en San Joaquín y toda Venezuela.</p>
 </div>
 
 <div class="container">
     
+    <div style="font-weight: 900; color: var(--blue); margin-bottom: 20px;">RUTA PARA PERSONAS</div>
+
     <div class="organigrama">
         <div class="paso">
             <div class="punto"></div>
-            <h2 class="paso-titulo">01. Registro y Perfil</h2>
-            <p class="paso-desc">Crea tu identidad digital. Como usuario, accede a precios exclusivos. Como comercio, digitaliza tu vitrina para todo el país.</p>
-            <img src="https://via.placeholder.com/600x300/e8f0fe/1a73e8?text=Interfaz+Profesional+Registro" class="img-pro">
-        </div>
+            <h2>01. Crea tu cuenta</h2>
+            <p>Únete como persona para buscar productos o como comercio para vender. Un solo lugar para todo el país.</p>
+            <div style="height: 150px; background: #eee; border-radius: 20px;"></div> </div>
 
         <div class="paso">
             <div class="punto"></div>
-            <h2 class="paso-titulo">02. Localización Inteligente</h2>
-            <p class="paso-desc">El mapa detecta tu ubicación y te muestra los productos disponibles en tu zona. Sin vueltas, sin pérdidas de tiempo.</p>
-            <img src="https://via.placeholder.com/600x300/e8f0fe/1a73e8?text=Mapa+de+Inventarios" class="img-pro">
-        </div>
+            <h2>02. Localiza en el Mapa</h2>
+            <p>Mira qué tiendas tienen lo que buscas en tiempo real. Filtra por cercanía y disponibilidad inmediata.</p>
+            <div style="height: 150px; background: #eee; border-radius: 20px;"></div> </div>
 
         <div class="paso">
             <div class="punto"></div>
-            <h2 class="paso-titulo">03. Ahorro y Ruta GPS</h2>
-            <p class="paso-desc">Compara, elige el mejor precio y deja que SmartMarket te guíe por GPS hasta la puerta del comercio.</p>
-            <img src="https://via.placeholder.com/600x300/e8f0fe/1a73e8?text=Ruta+GPS+Comercio" class="img-pro">
-        </div>
+            <h2>03. Ahorra y Compra</h2>
+            <p>Compara precios y llega a la tienda usando nuestro GPS integrado. Sin perder tiempo ni dinero.</p>
+            <div style="height: 150px; background: #eee; border-radius: 20px;"></div> </div>
     </div>
 
-    <div class="beneficio-comercio">
+    <div class="box-comercio">
         <h2>Para tu Comercio</h2>
-        <p>✅ <b>Alcance Nacional:</b> Tu negocio visible en todo el país.</p>
-        <p>✅ <b>Control Total:</b> Cambia precios y stock al instante.</p>
-        <p>✅ <b>Más Ventas:</b> Clientes que llegan directo a tu local por GPS.</p>
+        <div class="item-comercio"><b>✅ Alcance Nacional:</b> Tu inventario visible para todos.</div>
+        <div class="item-comercio"><b>✅ Gestión Simple:</b> Cambia precios y stock en un clic.</div>
+        <div class="item-comercio"><b>✅ Guía GPS:</b> Los clientes llegan directo a tu puerta.</div>
     </div>
 
+    <div style="height: 100px;"></div>
 </div>
 
-<div style="height: 120px;"></div>
-
-<button class="btn-entrar" onclick="window.location.href='auth.html'">COMENZAR EXPERIENCIA 🚀</button>
+<button class="btn-go" onclick="window.location.href='auth.html'">COMENZAR AHORA 🚀</button>
 
 </body>
 </html>
