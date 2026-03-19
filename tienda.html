@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tienda - SmartMarket</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
+
+<style>
+:root { --blue:#1e88e5; --cyan:#4fc3f7; --dark:#0f2027; --yellow:#ffeb3b; --red:#f44336; }
+
+body {
+    margin:0;
+    font-family:'Montserrat';
+    background:var(--dark);
+    color:white;
+}
+
+/* HEADER */
+.header {
+    padding:25px;
+    background:linear-gradient(45deg,#1e88e5,#4fc3f7);
+}
+
+.header h1 { margin:0; font-size:20px; }
+
+/* PRODUCTOS */
+.lista {
+    padding:15px;
+}
+
+.prod {
+    background:rgba(255,255,255,0.05);
+    padding:15px;
+    border-radius:15px;
+    margin-bottom:12px;
+}
+
+.precio {
+    color:var(--yellow);
+    font-weight:900;
+}
+
+.stock {
+    font-size:12px;
+    margin-top:5px;
+}
+
+.stock-bajo { color:var(--red); }
+.stock-ok { color:#4caf50; }
+</style>
+</head>
+
+<body>
+
+<div class="header">
+    <h1 id="nombreTienda">Cargando...</h1>
+</div>
+
+<div class="lista" id="productos"></div>
+
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+
+<script>
+const firebaseConfig = {
+ apiKey: "AIzaSyA6tYooh4CtX7ww9GRyXWhuakl2nLovtsY",
+ authDomain: "smartmarket-zone-e7559.firebaseapp.com",
+ projectId: "smartmarket-zone-e7559"
+};
+
+if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+
+const db = firebase.firestore();
+
+// 🔥 OBTENER ID DEL COMERCIO DESDE LA URL
+const params = new URLSearchParams(window.location.search);
+const id = params.get("id");
+
+// 🏪 CARGAR DATOS DEL COMERCIO
+async function cargarTienda(){
+    const doc = await db.collection("comercios").doc(id).get();
+
+    if(doc.exists){
+        document.getElementById("nombreTienda").innerText = doc.data().nombre;
+    }
+}
+
+// 📦 CARGAR PRODUCTOS
+function cargarProductos(){
+    db.collection("productos")
+    .where("comercioID","==",id)
+    .onSnapshot(snap => {
+
+        const cont = document.getElementById("productos");
+        cont.innerHTML = "";
+
+        snap.forEach(doc => {
+            const p = doc.data();
+
+            let stockClass = "stock-ok";
+            let texto = "Disponible";
+
+            if(p.stock <= 5){
+                stockClass = "stock-bajo";
+                texto = "Pocas unidades";
+            }
+
+            cont.innerHTML += `
+                <div class="prod">
+                    <h3>${p.nombre}</h3>
+                    <div class="precio">Bs. ${p.precio}</div>
+                    <div class="stock ${stockClass}">${texto}</div>
+                </div>
+            `;
+        });
+    });
+}
+
+cargarTienda();
+cargarProductos();
+</script>
+
+</body>
+</html>
