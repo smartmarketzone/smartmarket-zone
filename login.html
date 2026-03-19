@@ -1,11 +1,25 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SmartMarket - Acceso</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>SmartMarket</title>
+    <link rel="stylesheet" href="style.css">
 
-<link rel="stylesheet" href="style.css">
+    <style>
+        .bienvenida {
+            font-size: 14px;
+            margin-bottom: 15px;
+            color: #4fc3f7;
+            font-weight: 700;
+        }
+
+        .sub-text {
+            font-size: 12px;
+            opacity: 0.7;
+            margin-bottom: 20px;
+        }
+    </style>
 </head>
 
 <body class="auth-body">
@@ -13,18 +27,20 @@
 <div class="card">
     <h1 class="logo">Smart<span>Market</span></h1>
 
-    <p style="font-size:12px; opacity:0.8;">
-        Encuentra productos, precios y comercios en toda Venezuela 🇻🇪
-    </p>
+    <!-- TEXTO DINÁMICO -->
+    <p id="bienvenida" class="bienvenida">Detectando tu ubicación...</p>
+    <p class="sub-text">Encuentra lo que necesitas al mejor precio cerca de ti</p>
 
-    <input type="email" id="regEmail" placeholder="Correo">
+    <input type="email" id="regEmail" placeholder="Correo" inputmode="email">
     <input type="password" id="regPass" placeholder="Contraseña">
 
-    <button class="btn-primary" onclick="login()">INICIAR SESIÓN</button>
+    <button type="button" class="btn-primary" id="btnLogin">
+        INICIAR SESIÓN
+    </button>
 
     <p style="margin-top:15px; font-size:12px;">
         ¿No tienes cuenta? 
-        <a href="register.html" style="color:#4fc3f7;">Crear cuenta</a>
+        <a href="register.html" style="color:#4fc3f7;">Regístrate</a>
     </p>
 </div>
 
@@ -32,22 +48,77 @@
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
 
 <script>
-const firebaseConfig = {
- apiKey: "AIzaSyA6tYooh4CtX7ww9GRyXWhuakl2nLovtsY",
- authDomain: "smartmarket-zone-e7559.firebaseapp.com",
- projectId: "smartmarket-zone-e7559"
-};
+    // CONFIG FIREBASE
+    const firebaseConfig = {
+        apiKey: "AIzaSyA6tYooh4CtX7ww9GRyXWhuakl2nLovtsY",
+        authDomain: "smartmarket-zone-e7559.firebaseapp.com",
+        projectId: "smartmarket-zone-e7559"
+    };
 
-if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+    if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
 
-function login(){
-    const email = document.getElementById("regEmail").value;
-    const pass = document.getElementById("regPass").value;
+    // LOGIN
+    document.getElementById('btnLogin').addEventListener('click', function () {
+        const email = document.getElementById("regEmail").value.trim();
+        const pass = document.getElementById("regPass").value.trim();
 
-    firebase.auth().signInWithEmailAndPassword(email, pass)
-    .then(()=> window.location.href="tipo.html")
-    .catch(e => alert(e.message));
-}
+        if (!email || !pass) {
+            alert("Completa todos los campos");
+            return;
+        }
+
+        this.innerText = "ENTRANDO...";
+
+        firebase.auth().signInWithEmailAndPassword(email, pass)
+        .then(() => {
+            window.location.href = "tipo.html";
+        })
+        .catch((error) => {
+            this.innerText = "INICIAR SESIÓN";
+            alert(error.message);
+        });
+    });
+
+    // =========================
+    // 🌍 DETECCIÓN DE UBICACIÓN
+    // =========================
+
+    const txt = document.getElementById("bienvenida");
+
+    function detectarUbicacion() {
+        if (!navigator.geolocation) {
+            txt.innerText = "Bienvenido a SmartMarket";
+            return;
+        }
+
+        navigator.geolocation.getCurrentPosition(async (pos) => {
+            const lat = pos.coords.latitude;
+            const lng = pos.coords.longitude;
+
+            try {
+                // API gratuita (OpenStreetMap)
+                const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}`);
+                const data = await res.json();
+
+                let ciudad =
+                    data.address.city ||
+                    data.address.town ||
+                    data.address.village ||
+                    data.address.state ||
+                    "tu zona";
+
+                txt.innerText = "Bienvenido a " + ciudad;
+
+            } catch (e) {
+                txt.innerText = "Bienvenido a SmartMarket";
+            }
+
+        }, () => {
+            txt.innerText = "Bienvenido a SmartMarket";
+        });
+    }
+
+    detectarUbicacion();
 </script>
 
 </body>
