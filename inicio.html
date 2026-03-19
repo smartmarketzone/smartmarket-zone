@@ -1,77 +1,263 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SmartMarket | Inteligencia Comercial Local</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700;900&display=swap" rel="stylesheet">
+
 <style>
-/* NUEVO: Animaciones base */
-.fade-in {
+:root {
+    --blue: #1a73e8;
+    --accent: #00d2ff;
+    --dark: #0f172a;
+    --gray: #64748b;
+}
+
+body {
+    margin: 0;
+    font-family: 'Outfit', sans-serif;
+    background: #ffffff;
+    color: var(--dark);
+}
+
+/* HERO */
+.hero {
+    text-align: center;
+    padding: 120px 20px 80px;
+    background: radial-gradient(circle at top, #e8f0fe, #ffffff);
+}
+
+.logo {
+    font-size: 50px;
+}
+
+.hero h1 {
+    font-size: clamp(40px, 7vw, 70px);
+    margin: 10px 0;
+    font-weight: 900;
+    background: linear-gradient(90deg, var(--blue), var(--accent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.hero p {
+    max-width: 650px;
+    margin: auto;
+    font-size: 20px;
+    color: var(--gray);
+}
+
+.btn {
+    margin-top: 30px;
+    padding: 18px 40px;
+    border-radius: 40px;
+    border: none;
+    background: var(--dark);
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s;
+}
+.btn:hover {
+    background: var(--blue);
+    transform: translateY(-3px);
+}
+
+/* SECCIONES */
+.section {
+    max-width: 1100px;
+    margin: auto;
+    padding: 80px 20px;
+    text-align: center;
+}
+
+.section h2 {
+    font-size: 38px;
+    margin-bottom: 20px;
+}
+
+.section p {
+    color: var(--gray);
+    font-size: 18px;
+}
+
+/* PROBLEMA */
+.problem {
+    background: #f8fafc;
+    border-radius: 40px;
+    padding: 60px;
+}
+
+/* PASOS */
+.steps {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 40px;
+    margin-top: 40px;
+}
+
+.step {
+    padding: 30px;
+    border-radius: 25px;
+    background: #f1f5f9;
+    transition: 0.3s;
+}
+.step:hover {
+    transform: translateY(-8px);
+}
+
+/* BENEFICIOS */
+.benefits {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 40px;
+}
+
+.card {
+    background: #0f172a;
+    color: white;
+    padding: 40px;
+    border-radius: 30px;
+}
+.card h3 {
+    color: var(--accent);
+}
+
+/* MAPA */
+.map img {
+    max-width: 400px;
+    margin-top: 20px;
+}
+
+/* CTA FINAL */
+.cta {
+    text-align: center;
+    padding: 80px 20px;
+}
+
+.cta h2 {
+    font-size: 40px;
+}
+
+/* ANIMACIONES */
+.fade {
     opacity: 0;
     transform: translateY(40px);
-    transition: all 0.8s ease;
+    transition: 0.8s;
 }
-.fade-in.visible {
+.fade.visible {
     opacity: 1;
     transform: translateY(0);
 }
-
-/* Mejoras visuales */
-header {
-    background: radial-gradient(circle at top right, #e8f0fe, #ffffff 70%);
-}
-
-/* Indicador más moderno */
-.indicador {
-    background: linear-gradient(135deg, var(--blue), var(--accent));
-    color: white;
-    border: none;
-}
-
-/* Tarjetas visuales mejoradas */
-.visual div {
-    background: linear-gradient(135deg, #eef2ff, #f8fafc);
-    transition: 0.4s;
-}
-.visual div:hover {
-    transform: scale(1.05);
-}
-
-/* Sección negocio más premium */
-.seccion-negocio {
-    background: linear-gradient(135deg, #020617, #0f172a);
-}
-
-/* Cards con hover */
-.biz-card {
-    padding: 30px;
-    border-radius: 25px;
-    transition: 0.3s;
-}
-.biz-card:hover {
-    transform: translateY(-10px);
-    background: rgba(255,255,255,0.03);
-}
-
-/* BOTÓN PRO */
-.btn-ready {
-    position: relative;
-    overflow: hidden;
-}
-
-.btn-ready::after {
-    content: '';
-    position: absolute;
-    width: 200%;
-    height: 200%;
-    background: radial-gradient(circle, rgba(0,210,255,0.3), transparent 70%);
-    top: -50%;
-    left: -50%;
-    animation: glow 4s infinite linear;
-}
-
-@keyframes glow {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
 </style>
+</head>
+
+<body>
+
+<!-- HERO -->
+<section class="hero">
+    <div class="logo">🛒</div>
+    <h1>SmartMarket</h1>
+    <p>
+        Encuentra productos disponibles cerca de ti, compara precios y llega directamente al punto de compra en tiempo real.
+    </p>
+    <button class="btn" onclick="location.href='auth.html'">
+        Comenzar ahora 🚀
+    </button>
+</section>
+
+<!-- PROBLEMA -->
+<section class="section fade">
+    <div class="problem">
+        <h2>Comprar no debería ser una adivinanza</h2>
+        <p>
+            Pierdes tiempo buscando productos, no sabes qué tienda lo tiene disponible
+            y terminas pagando más o recorriendo múltiples lugares innecesariamente.
+        </p>
+    </div>
+</section>
+
+<!-- SOLUCIÓN -->
+<section class="section fade">
+    <h2>La solución inteligente</h2>
+    <p>
+        SmartMarket analiza tu zona en tiempo real y te muestra las mejores opciones
+        basadas en precio, cercanía y disponibilidad.
+    </p>
+</section>
+
+<!-- PASOS -->
+<section class="section fade">
+    <h2>¿Cómo funciona?</h2>
+
+    <div class="steps">
+        <div class="step">
+            <h3>Buscar</h3>
+            <p>Encuentra el producto que necesitas en segundos</p>
+        </div>
+
+        <div class="step">
+            <h3>Comparar</h3>
+            <p>Analiza precios y disponibilidad en tu zona</p>
+        </div>
+
+        <div class="step">
+            <h3>Llegar</h3>
+            <p>Dirígete al comercio con GPS integrado</p>
+        </div>
+    </div>
+</section>
+
+<!-- DIFERENCIAL -->
+<section class="section fade">
+    <h2>Tecnología inteligente</h2>
+    <p>
+        No dependemos de inventarios manuales. Nuestro sistema utiliza análisis de
+        demanda y comportamiento de compra para estimar disponibilidad en tiempo real.
+    </p>
+</section>
+
+<!-- BENEFICIOS -->
+<section class="section fade">
+    <h2>Beneficios</h2>
+
+    <div class="benefits">
+        <div class="card">
+            <h3>Para Personas</h3>
+            <p>
+                Encuentra productos rápido, compara precios y ahorra tiempo evitando
+                recorrer múltiples tiendas.
+            </p>
+        </div>
+
+        <div class="card">
+            <h3>Para Comercios</h3>
+            <p>
+                Atrae clientes con intención real de compra, aumenta tu visibilidad
+                y digitaliza tu negocio sin complicaciones.
+            </p>
+        </div>
+    </div>
+</section>
+
+<!-- COBERTURA -->
+<section class="section map fade">
+    <h2>Cobertura Nacional</h2>
+    <p>Operamos en todo el territorio venezolano</p>
+    <img src="https://upload.wikimedia.org/wikipedia/commons/0/06/Venezuela_location_map.svg">
+</section>
+
+<!-- CTA FINAL -->
+<section class="cta">
+    <h2>Empieza a comprar mejor hoy</h2>
+    <button class="btn" onclick="location.href='auth.html'">
+        Crear cuenta 🚀
+    </button>
+</section>
 
 <script>
-/* Animación al hacer scroll */
 const observer = new IntersectionObserver(entries => {
     entries.forEach(entry => {
         if(entry.isIntersecting){
@@ -80,8 +266,8 @@ const observer = new IntersectionObserver(entries => {
     });
 });
 
-document.querySelectorAll(".paso, .biz-card").forEach(el => {
-    el.classList.add("fade-in");
-    observer.observe(el);
-});
+document.querySelectorAll(".fade").forEach(el => observer.observe(el));
 </script>
+
+</body>
+</html>
