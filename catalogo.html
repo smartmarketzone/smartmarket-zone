@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Catálogo</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
+
+<style>
+:root {
+    --blue:#1e88e5;
+    --dark:#0f2027;
+    --yellow:#ffeb3b;
+    --red:#f44336;
+}
+
+body {
+    margin:0;
+    font-family:'Montserrat', sans-serif;
+    background:var(--dark);
+    color:white;
+}
+
+/* HEADER */
+.header {
+    padding:20px;
+    text-align:center;
+    background:linear-gradient(45deg,#1e88e5,#4fc3f7);
+    position:relative;
+}
+
+.back {
+    position:absolute;
+    top:15px;
+    left:15px;
+    background:white;
+    color:black;
+    padding:8px 12px;
+    border-radius:10px;
+    font-weight:900;
+    cursor:pointer;
+}
+
+/* GRID */
+.grid {
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:15px;
+    padding:15px;
+}
+
+/* CARD */
+.card {
+    background:#162a33;
+    border-radius:15px;
+    overflow:hidden;
+}
+
+/* IMG */
+.img {
+    width:100%;
+    height:120px;
+    object-fit:cover;
+}
+
+/* INFO */
+.info { padding:10px; }
+
+.name { font-size:13px; font-weight:700; }
+
+.price { color:var(--yellow); font-weight:900; }
+
+.stock {
+    font-size:10px;
+    padding:3px 6px;
+    border-radius:6px;
+    font-weight:900;
+}
+
+.stock-ok { background:#4caf50; }
+.stock-low { background:var(--red); }
+
+.btn {
+    margin-top:6px;
+    background:var(--blue);
+    border:none;
+    width:100%;
+    padding:8px;
+    border-radius:8px;
+    color:white;
+    font-weight:900;
+    cursor:pointer;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+    <div class="back" onclick="history.back()">⬅</div>
+    <h2 id="nombreComercio">Cargando...</h2>
+</div>
+
+<div class="grid" id="lista"></div>
+
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+
+<script>
+const firebaseConfig = {
+    apiKey: "AIzaSy...",
+    authDomain: "smartmarket-zone-e7559.firebaseapp.com",
+    projectId: "smartmarket-zone-e7559"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
+const params = new URLSearchParams(window.location.search);
+const comercioID = params.get("comercio");
+
+async function cargar(){
+
+    // Nombre comercio
+    const doc = await db.collection("comercios").doc(comercioID).get();
+    document.getElementById("nombreComercio").innerText = doc.data().nombre;
+
+    const snap = await db.collection("productos")
+        .where("comercioID","==",comercioID)
+        .get();
+
+    const lista = document.getElementById("lista");
+    lista.innerHTML = "";
+
+    snap.forEach(d=>{
+        const p = d.data();
+
+        const stockClass = p.stock <= 5 ? "stock-low" : "stock-ok";
+
+        lista.innerHTML += `
+        <div class="card">
+            <img src="${p.imagen || 'https://via.placeholder.com/150'}" class="img">
+            <div class="info">
+                <div class="name">${p.nombre}</div>
+                <div class="price">Bs. ${p.precio}</div>
+                <div class="stock ${stockClass}">
+                    Stock: ${p.stock}
+                </div>
+            </div>
+        </div>`;
+    });
+}
+
+cargar();
+</script>
+
+</body>
+</html>
