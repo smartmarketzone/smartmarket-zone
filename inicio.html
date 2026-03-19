@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SmartMarket</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
+
+<style>
+body {
+    margin:0;
+    font-family:'Montserrat';
+    background:#0f2027;
+    color:white;
+}
+
+.section {
+    padding:40px 20px;
+    text-align:center;
+}
+
+.hero {
+    background:linear-gradient(45deg,#1e88e5,#4fc3f7);
+}
+
+h1 { font-size:26px; margin:0; }
+p { font-size:13px; opacity:0.8; }
+
+.card {
+    background:rgba(255,255,255,0.05);
+    margin:15px;
+    padding:20px;
+    border-radius:15px;
+}
+
+.btn {
+    background:#ffeb3b;
+    color:black;
+    padding:15px;
+    border:none;
+    border-radius:12px;
+    font-weight:bold;
+    margin-top:20px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="section hero">
+    <h1>SMARTMARKET</h1>
+    <p>La forma más fácil de encontrar productos y tiendas en Venezuela</p>
+</div>
+
+<div class="section">
+    <h2>¿Qué somos?</h2>
+    <p>Una plataforma que conecta personas con comercios cercanos en tiempo real.</p>
+</div>
+
+<div class="section">
+    <h2>¿Qué problema resolvemos?</h2>
+
+    <div class="card">❌ No sabes dónde conseguir productos</div>
+    <div class="card">❌ Precios diferentes en cada tienda</div>
+    <div class="card">❌ Pérdida de tiempo buscando</div>
+</div>
+
+<div class="section">
+    <h2>¿Por qué elegirnos?</h2>
+
+    <div class="card">📍 Ubicación en tiempo real</div>
+    <div class="card">💰 Comparación de precios</div>
+    <div class="card">⚡ Información actualizada</div>
+</div>
+
+<div class="section">
+    <h2>¿Cómo funciona?</h2>
+
+    <div class="card">1️⃣ Te registras</div>
+    <div class="card">2️⃣ Buscas productos</div>
+    <div class="card">3️⃣ Ves tiendas cercanas</div>
+    <div class="card">4️⃣ Compras inteligente</div>
+</div>
+
+<div class="section">
+    <button class="btn" onclick="entrar()">COMENZAR</button>
+</div>
+
+<script>
+function entrar(){
+    window.location.href="login.html";
+}
+</script>
+
+</body>
+</html>
