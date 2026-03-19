@@ -1,143 +1,45 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>SmartMarket - Inicio</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SmartMarket Venezuela</title>
+    
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        :root { --blue: #1e88e5; --cyan: #4fc3f7; --dark: #0f2027; --yellow: #ffeb3b; }
+        body { margin: 0; font-family: 'Montserrat', sans-serif; background: var(--dark); color: white; overflow: hidden; }
 
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
+        #map { height: calc(100vh - 75px); width: 100%; }
 
-<style>
-:root { --blue:#1e88e5; --cyan:#4fc3f7; --dark:#0f2027; --yellow:#ffeb3b; }
-
-body {
-    margin:0;
-    font-family:'Montserrat',sans-serif;
-    background:var(--dark);
-    color:white;
-}
-
-/* HEADER */
-.header {
-    padding:40px 20px;
-    background:linear-gradient(45deg,#1e88e5,#4fc3f7);
-    border-radius:0 0 30px 30px;
-}
-
-.header h1 {
-    margin:0;
-    font-size:22px;
-    font-weight:900;
-}
-
-.header p {
-    margin-top:5px;
-    font-size:12px;
-    opacity:0.8;
-}
-
-/* BUSCADOR */
-.search-box {
-    margin:20px;
-}
-
-.search-box input {
-    width:100%;
-    padding:15px;
-    border-radius:15px;
-    border:none;
-    font-weight:700;
-    outline:none;
-}
-
-/* OPCIONES */
-.menu {
-    padding:20px;
-    display:flex;
-    flex-direction:column;
-    gap:15px;
-}
-
-.card {
-    background:rgba(255,255,255,0.05);
-    border-radius:15px;
-    padding:20px;
-    border:1px solid rgba(255,255,255,0.1);
-    cursor:pointer;
-}
-
-.card h3 {
-    margin:0;
-    font-size:16px;
-}
-
-.card p {
-    font-size:12px;
-    opacity:0.7;
-}
-
-/* NAV */
-.bottom-nav {
-    position:fixed;
-    bottom:0;
-    left:0;
-    right:0;
-    height:70px;
-    background:#0b171c;
-    border-top:2px solid var(--cyan);
-    display:flex;
-    justify-content:space-around;
-    align-items:center;
-}
-
-.nav-item {
-    text-align:center;
-    color:rgba(255,255,255,0.4);
-    text-decoration:none;
-    font-size:10px;
-    font-weight:900;
-}
-
-.nav-item.active {
-    color:var(--cyan);
-}
-</style>
+        .bottom-nav { 
+            position: fixed; bottom: 0; left: 0; right: 0; height: 75px; 
+            background: #0b171c; border-top: 2px solid var(--cyan); 
+            display: flex; justify-content: space-around; align-items: center; 
+        }
+        .nav-item { 
+            text-align: center; color: rgba(255,255,255,0.4); 
+            text-decoration: none; font-size: 9px; font-weight: 900; 
+            display: flex; flex-direction: column; align-items: center; 
+        }
+        .nav-item.active { color: var(--cyan); }
+    </style>
 </head>
 
 <body>
 
-<div class="header">
-    <h1 id="saludo">Cargando...</h1>
-    <p>¿Qué deseas buscar hoy?</p>
-</div>
-
-<div class="search-box">
-    <input type="text" placeholder="🔍 Buscar productos o tiendas..." onclick="irBuscar()">
-</div>
-
-<div class="menu">
-    <div class="card" onclick="irMapa()">
-        <h3>📍 Ver tiendas cercanas</h3>
-        <p>Explora negocios cerca de tu ubicación</p>
-    </div>
-
-    <div class="card" onclick="irFavoritos()">
-        <h3>⭐ Mis favoritos</h3>
-        <p>Accede rápido a tus tiendas guardadas</p>
-    </div>
-
-    <div class="card" onclick="irPerfil()">
-        <h3>👤 Mi perfil</h3>
-        <p>Configura tu cuenta</p>
-    </div>
-</div>
+<div id="map"></div>
 
 <nav class="bottom-nav">
-    <a href="index.html" class="nav-item active">🏠 INICIO</a>
-    <a href="mapa.html" class="nav-item">📍 MAPA</a>
-    <a href="cliente.html" class="nav-item">👤 PERFIL</a>
+    <a href="index.html" class="nav-item active"><span>📍</span>MAPA</a>
+    <a href="cliente.html" class="nav-item"><span>👤</span>PERFIL</a>
+    <a href="registro_comercio.html" id="btn-registrar" class="nav-item"><span>🏪</span>REGISTRAR</a>
+    <a href="comercio.html" id="btn-panel" class="nav-item"><span>📊</span>PANEL</a>
 </nav>
 
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
@@ -150,53 +52,32 @@ const firebaseConfig = {
 };
 
 if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
-
-const auth = firebase.auth();
 const db = firebase.firestore();
 
-// CONTROL DE SESIÓN + ROL
-auth.onAuthStateChanged(async (user) => {
-    if (!user) {
-        window.location.href = "auth.html";
-        return;
+/* 🔥 CAMBIO SOLO AQUÍ */
+firebase.auth().onAuthStateChanged(async (user) => {
+    if (user) {
+        const docUser = await db.collection("usuarios").doc(user.uid).get();
+
+        if (docUser.exists && docUser.data().tipo === "persona") {
+            document.getElementById('btn-registrar').style.display = 'none';
+            document.getElementById('btn-panel').style.display = 'none';
+        }
+
+    } else {
+        // 👉 SI NO HAY SESIÓN → IR A INICIO (NO LOGIN)
+        window.location.href = "inicio.html";
     }
-
-    const doc = await db.collection("usuarios").doc(user.uid).get();
-
-    if (!doc.exists) {
-        window.location.href = "tipo.html";
-        return;
-    }
-
-    const data = doc.data();
-
-    // 🔥 SI ES COMERCIO → LO SACAMOS
-    if (data.tipo === "comercio") {
-        window.location.href = "comercio.html";
-        return;
-    }
-
-    // 👤 CLIENTE
-    const nombre = data.nombre || "USUARIO";
-    document.getElementById("saludo").innerText = "HOLA, " + nombre.toUpperCase();
 });
 
-// NAVEGACIÓN
-function irMapa() {
-    window.location.href = "mapa.html";
-}
+/* MAPA */
+const map = L.map('map').setView([10.4806, -66.8983], 6);
 
-function irPerfil() {
-    window.location.href = "cliente.html";
-}
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png')
+.addTo(map);
 
-function irFavoritos() {
-    window.location.href = "cliente.html#tab-favs";
-}
+map.locate({setView: true, maxZoom: 15});
 
-function irBuscar() {
-    window.location.href = "cliente.html#tab-buscar";
-}
 </script>
 
 </body>
