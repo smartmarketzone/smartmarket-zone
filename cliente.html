@@ -1,136 +1,185 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mi Perfil | SmartMarket</title>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
-    <style>
-        :root { --primary: #1a73e8; --bg: #f8f9fa; --text: #202124; --card: #ffffff; }
-        body { margin: 0; background: var(--bg); font-family: 'Outfit', sans-serif; color: var(--text); padding-bottom: 90px; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cliente - SmartMarket</title>
 
-        /* CABECERA ESTILO GOOGLE */
-        .profile-header { 
-            background: white; padding: 40px 20px; text-align: center; 
-            border-bottom: 1px solid #dadce0; box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-        }
-        .avatar { 
-            width: 90px; height: 90px; background: #e8f0fe; border-radius: 50%; 
-            margin: 0 auto 15px; display: flex; align-items: center; justify-content: center; 
-            font-size: 40px; color: var(--primary); border: 2px solid var(--primary);
-        }
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
 
-        .user-info h2 { margin: 0; font-weight: 700; color: var(--text); }
-        .user-info p { margin: 5px 0; color: #5f6368; font-size: 14px; }
+<style>
+:root { --blue:#1e88e5; --cyan:#4fc3f7; --dark:#0f2027; --yellow:#ffeb3b; --green:#4caf50; }
 
-        /* SECCIONES DE CLIENTE */
-        .content-body { padding: 20px; }
-        .section-label { font-size: 12px; font-weight: 800; color: #70757a; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px; }
-        
-        .menu-item { 
-            background: var(--card); padding: 16px; border-radius: 16px; 
-            margin-bottom: 10px; display: flex; align-items: center; gap: 15px;
-            border: 1px solid #dfe1e5; transition: background 0.2s; cursor: pointer;
-        }
-        .menu-item:active { background: #f1f3f4; }
-        .menu-icon { font-size: 20px; width: 30px; text-align: center; }
+body {
+    margin:0;
+    font-family:'Montserrat';
+    background:var(--dark);
+    color:white;
+}
 
-        /* NAVEGACIÓN INFERIOR CLARA */
-        .nav-bar { 
-            position: fixed; bottom: 0; width: 100%; height: 70px; 
-            background: white; display: flex; justify-content: space-around; 
-            align-items: center; border-top: 1px solid #dadce0; z-index: 1000;
-        }
-        .nav-btn { color: #5f6368; text-decoration: none; text-align: center; font-size: 11px; font-weight: 500; flex: 1; }
-        .nav-btn.active { color: var(--primary); }
-        .nav-btn span { display: block; font-size: 22px; margin-bottom: 2px; }
+/* HEADER */
+.header {
+    padding:30px;
+    background:linear-gradient(45deg,#1e88e5,#4fc3f7);
+}
 
-        .btn-signout { 
-            margin: 20px; padding: 15px; border-radius: 12px; border: 1px solid #dadce0; 
-            background: white; color: #d93025; width: calc(100% - 40px); 
-            font-weight: 700; cursor: pointer; font-size: 14px;
-        }
-    </style>
+.header h1 { margin:0; }
+
+/* BUSCADOR */
+.search {
+    padding:20px;
+}
+
+.search input {
+    width:100%;
+    padding:15px;
+    border-radius:15px;
+    border:none;
+    font-weight:700;
+}
+
+/* RESULTADOS */
+.resultados {
+    padding:15px;
+}
+
+.card {
+    background:rgba(255,255,255,0.05);
+    padding:15px;
+    border-radius:15px;
+    margin-bottom:10px;
+}
+
+.precio {
+    color:var(--yellow);
+    font-weight:900;
+}
+
+.barato {
+    border-left:5px solid var(--green);
+}
+
+button {
+    width:100%;
+    padding:10px;
+    margin-top:10px;
+    border:none;
+    border-radius:10px;
+    background:var(--blue);
+    color:white;
+}
+</style>
 </head>
+
 <body>
 
-<div class="profile-header">
-    <div class="avatar">👤</div>
-    <div class="user-info">
-        <h2 id="u-name">Cargando...</h2>
-        <p id="u-mail">---</p>
-    </div>
+<div class="header">
+    <h1 id="nombre">Cargando...</h1>
 </div>
 
-<div class="content-body">
-    <div class="section-label">Actividad del Usuario</div>
-    
-    <div class="menu-item">
-        <div class="menu-icon">⭐</div>
-        <div><b>Tiendas Favoritas</b><br><small style="color:#70757a;">Tus comercios guardados</small></div>
-    </div>
-
-    <div class="menu-item" onclick="window.location.href='index.html'">
-        <div class="menu-icon">🔍</div>
-        <div><b>Buscar Productos</b><br><small style="color:#70757a;">Explorar San Joaquín</small></div>
-    </div>
-
-    <div class="section-label">Ajustes</div>
-    <div class="menu-item">
-        <div class="menu-icon">⚙️</div>
-        <div><b>Configuración</b><br><small style="color:#70757a;">Editar mis datos personales</small></div>
-    </div>
+<div class="search">
+    <input type="text" id="buscador" placeholder="Buscar arroz, leche, harina..." oninput="buscar()">
 </div>
 
-<button class="btn-signout" onclick="logout()">Cerrar Sesión</button>
-
-<nav class="nav-bar">
-    <a href="index.html" class="nav-btn"><span>📍</span>Explorar</a>
-    <a href="cliente.html" class="nav-btn active"><span>👤</span>Perfil</a>
-    <a href="registro_comercio.html" id="nav-reg" class="nav-btn" style="display:none;"><span>🏪</span>Registrar</a>
-    <a href="comercio.html" id="nav-pan" class="nav-btn" style="display:none;"><span>📊</span>Panel</a>
-</nav>
+<div class="resultados" id="res"></div>
 
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
 
 <script>
-    const firebaseConfig = {
-        apiKey: "AIzaSyA6tYooh4CtX7ww9GRyXWhuakl2nLovtsY",
-        authDomain: "smartmarket-zone-e7559.firebaseapp.com",
-        projectId: "smartmarket-zone-e7559"
-    };
-    if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
-    const auth = firebase.auth();
+const firebaseConfig = {
+ apiKey: "AIzaSyA6tYooh4CtX7ww9GRyXWhuakl2nLovtsY",
+ authDomain: "smartmarket-zone-e7559.firebaseapp.com",
+ projectId: "smartmarket-zone-e7559"
+};
 
-    auth.onAuthStateChanged(async (user) => {
-        if (user) {
-            document.getElementById('u-mail').innerText = user.email;
-            
-            // Lógica de acceso maestro (Gabriel Admin)
-            const adminEmail = "gabriel01cvenus@gmail.com";
-            const doc = await db.collection("usuarios").doc(user.uid).get();
-            
-            if (doc.exists) {
-                const data = doc.data();
-                document.getElementById('u-name').innerText = data.nombre || "Usuario";
-                
-                // Solo mostrar gestión si es Gabriel o tipo comercio
-                if (user.email === adminEmail || data.tipo === "comercio") {
-                    document.getElementById('nav-reg').style.display = 'block';
-                    document.getElementById('nav-pan').style.display = 'block';
-                }
-            }
-        } else {
-            window.location.href = "auth.html";
-        }
-    });
+if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
 
-    function logout() {
-        auth.signOut().then(() => window.location.href = "auth.html");
+const db = firebase.firestore();
+
+// 🔐 SESIÓN
+firebase.auth().onAuthStateChanged(async user => {
+    if(!user){
+        window.location.href="auth.html";
+        return;
     }
+
+    const doc = await db.collection("usuarios").doc(user.uid).get();
+
+    if(doc.exists){
+        document.getElementById("nombre").innerText = "HOLA, " + (doc.data().nombre || "CLIENTE");
+    }
+});
+
+// 🔍 BÚSQUEDA INTELIGENTE
+async function buscar(){
+    const txt = document.getElementById("buscador").value.toLowerCase();
+    const cont = document.getElementById("res");
+
+    if(txt.length < 2){
+        cont.innerHTML = "";
+        return;
+    }
+
+    const productos = await db.collection("productos").get();
+
+    let resultados = [];
+
+    for(const doc of productos.docs){
+        const p = doc.data();
+
+        if(p.nombre.toLowerCase().includes(txt)){
+
+            const tienda = await db.collection("comercios").doc(p.comercioID).get();
+
+            resultados.push({
+                id: doc.id,
+                nombre: p.nombre,
+                precio: p.precio,
+                stock: p.stock,
+                tienda: tienda.data().nombre,
+                comercioID: p.comercioID
+            });
+        }
+    }
+
+    // 🔥 ORDENAR POR PRECIO (MÁS BARATO PRIMERO)
+    resultados.sort((a,b) => a.precio - b.precio);
+
+    cont.innerHTML = "";
+
+    resultados.forEach((r, index) => {
+
+        let clase = "";
+        let etiqueta = "";
+
+        // 🥇 MÁS BARATO
+        if(index === 0){
+            clase = "barato";
+            etiqueta = "🔥 MEJOR PRECIO";
+        }
+
+        cont.innerHTML += `
+            <div class="card ${clase}">
+                <b>${r.nombre}</b>
+                <div class="precio">Bs. ${r.precio}</div>
+                <p style="font-size:12px;">${r.tienda}</p>
+                <p style="font-size:11px; color:#4caf50;">${etiqueta}</p>
+
+                <button onclick="verTienda('${r.comercioID}')">
+                    Ver catálogo
+                </button>
+            </div>
+        `;
+    });
+}
+
+// 🏪 IR A TIENDA
+function verTienda(id){
+    window.location.href = "tienda.html?id=" + id;
+}
 </script>
+
 </body>
 </html>
