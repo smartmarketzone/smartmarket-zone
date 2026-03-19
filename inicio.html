@@ -3,142 +3,128 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SmartMarket | El Futuro del Comercio en Venezuela</title>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;900&display=swap" rel="stylesheet">
+    <title>SmartMarket | El Futuro Comercial</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;600;900&display=swap" rel="stylesheet">
     <style>
-        :root { --blue: #1a73e8; --dark: #121212; --soft-blue: #e8f0fe; }
-        body { margin:0; font-family:'Outfit', sans-serif; color: var(--dark); background: #ffffff; scroll-behavior: smooth; }
+        :root { --blue: #1a73e8; --text: #202124; --light-blue: #e8f0fe; }
+        body { margin: 0; font-family: 'Outfit', sans-serif; color: var(--text); background: #ffffff; overflow-x: hidden; }
 
-        /* HEADER MINIMALISTA */
-        header { padding: 40px 20px; text-align: center; }
-        .hero-title { font-size: 52px; font-weight: 900; letter-spacing: -2px; margin: 0; background: linear-gradient(90deg, #1a73e8, #00d2ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .hero-sub { font-size: 20px; color: #5f6368; max-width: 700px; margin: 20px auto; font-weight: 400; }
+        /* HERO - SIN CAJAS */
+        .hero { padding: 100px 20px 60px; text-align: center; }
+        .hero h1 { font-size: 58px; font-weight: 900; margin: 0; letter-spacing: -2px; line-height: 1; }
+        .hero p { font-size: 20px; color: #5f6368; max-width: 600px; margin: 20px auto; font-weight: 300; }
 
-        .container { max-width: 1100px; margin: auto; padding: 60px 20px; }
+        .container { max-width: 1100px; margin: auto; position: relative; padding: 40px 20px; }
 
-        /* ORGANIGRAMA VISUAL (LÍNEA CONECTORA) */
-        .flow-container { position: relative; }
-        /* Línea vertical decorativa que conecta los pasos */
-        .flow-container::before { 
-            content: ''; position: absolute; left: 50%; top: 0; bottom: 0; 
-            width: 2px; background: linear-gradient(to bottom, #1a73e8 0%, #e8f0fe 100%);
-            z-index: -1; display: none; /* Se activa en desktop */
+        /* ORGANIGRAMA DEL PASO A PASO (LÍNEA CONECTORA) */
+        .process-line {
+            position: absolute; left: 50%; top: 100px; bottom: 100px;
+            width: 2px; background: #e0e0e0; z-index: -1;
         }
 
-        .step-block { display: flex; align-items: center; justify-content: space-between; margin-bottom: 120px; gap: 60px; }
-        .step-block:nth-child(even) { flex-direction: row-reverse; }
+        .step-section { display: flex; align-items: center; justify-content: space-between; margin-bottom: 150px; position: relative; }
+        .step-section:nth-child(even) { flex-direction: row-reverse; }
 
-        .content-side { flex: 1; }
-        .image-side { flex: 1; display: flex; justify-content: center; }
+        .text-block { flex: 1; padding: 0 40px; }
+        .image-block { flex: 1; display: flex; justify-content: center; padding: 0 40px; }
 
-        .step-tag { color: var(--blue); font-weight: 900; font-size: 14px; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 10px; display: block; }
-        .step-h { font-size: 36px; font-weight: 800; margin: 0 0 20px 0; line-height: 1.1; }
-        .step-p { font-size: 18px; color: #5f6368; font-weight: 300; line-height: 1.6; }
-
-        /* MOCKUP DE TELÉFONO (Simulado) */
-        .phone-frame { 
-            width: 280px; height: 560px; background: #000; border-radius: 40px; 
-            border: 8px solid #1a1a1a; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.2);
-            display: flex; align-items: center; justify-content: center; position: relative;
-            color: white; font-size: 12px; text-align: center; padding: 20px;
+        /* EL NÚMERO DEL PASO (EL NODO DEL ORGANIGRAMA) */
+        .node {
+            position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+            width: 50px; height: 50px; background: white; border: 4px solid var(--blue);
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-weight: 900; color: var(--blue); z-index: 2; box-shadow: 0 0 20px rgba(0,0,0,0.05);
         }
 
-        /* SECCIÓN COBERTURA NACIONAL (LIMPIA) */
-        .coverage { text-align: center; padding: 100px 20px; background: #fafafa; border-radius: 60px; margin-bottom: 150px; }
-        .coverage h2 { font-size: 40px; font-weight: 900; margin-bottom: 20px; }
-        .venezuela-svg { font-size: 120px; display: block; margin: 40px 0; filter: drop-shadow(0 10px 20px rgba(26,115,232,0.2)); }
+        .step-section h2 { font-size: 38px; font-weight: 800; margin-bottom: 15px; letter-spacing: -1px; }
+        .step-section p { font-size: 18px; color: #5f6368; line-height: 1.6; font-weight: 300; }
 
-        /* SECCIÓN COMERCIO (ELEGANTE) */
-        .business-section { display: flex; gap: 40px; flex-wrap: wrap; margin-top: 50px; }
-        .biz-card { flex: 1; min-width: 300px; padding: 0; }
-        .biz-card h4 { font-size: 24px; color: var(--blue); margin-bottom: 15px; }
-
-        /* CTA FIJO PROFESIONAL */
-        .cta-wrapper { position: fixed; bottom: 30px; left: 0; width: 100%; display: flex; justify-content: center; z-index: 2000; pointer-events: none; }
-        .btn-main { 
-            pointer-events: auto; background: var(--dark); color: white; padding: 20px 60px; 
-            border: none; border-radius: 50px; font-weight: 700; font-size: 18px; 
-            cursor: pointer; box-shadow: 0 20px 40px rgba(0,0,0,0.3); transition: 0.3s;
+        /* IMAGENES LIMPIAS (SIN BARRAS) */
+        .mockup-img {
+            max-width: 100%; height: auto; border-radius: 25px;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.1); transition: transform 0.3s;
         }
-        .btn-main:hover { transform: translateY(-5px); background: var(--blue); }
+        .mockup-img:hover { transform: translateY(-10px); }
 
-        @media (max-width: 800px) {
-            .step-block, .step-block:nth-child(even) { flex-direction: column; text-align: center; gap: 30px; }
-            .hero-title { font-size: 38px; }
-            .phone-frame { width: 240px; height: 480px; }
+        /* SECCIÓN COBERTURA NACIONAL */
+        .nacional { text-align: center; padding: 100px 20px; background: var(--light-blue); border-radius: 60px; margin: 40px 20px; }
+        .nacional h2 { font-size: 45px; font-weight: 900; }
+        .venezuela-map { font-size: 120px; margin-top: 30px; display: block; filter: grayscale(1) opacity(0.5); }
+
+        /* BOTÓN DE ACCIÓN FLOTANTE */
+        .btn-float {
+            position: fixed; bottom: 40px; right: 40px; 
+            background: var(--text); color: white; padding: 20px 40px;
+            border-radius: 50px; text-decoration: none; font-weight: 800;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.2); z-index: 1000;
+            transition: 0.3s; border: none; cursor: pointer;
+        }
+        .btn-float:hover { background: var(--blue); transform: scale(1.05); }
+
+        /* MÓVIL */
+        @media (max-width: 850px) {
+            .process-line, .node { display: none; }
+            .step-section, .step-section:nth-child(even) { flex-direction: column; text-align: center; margin-bottom: 80px; }
+            .hero h1 { font-size: 40px; }
+            .text-block { padding: 20px 0; }
         }
     </style>
 </head>
 <body>
 
-<header>
-    <h1 class="hero-title">SmartMarket</h1>
-    <p class="hero-sub">Digitalizamos el comercio en Venezuela. Una conexión directa entre el inventario de las tiendas y la necesidad de tu hogar.</p>
-</header>
-
-<div class="container flow-container">
-    
-    <div class="step-block">
-        <div class="content-side">
-            <span class="step-tag">Paso 01</span>
-            <h2 class="step-h">Tu identidad en la red</h2>
-            <p class="step-p">Regístrate como persona o comercio. Un acceso único que abre las puertas al mercado digital más grande del país.</p>
-        </div>
-        <div class="image-side">
-            <div class="phone-frame">ESPACIO PARA CAPTURA DE REGISTRO</div>
-        </div>
-    </div>
-
-    <div class="step-block">
-        <div class="content-side">
-            <span class="step-tag">Paso 02</span>
-            <h2 class="step-h">Radar de proximidad</h2>
-            <p class="step-p">Nuestra tecnología de geolocalización detecta tu posición exacta para mostrarte opciones reales a menos de 5km de ti.</p>
-        </div>
-        <div class="image-side">
-            <div class="phone-frame">ESPACIO PARA VISTA DEL MAPA</div>
-        </div>
-    </div>
-
-    <div class="step-block">
-        <div class="content-side">
-            <span class="step-tag">Paso 03</span>
-            <h2 class="step-h">Inteligencia de precios</h2>
-            <p class="step-p">Escribe el producto. Compara costos. Decide con datos. Ahorrar en Venezuela nunca fue tan tecnológico.</p>
-        </div>
-        <div class="image-side">
-            <div class="phone-frame">ESPACIO PARA COMPARACIÓN</div>
-        </div>
-    </div>
-
+<div class="hero">
+    <h1>SmartMarket</h1>
+    <p>La red que une los inventarios de Venezuela con la puerta de tu hogar. Sin intermediarios, sin complicaciones.</p>
 </div>
-
-
 
 <div class="container">
-    <div class="coverage">
-        <h2>Cobertura Nacional</h2>
-        <p class="hero-sub">No somos una app local. Somos una red nacional activando la economía desde el corazón de cada ciudad.</p>
-        <span class="venezuela-svg">🇻🇪</span>
-        
-        <div class="business-section">
-            <div class="biz-card">
-                <h4>Comercios</h4>
-                <p class="step-p">Sube tus productos, ajusta precios en tiempo real y deja que el país entero vea lo que tienes para ofrecer.</p>
-            </div>
-            <div class="biz-card">
-                <h4>Personas</h4>
-                <p class="step-p">Acceso a inventarios actualizados, GPS guiado y la garantía de encontrar siempre el mejor precio.</p>
-            </div>
+    <div class="process-line"></div>
+
+    <div class="step-section">
+        <div class="text-block">
+            <h2>01. Conexión Directa</h2>
+            <p>Regístrate y define tu perfil. Ya seas un comprador buscando ahorro o un comercio buscando visibilidad, SmartMarket es tu punto de encuentro nacional.</p>
+        </div>
+        <div class="node">1</div>
+        <div class="image-block">
+            <img src="https://via.placeholder.com/400x300/f8f9fa/1a73e8?text=Interfaz+de+Registro" class="mockup-img" alt="Registro">
+        </div>
+    </div>
+
+    <div class="step-section">
+        <div class="text-block">
+            <h2>02. Visibilidad Total</h2>
+            <p>Activa tu ubicación. Nuestra plataforma mapea en tiempo real los productos disponibles en tu zona exacta, eliminando las caminatas innecesarias.</p>
+        </div>
+        <div class="node">2</div>
+        <div class="image-block">
+            <img src="https://via.placeholder.com/400x300/f8f9fa/1a73e8?text=Mapa+Nacional" class="mockup-img" alt="Mapa">
+        </div>
+    </div>
+
+    <div class="step-section">
+        <div class="text-block">
+            <h2>03. Decisión Inteligente</h2>
+            <p>Compara precios y existencias. Obtén la ruta más corta y económica. SmartMarket te guía hasta el mostrador del comercio que elegiste.</p>
+        </div>
+        <div class="node">3</div>
+        <div class="image-block">
+            <img src="https://via.placeholder.com/400x300/f8f9fa/1a73e8?text=Precios+y+Ahorro" class="mockup-img" alt="Ahorro">
         </div>
     </div>
 </div>
 
-<div class="cta-wrapper">
-    <button class="btn-main" onclick="window.location.href='auth.html'">EMPEZAR EXPERIENCIA</button>
+
+
+<div class="nacional">
+    <h2>Cobertura en toda Venezuela</h2>
+    <p>Un sistema diseñado para escalar desde San Joaquín hacia cada rincón del país.</p>
+    <span class="venezuela-map">🇻🇪</span>
 </div>
 
-<div style="height: 100px;"></div>
+<button class="btn-float" onclick="window.location.href='auth.html'">EMPEZAR AHORA</button>
+
+<div style="height: 150px;"></div>
 
 </body>
 </html>
