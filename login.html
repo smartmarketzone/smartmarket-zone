@@ -1,67 +1,53 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Login SmartMarket</title>
-    <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SmartMarket - Acceso</title>
+
+<link rel="stylesheet" href="style.css">
 </head>
+
 <body class="auth-body">
 
 <div class="card">
     <h1 class="logo">Smart<span>Market</span></h1>
-    <p>Prueba de Conexión Móvil</p>
 
-    <input type="email" id="regEmail" placeholder="Correo" inputmode="email">
+    <p style="font-size:12px; opacity:0.8;">
+        Encuentra productos, precios y comercios en toda Venezuela 🇻🇪
+    </p>
+
+    <input type="email" id="regEmail" placeholder="Correo">
     <input type="password" id="regPass" placeholder="Contraseña">
 
-    <button type="button" class="btn-primary" id="btnTest">
-        PROBAR BOTÓN
-    </button>
+    <button class="btn-primary" onclick="login()">INICIAR SESIÓN</button>
+
+    <p style="margin-top:15px; font-size:12px;">
+        ¿No tienes cuenta? 
+        <a href="register.html" style="color:#4fc3f7;">Crear cuenta</a>
+    </p>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
 
 <script>
-    // 1. Verificación inmediata
-    alert("El script se ha cargado en el teléfono");
+const firebaseConfig = {
+ apiKey: "AIzaSyA6tYooh4CtX7ww9GRyXWhuakl2nLovtsY",
+ authDomain: "smartmarket-zone-e7559.firebaseapp.com",
+ projectId: "smartmarket-zone-e7559"
+};
 
-    const firebaseConfig = {
-        apiKey: "AIzaSyA6tYooh4CtX7ww9GRyXWhuakl2nLovtsY",
-        authDomain: "smartmarket-zone-e7559.firebaseapp.com",
-        projectId: "smartmarket-zone-e7559"
-    };
+if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
 
-    if (!firebase.apps.length) {
-        firebase.initializeApp(firebaseConfig);
-    }
+function login(){
+    const email = document.getElementById("regEmail").value;
+    const pass = document.getElementById("regPass").value;
 
-    // 2. Evento para móviles (Touch)
-    const boton = document.getElementById('btnTest');
-
-    boton.addEventListener('click', function() {
-        const email = document.getElementById("regEmail").value;
-        const pass = document.getElementById("regPass").value;
-
-        if(!email || !pass) {
-            alert("Por favor escribe algo en los campos");
-            return;
-        }
-
-        boton.innerText = "CONECTANDO...";
-        
-        firebase.auth().signInWithEmailAndPassword(email, pass)
-        .then(() => {
-            alert("¡ÉXITO! Entrando...");
-            window.location.href = "tipo.html";
-        })
-        .catch((error) => {
-            boton.innerText = "PROBAR BOTÓN";
-            alert("ERROR DE FIREBASE: " + error.message);
-        });
-    });
+    firebase.auth().signInWithEmailAndPassword(email, pass)
+    .then(()=> window.location.href="tipo.html")
+    .catch(e => alert(e.message));
+}
 </script>
 
 </body>
