@@ -3,85 +3,177 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SmartMarket | Venezuela</title>
+<title>SmartMarket | Plataforma Nacional</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;600;900&display=swap" rel="stylesheet">
 
 <style>
+:root {
+    --blue:#1a73e8;
+    --accent:#00d2ff;
+    --dark:#0f172a;
+    --gray:#64748b;
+}
+
 body {
     margin:0;
     font-family:'Outfit', sans-serif;
     background:#fdfdfd;
+    color:var(--dark);
+}
+
+/* HERO */
+header {
     text-align:center;
-}
-
-.hero {
     padding:100px 20px 60px;
+    background: radial-gradient(circle at top right, #e8f0fe, transparent);
 }
 
-.hero h1 {
-    font-size:60px;
+.hero-title {
+    font-size: clamp(45px, 8vw, 70px);
     font-weight:900;
-    background: linear-gradient(90deg,#1a73e8,#00d2ff);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    background: linear-gradient(90deg,var(--blue),var(--accent));
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+    margin:0;
 }
 
-.hero p {
+.hero-desc {
+    font-size:20px;
+    color:var(--gray);
     max-width:600px;
-    margin:auto;
-    color:#64748b;
+    margin:20px auto;
 }
 
-.btn {
+/* BOTÓN */
+.btn-main {
     margin-top:30px;
-    padding:18px 40px;
-    border-radius:40px;
+    padding:20px 50px;
     border:none;
-    background:#0f172a;
+    border-radius:50px;
+    background:var(--dark);
     color:white;
     font-weight:700;
     cursor:pointer;
+    font-size:18px;
+    box-shadow:0 20px 40px rgba(0,0,0,0.2);
 }
 
-/* BENEFICIOS */
-.section {
+.btn-main:hover {
+    background:var(--blue);
+}
+
+/* SECCIONES */
+.container {
+    max-width:1100px;
+    margin:auto;
     padding:60px 20px;
 }
 
-.grid {
-    display:grid;
-    gap:20px;
+/* PASOS */
+.paso {
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:80px;
+    gap:40px;
 }
 
-.card {
-    padding:20px;
-    border-radius:20px;
-    background:#f1f5f9;
+.paso:nth-child(even){
+    flex-direction:row-reverse;
+}
+
+.texto {
+    flex:1;
+}
+
+.texto h2 {
+    font-size:35px;
+    margin-bottom:10px;
+}
+
+.texto p {
+    color:var(--gray);
+}
+
+.mock {
+    flex:1;
+    height:250px;
+    background:#eef2f7;
+    border-radius:25px;
+    box-shadow:0 20px 40px rgba(0,0,0,0.1);
+}
+
+/* NEGOCIO */
+.negocio {
+    background:var(--dark);
+    color:white;
+    padding:80px 20px;
+    border-radius:50px 50px 0 0;
+    text-align:center;
+}
+
+.negocio h3 {
+    color:var(--accent);
+}
+
+/* RESPONSIVE */
+@media(max-width:800px){
+    .paso {
+        flex-direction:column !important;
+        text-align:center;
+    }
 }
 </style>
 </head>
 
 <body>
 
-<div class="hero">
-    <h1>SmartMarket</h1>
-    <p>Encuentra productos disponibles cerca de ti, compara precios y llega directo al comercio.</p>
+<header>
+    <h1 class="hero-title">SmartMarket</h1>
+    <p class="hero-desc">
+        El puente digital entre los productos disponibles en tu ciudad y las decisiones inteligentes de compra.
+    </p>
 
-    <button class="btn" onclick="irAuth()">Comenzar 🚀</button>
+    <button class="btn-main" onclick="irAuth()">Comenzar experiencia 🚀</button>
+</header>
+
+<div class="container">
+
+    <div class="paso">
+        <div class="texto">
+            <h2>Encuentra lo que necesitas</h2>
+            <p>Busca productos en tiempo real dentro de los comercios cercanos a tu ubicación.</p>
+        </div>
+        <div class="mock"></div>
+    </div>
+
+    <div class="paso">
+        <div class="texto">
+            <h2>Compara precios</h2>
+            <p>Visualiza múltiples opciones y elige la mejor oferta sin perder tiempo.</p>
+        </div>
+        <div class="mock"></div>
+    </div>
+
+    <div class="paso">
+        <div class="texto">
+            <h2>Llega directo al comercio</h2>
+            <p>Nuestro sistema te guía con GPS hasta el punto exacto donde está el producto.</p>
+        </div>
+        <div class="mock"></div>
+    </div>
+
 </div>
 
-<div class="section">
-    <h2>¿Cómo funciona?</h2>
-    <div class="grid">
-        <div class="card">Buscar productos</div>
-        <div class="card">Comparar precios</div>
-        <div class="card">Llegar con GPS</div>
-    </div>
+<div class="negocio">
+    <h2>Para Comercios</h2>
+    <h3>Digitaliza tu inventario y atrae clientes reales</h3>
+    <p>SmartMarket conecta tu negocio con personas listas para comprar en tu zona.</p>
 </div>
 
 <script>
-// SI YA ESTÁ LOGUEADO → VA A LA APP
+// SI YA ESTÁ LOGUEADO → VA DIRECTO A LA APP
 if(localStorage.getItem("usuarioLogueado") === "true"){
     window.location.href = "app.html";
 }
