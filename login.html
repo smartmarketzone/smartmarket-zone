@@ -44,20 +44,28 @@
     </p>
 </div>
 
+<!-- Firebase (solo librerías) -->
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
 
 <script>
-    // CONFIG FIREBASE
+    // =========================
+    // 🔥 CONFIGURACIÓN FIREBASE
+    // =========================
     const firebaseConfig = {
         apiKey: "AIzaSyA6tYooh4CtX7ww9GRyXWhuakl2nLovtsY",
         authDomain: "smartmarket-zone-e7559.firebaseapp.com",
         projectId: "smartmarket-zone-e7559"
     };
 
-    if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+    // Evita inicialización duplicada
+    if (!firebase.apps.length) {
+        firebase.initializeApp(firebaseConfig);
+    }
 
-    // LOGIN
+    // =========================
+    // 🔐 LOGIN
+    // =========================
     document.getElementById('btnLogin').addEventListener('click', function () {
         const email = document.getElementById("regEmail").value.trim();
         const pass = document.getElementById("regPass").value.trim();
@@ -71,7 +79,8 @@
 
         firebase.auth().signInWithEmailAndPassword(email, pass)
         .then(() => {
-            window.location.href = "tipo.html";
+            // 🔥 CORREGIDO (antes iba a tipo.html)
+            window.location.href = "selection.html";
         })
         .catch((error) => {
             this.innerText = "INICIAR SESIÓN";
@@ -80,9 +89,8 @@
     });
 
     // =========================
-    // 🌍 DETECCIÓN DE UBICACIÓN
+    // 🌍 UBICACIÓN
     // =========================
-
     const txt = document.getElementById("bienvenida");
 
     function detectarUbicacion() {
@@ -96,7 +104,6 @@
             const lng = pos.coords.longitude;
 
             try {
-                // API gratuita (OpenStreetMap)
                 const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}`);
                 const data = await res.json();
 
