@@ -8,7 +8,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;600;900&display=swap" rel="stylesheet">
 
 <style>
-body.auth-body {
+body{
     margin:0;
     height:100vh;
     display:flex;
@@ -16,94 +16,71 @@ body.auth-body {
     align-items:center;
     font-family:'Outfit', sans-serif;
     overflow:hidden;
-    position:relative;
+    background:#0f2027;
 }
 
-/* 🌍 FONDO MAPA */
-body.auth-body::before{
-    content:"";
-    position:absolute;
+/* LOADER */
+.loader{
+    position:fixed;
     width:100%;
     height:100%;
-    background:
-        linear-gradient(rgba(15,32,39,0.8), rgba(32,58,67,0.8)),
-        url('https://images.unsplash.com/photo-1524661135-423995f22d0b?auto=format&fit=crop&w=1500&q=80');
-    background-size:cover;
-    background-position:center;
-    z-index:-2;
+    background:#0f2027;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    z-index:999;
+    color:white;
+    font-size:20px;
+    transition:0.5s;
 }
 
-/* ✨ RED DE CONEXIÓN */
-canvas{
-    position:absolute;
-    width:100%;
-    height:100%;
-    z-index:-1;
-}
-
-/* 🧊 CARD */
-.card{
+/* CARD */
+.container{
     width:340px;
+    background:rgba(255,255,255,0.05);
+    backdrop-filter:blur(20px);
     padding:30px;
     border-radius:20px;
-    background: rgba(255,255,255,0.08);
-    backdrop-filter: blur(20px);
-    box-shadow:0 20px 60px rgba(0,0,0,0.6);
     text-align:center;
+    box-shadow:0 20px 60px rgba(0,0,0,0.6);
 }
 
 /* LOGO */
 .logo{
     color:white;
-    font-size:30px;
+    font-size:28px;
     font-weight:900;
 }
 .logo span{
     color:#00d2ff;
 }
 
-/* TEXTOS */
-.bienvenida{
-    color:#00d2ff;
-    font-size:14px;
-}
-.sub-text{
-    color:#cbd5e1;
-    font-size:12px;
-    margin-bottom:20px;
+/* FORM */
+.form{
+    display:none;
+    animation:fade 0.4s ease;
 }
 
-/* INPUTS */
-.input-group{
-    position:relative;
+.active{
+    display:block;
+}
+
+@keyframes fade{
+    from{opacity:0;transform:translateY(10px);}
+    to{opacity:1;transform:translateY(0);}
 }
 
 input{
     width:100%;
     padding:12px;
-    margin-bottom:12px;
+    margin:10px 0;
     border:none;
     border-radius:10px;
     background:rgba(255,255,255,0.15);
     color:white;
 }
 
-input::placeholder{
-    color:#cbd5e1;
-}
-
-/* 👁 VER CONTRASEÑA */
-.toggle-pass{
-    position:absolute;
-    right:10px;
-    top:12px;
-    cursor:pointer;
-    color:#cbd5e1;
-    font-size:12px;
-}
-
-/* BOTÓN */
-.btn-primary{
+.btn{
     width:100%;
     padding:12px;
     border:none;
@@ -112,123 +89,104 @@ input::placeholder{
     color:white;
     font-weight:700;
     cursor:pointer;
-    transition:0.3s;
-}
-.btn-primary:hover{
-    transform:scale(1.05);
 }
 
-/* LINK */
-a{
+.link{
     color:#00d2ff;
-    text-decoration:none;
+    cursor:pointer;
+    font-size:12px;
+}
+
+/* ERROR */
+.error{
+    color:#ff6b6b;
+    font-size:12px;
 }
 </style>
 </head>
 
-<body class="auth-body">
+<body>
 
-<canvas id="network"></canvas>
+<div class="loader" id="loader">Cargando...</div>
 
-<div class="card">
+<div class="container">
+
     <h1 class="logo">Smart<span>Market</span></h1>
 
-    <p class="bienvenida">Bienvenido</p>
-    <p class="sub-text">Conectamos productos contigo en tiempo real</p>
+    <!-- LOGIN -->
+    <div id="loginForm" class="form active">
+        <input type="email" id="loginEmail" placeholder="Correo">
+        <input type="password" id="loginPass" placeholder="Contraseña">
+        <div id="loginError" class="error"></div>
 
-    <input type="email" id="email" placeholder="Correo">
+        <button class="btn" onclick="login()">Iniciar sesión</button>
 
-    <div class="input-group">
-        <input type="password" id="password" placeholder="Contraseña">
-        <span class="toggle-pass" onclick="togglePass()">👁</span>
+        <p class="link" onclick="showRegister()">¿No tienes cuenta? Regístrate</p>
     </div>
 
-    <button class="btn-primary" onclick="login()">INICIAR SESIÓN</button>
+    <!-- REGISTER -->
+    <div id="registerForm" class="form">
+        <input type="email" id="regEmail" placeholder="Correo">
+        <input type="password" id="regPass" placeholder="Contraseña">
+        <div id="regError" class="error"></div>
 
-    <p style="margin-top:15px;font-size:12px;">
-        ¿No tienes cuenta?
-        <a href="register.html">Regístrate</a>
-    </p>
+        <button class="btn" onclick="register()">Crear cuenta</button>
+
+        <p class="link" onclick="showLogin()">¿Ya tienes cuenta? Inicia sesión</p>
+    </div>
+
 </div>
 
-<!-- FIREBASE -->
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
 
 <script>
 const firebaseConfig = {
-    apiKey: "AIzaSyA6tYooh4CtX7ww9GRyXWhuakl2nLovtsY",
+    apiKey: "AIzaSyA6...",
     authDomain: "smartmarket-zone-e7559.firebaseapp.com",
     projectId: "smartmarket-zone-e7559"
 };
 
 firebase.initializeApp(firebaseConfig);
 
-/* 👁 MOSTRAR CONTRASEÑA */
-function togglePass(){
-    const pass = document.getElementById("password");
-    pass.type = pass.type === "password" ? "text" : "password";
+/* LOADER */
+window.onload = () => {
+    setTimeout(()=>{
+        document.getElementById("loader").style.opacity="0";
+        setTimeout(()=>document.getElementById("loader").style.display="none",500);
+    },1000);
+};
+
+/* CAMBIO DE FORM */
+function showRegister(){
+    document.getElementById("loginForm").classList.remove("active");
+    document.getElementById("registerForm").classList.add("active");
+}
+
+function showLogin(){
+    document.getElementById("registerForm").classList.remove("active");
+    document.getElementById("loginForm").classList.add("active");
 }
 
 /* LOGIN */
 function login(){
-    const email = document.getElementById("email").value;
-    const pass = document.getElementById("password").value;
+    const email = loginEmail.value;
+    const pass = loginPass.value;
 
     firebase.auth().signInWithEmailAndPassword(email, pass)
-    .then(()=>{
-        window.location.href="selection.html";
-    })
-    .catch(e=>alert(e.message));
+    .then(()=> window.location.href="selection.html")
+    .catch(e=> loginError.innerText = e.message);
 }
 
-/* 🌐 RED ANIMADA */
-const canvas = document.getElementById("network");
-const ctx = canvas.getContext("2d");
+/* REGISTER */
+function register(){
+    const email = regEmail.value;
+    const pass = regPass.value;
 
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
-
-let points = [];
-for(let i=0;i<50;i++){
-    points.push({
-        x:Math.random()*canvas.width,
-        y:Math.random()*canvas.height,
-        vx:(Math.random()-0.5)*0.5,
-        vy:(Math.random()-0.5)*0.5
-    });
+    firebase.auth().createUserWithEmailAndPassword(email, pass)
+    .then(()=> showLogin())
+    .catch(e=> regError.innerText = e.message);
 }
-
-function animate(){
-    ctx.clearRect(0,0,canvas.width,canvas.height);
-
-    points.forEach(p=>{
-        p.x+=p.vx;
-        p.y+=p.vy;
-
-        if(p.x<0||p.x>canvas.width) p.vx*=-1;
-        if(p.y<0||p.y>canvas.height) p.vy*=-1;
-
-        ctx.beginPath();
-        ctx.arc(p.x,p.y,2,0,Math.PI*2);
-        ctx.fillStyle="#00d2ff";
-        ctx.fill();
-
-        points.forEach(p2=>{
-            let dist = Math.hypot(p.x-p2.x,p.y-p2.y);
-            if(dist<120){
-                ctx.beginPath();
-                ctx.moveTo(p.x,p.y);
-                ctx.lineTo(p2.x,p2.y);
-                ctx.strokeStyle="rgba(0,210,255,0.1)";
-                ctx.stroke();
-            }
-        });
-    });
-
-    requestAnimationFrame(animate);
-}
-animate();
 </script>
 
 </body>
