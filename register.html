@@ -35,16 +35,11 @@
     }
 
     function probarRegistro() {
-        // Capturamos los datos
         const correo = document.getElementById("testEmail").value.trim();
         const clave = document.getElementById("testPass").value.trim();
 
-        // --- DIAGNÓSTICO ---
-        // Esto nos dirá qué está leyendo el navegador realmente
-        alert("El navegador leyó esto:\nCorreo: [" + correo + "]\nClave: [" + clave + "]");
-
         if (correo === "" || clave === "") {
-            alert("❌ Error: El navegador dice que los campos están vacíos.");
+            alert("❌ Completa todos los campos.");
             return;
         }
 
@@ -53,14 +48,22 @@
             return;
         }
 
-        // Si pasó las pruebas, intentamos Firebase
         firebase.auth().createUserWithEmailAndPassword(correo, clave)
             .then(() => {
-                alert("✅ ¡ÉXITO! Cuenta creada.");
-                window.location.href = "tipo.html";
+                alert("✅ ¡Cuenta creada con éxito!");
+
+                // 🔥 IMPORTANTE: cerramos sesión para evitar salto automático
+                firebase.auth().signOut().then(() => {
+                    // 🔥 limpiamos tipo por seguridad
+                    localStorage.removeItem("tipoUsuario");
+
+                    // 🔥 enviamos a selección
+                    window.location.href = "tipo.html";
+                });
+
             })
             .catch((error) => {
-                alert("❌ ERROR DE FIREBASE: " + error.message);
+                alert("❌ ERROR: " + error.message);
             });
     }
 </script>
