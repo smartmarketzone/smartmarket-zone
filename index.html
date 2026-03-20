@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SmartMarket</title>
+<title>SmartMarket | Venezuela</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;600;900&display=swap" rel="stylesheet">
 
@@ -11,49 +11,82 @@
 body {
     margin:0;
     font-family:'Outfit', sans-serif;
+    background:#fdfdfd;
     text-align:center;
-    background:linear-gradient(135deg,#1a73e8,#00d2ff);
-    color:white;
 }
 
-.container {
-    padding:100px 20px;
+.hero {
+    padding:100px 20px 60px;
 }
 
-h1 {
-    font-size:50px;
-    margin-bottom:20px;
+.hero h1 {
+    font-size:60px;
+    font-weight:900;
+    background: linear-gradient(90deg,#1a73e8,#00d2ff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 
-p {
-    font-size:18px;
-    max-width:500px;
+.hero p {
+    max-width:600px;
     margin:auto;
+    color:#64748b;
 }
 
-button {
+.btn {
     margin-top:30px;
-    padding:15px 30px;
+    padding:18px 40px;
+    border-radius:40px;
     border:none;
-    border-radius:20px;
-    background:white;
-    color:#1a73e8;
-    font-weight:bold;
+    background:#0f172a;
+    color:white;
+    font-weight:700;
     cursor:pointer;
+}
+
+/* BENEFICIOS */
+.section {
+    padding:60px 20px;
+}
+
+.grid {
+    display:grid;
+    gap:20px;
+}
+
+.card {
+    padding:20px;
+    border-radius:20px;
+    background:#f1f5f9;
 }
 </style>
 </head>
 
 <body>
 
-<div class="container">
+<div class="hero">
     <h1>SmartMarket</h1>
-    <p>Encuentra productos cerca de ti y compara precios en tiempo real.</p>
-    <button onclick="irLogin()">Comenzar</button>
+    <p>Encuentra productos disponibles cerca de ti, compara precios y llega directo al comercio.</p>
+
+    <button class="btn" onclick="irAuth()">Comenzar 🚀</button>
+</div>
+
+<div class="section">
+    <h2>¿Cómo funciona?</h2>
+    <div class="grid">
+        <div class="card">Buscar productos</div>
+        <div class="card">Comparar precios</div>
+        <div class="card">Llegar con GPS</div>
+    </div>
 </div>
 
 <script>
-function irLogin(){
+// SI YA ESTÁ LOGUEADO → VA A LA APP
+if(localStorage.getItem("usuarioLogueado") === "true"){
+    window.location.href = "app.html";
+}
+
+function irAuth(){
     window.location.href = "auth.html";
 }
 </script>
