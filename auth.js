@@ -56,8 +56,8 @@ function register() {
     firebase.auth().createUserWithEmailAndPassword(email, password)
     .then((userCredential) => {
         alert("¡Cuenta creada con éxito!");
-        // Al registrarse, lo mandamos directo a elegir su rol
-        window.location.href = "tipo.html";
+        // 🔥 Redirigimos directamente a la página de selección
+        window.location.href = "seleccion.html";
     })
     .catch((error) => {
         console.error("Error registro:", error.code);
@@ -104,12 +104,12 @@ function verificarRutaUsuario(uid) {
                 window.location.href = "cliente.html";
             }
         } else {
-            // Si el usuario no tiene rol, lo mandamos a elegir uno
-            window.location.href = "tipo.html";
+            // 🔥 Si el usuario no tiene rol, lo mandamos a elegir en seleccion.html
+            window.location.href = "seleccion.html";
         }
     }).catch((error) => {
         console.error("Error verificando ruta:", error);
-        // Por seguridad, si hay error de lectura, mandamos a tipo.html
-        window.location.href = "tipo.html";
+        // Por seguridad, si hay error de lectura, mandamos a seleccion.html
+        window.location.href = "seleccion.html";
     });
 }
