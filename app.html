@@ -17,9 +17,7 @@ body { margin:0; font-family:'Outfit', sans-serif; }
     text-align:center;
 }
 
-.badge {
-    margin-top:10px;
-}
+.badge { margin-top:10px; }
 
 button {
     margin-top:20px;
@@ -43,10 +41,10 @@ button {
     <button onclick="logout()">Cerrar sesión</button>
 </div>
 
-<!-- 🔥 FIREBASE (AGREGADO) -->
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<!-- ✅ FIREBASE UNIFICADO (v8 como todo tu proyecto) -->
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
 
 <script>
 const firebaseConfig = {
@@ -59,58 +57,67 @@ if (!firebase.apps.length) {
     firebase.initializeApp(firebaseConfig);
 }
 
-/* 🔐 CONTROL DE LOGIN + REDIRECCIÓN POR TIPO */
-if(localStorage.getItem("usuarioLogueado") !== "true"){
-    window.location.href = "auth.html";
-} else {
+const db = firebase.firestore();
 
-    firebase.auth().onAuthStateChanged(function(user) {
-        if (user) {
-            firebase.firestore().collection("usuarios").doc(user.uid).get()
-            .then((doc) => {
+/* 🔐 CONTROL REAL DE SESIÓN (SOLO FIREBASE) */
+firebase.auth().onAuthStateChanged(function(user) {
 
-                if (doc.exists && doc.data().tipo === "persona") {
-                    window.location.href = "cliente.html";
-                } 
-                else if (doc.exists && doc.data().tipo === "comercio") {
-                    window.location.href = "comercio.html";
-                } 
-                else {
-                    window.location.href = "seleccion.html";
-                }
+    if (!user) {
+        window.location.href = "login.html";
+        return;
+    }
 
-            });
+    db.collection("usuarios").doc(user.uid).get()
+    .then((doc) => {
+
+        if (doc.exists && doc.data().tipo === "persona") {
+            window.location.href = "cliente.html";
+        } 
+        else if (doc.exists && doc.data().tipo === "comercio") {
+            window.location.href = "comercio.html";
+        } 
+        else {
+            window.location.href = "selection.html";
         }
+
     });
 
-}
+});
 
-/* GEOLOCALIZACIÓN (NO SE TOCA) */
+/* 🌍 GEOLOCALIZACIÓN (IGUAL PERO MÁS ROBUSTO) */
 function detectar(){
     const city = document.getElementById("city");
 
-    if(navigator.geolocation){
-        navigator.geolocation.getCurrentPosition(async pos => {
-            const lat = pos.coords.latitude;
-            const lon = pos.coords.longitude;
-
-            try{
-                const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`);
-                const data = await res.json();
-
-                city.innerHTML = data.address.city || data.address.state || "Venezuela";
-            }catch{
-                city.innerHTML = "Venezuela";
-            }
-        });
+    if(!navigator.geolocation){
+        city.innerText = "SmartMarket";
+        return;
     }
+
+    navigator.geolocation.getCurrentPosition(async pos => {
+        const lat = pos.coords.latitude;
+        const lon = pos.coords.longitude;
+
+        try{
+            const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`);
+            const data = await res.json();
+
+            city.innerText =
+                data.address.city ||
+                data.address.town ||
+                data.address.state ||
+                "Tu zona";
+        }catch{
+            city.innerText = "SmartMarket";
+        }
+    }, () => {
+        city.innerText = "SmartMarket";
+    });
 }
 
-/* LOGOUT */
+/* 🔒 LOGOUT LIMPIO */
 function logout(){
-    localStorage.removeItem("usuarioLogueado");
     firebase.auth().signOut().then(()=>{
-        window.location.href = "index.html";
+        window.location.href = "login.html";
     });
 }
 
