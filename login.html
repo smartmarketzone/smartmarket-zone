@@ -1,25 +1,25 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>SmartMarket</title>
-    <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>SmartMarket</title>
 
-    <style>
-        .bienvenida {
-            font-size: 14px;
-            margin-bottom: 15px;
-            color: #4fc3f7;
-            font-weight: 700;
-        }
+<link rel="stylesheet" href="style.css">
 
-        .sub-text {
-            font-size: 12px;
-            opacity: 0.7;
-            margin-bottom: 20px;
-        }
-    </style>
+<style>
+.bienvenida {
+    font-size: 14px;
+    margin-bottom: 15px;
+    color: #4fc3f7;
+    font-weight: 700;
+}
+.sub-text {
+    font-size: 12px;
+    opacity: 0.7;
+    margin-bottom: 20px;
+}
+</style>
 </head>
 
 <body class="auth-body">
@@ -27,11 +27,10 @@
 <div class="card">
     <h1 class="logo">Smart<span>Market</span></h1>
 
-    <!-- TEXTO DINÁMICO -->
     <p id="bienvenida" class="bienvenida">Detectando tu ubicación...</p>
     <p class="sub-text">Encuentra lo que necesitas al mejor precio cerca de ti</p>
 
-    <input type="email" id="regEmail" placeholder="Correo" inputmode="email">
+    <input type="email" id="regEmail" placeholder="Correo">
     <input type="password" id="regPass" placeholder="Contraseña">
 
     <button type="button" class="btn-primary" id="btnLogin">
@@ -44,88 +43,105 @@
     </p>
 </div>
 
-<!-- Firebase (solo librerías) -->
+<!-- FIREBASE -->
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
 
 <script>
-    // =========================
-    // 🔥 CONFIGURACIÓN FIREBASE
-    // =========================
-    const firebaseConfig = {
-        apiKey: "AIzaSyA6tYooh4CtX7ww9GRyXWhuakl2nLovtsY",
-        authDomain: "smartmarket-zone-e7559.firebaseapp.com",
-        projectId: "smartmarket-zone-e7559"
-    };
+const firebaseConfig = {
+    apiKey: "AIzaSyA6tYooh4CtX7ww9GRyXWhuakl2nLovtsY",
+    authDomain: "smartmarket-zone-e7559.firebaseapp.com",
+    projectId: "smartmarket-zone-e7559"
+};
 
-    // Evita inicialización duplicada
-    if (!firebase.apps.length) {
-        firebase.initializeApp(firebaseConfig);
-    }
+if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+}
 
-    // =========================
-    // 🔐 LOGIN
-    // =========================
-    document.getElementById('btnLogin').addEventListener('click', function () {
-        const email = document.getElementById("regEmail").value.trim();
-        const pass = document.getElementById("regPass").value.trim();
+const db = firebase.firestore();
 
-        if (!email || !pass) {
-            alert("Completa todos los campos");
-            return;
-        }
+/* 🔥 CONTROL DE SESIÓN (CLAVE) */
+firebase.auth().onAuthStateChanged(function(user) {
 
-        this.innerText = "ENTRANDO...";
+    if(user){
+        db.collection("usuarios").doc(user.uid).get()
+        .then((doc) => {
 
-        firebase.auth().signInWithEmailAndPassword(email, pass)
-        .then(() => {
-            // 🔥 CORREGIDO (antes iba a tipo.html)
-            window.location.href = "selection.html";
-        })
-        .catch((error) => {
-            this.innerText = "INICIAR SESIÓN";
-            alert(error.message);
-        });
-    });
-
-    // =========================
-    // 🌍 UBICACIÓN
-    // =========================
-    const txt = document.getElementById("bienvenida");
-
-    function detectarUbicacion() {
-        if (!navigator.geolocation) {
-            txt.innerText = "Bienvenido a SmartMarket";
-            return;
-        }
-
-        navigator.geolocation.getCurrentPosition(async (pos) => {
-            const lat = pos.coords.latitude;
-            const lng = pos.coords.longitude;
-
-            try {
-                const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}`);
-                const data = await res.json();
-
-                let ciudad =
-                    data.address.city ||
-                    data.address.town ||
-                    data.address.village ||
-                    data.address.state ||
-                    "tu zona";
-
-                txt.innerText = "Bienvenido a " + ciudad;
-
-            } catch (e) {
-                txt.innerText = "Bienvenido a SmartMarket";
+            if (doc.exists && doc.data().tipo === "persona") {
+                window.location.href = "cliente.html";
+            } 
+            else if (doc.exists && doc.data().tipo === "comercio") {
+                window.location.href = "comercio.html";
+            } 
+            else {
+                window.location.href = "selection.html";
             }
 
-        }, () => {
-            txt.innerText = "Bienvenido a SmartMarket";
         });
     }
 
-    detectarUbicacion();
+});
+
+/* LOGIN */
+document.getElementById('btnLogin').addEventListener('click', function () {
+
+    const email = document.getElementById("regEmail").value.trim();
+    const pass = document.getElementById("regPass").value.trim();
+
+    if (!email || !pass) {
+        alert("Completa todos los campos");
+        return;
+    }
+
+    this.innerText = "ENTRANDO...";
+
+    firebase.auth().signInWithEmailAndPassword(email, pass)
+    .then(() => {
+        window.location.href = "selection.html";
+    })
+    .catch((error) => {
+        this.innerText = "INICIAR SESIÓN";
+        alert(error.message);
+    });
+});
+
+/* UBICACIÓN */
+const txt = document.getElementById("bienvenida");
+
+function detectarUbicacion() {
+    if (!navigator.geolocation) {
+        txt.innerText = "Bienvenido a SmartMarket";
+        return;
+    }
+
+    navigator.geolocation.getCurrentPosition(async (pos) => {
+        const lat = pos.coords.latitude;
+        const lng = pos.coords.longitude;
+
+        try {
+            const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}`);
+            const data = await res.json();
+
+            let ciudad =
+                data.address.city ||
+                data.address.town ||
+                data.address.village ||
+                data.address.state ||
+                "tu zona";
+
+            txt.innerText = "Bienvenido a " + ciudad;
+
+        } catch (e) {
+            txt.innerText = "Bienvenido a SmartMarket";
+        }
+
+    }, () => {
+        txt.innerText = "Bienvenido a SmartMarket";
+    });
+}
+
+detectarUbicacion();
 </script>
 
 </body>
