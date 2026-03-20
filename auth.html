@@ -1,144 +1,73 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Acceso - SmartMarket VZLA</title>
-    <link rel="icon" href="https://fav.farm/🔐">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
-    <style>
-        :root { --blue: #1e88e5; --cyan: #00d2ff; --dark: #050a0e; --yellow: #ffeb3b; }
-        
-        body { 
-            margin: 0; font-family: 'Montserrat', sans-serif; 
-            background: radial-gradient(circle at top, #0b171c 0%, #050a0e 100%);
-            color: white; display: flex; align-items: center; justify-content: center; min-height: 100vh;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Acceso | SmartMarket</title>
 
-        /* Contenedor Efecto Cristal */
-        .auth-container { 
-            width: 90%; max-width: 400px; padding: 40px 30px; 
-            background: rgba(255, 255, 255, 0.03); 
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 30px; backdrop-filter: blur(15px);
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-            text-align: center;
-        }
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;600;900&display=swap" rel="stylesheet">
 
-        h1 { font-size: 24px; font-weight: 900; letter-spacing: -1px; margin-bottom: 5px; color: var(--cyan); }
-        p { font-size: 12px; opacity: 0.6; margin-bottom: 30px; }
+<style>
+body {
+    margin: 0;
+    font-family: 'Outfit', sans-serif;
+    background: linear-gradient(135deg, #1a73e8, #00d2ff);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
 
-        .input-group { text-align: left; margin-bottom: 15px; }
-        label { font-size: 10px; font-weight: 900; color: var(--cyan); text-transform: uppercase; margin-left: 10px; }
-        
-        input, select { 
-            width: 100%; padding: 15px; margin-top: 5px; border-radius: 15px; 
-            border: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.3); 
-            color: white; font-family: 'Montserrat'; outline: none; box-sizing: border-box;
-        }
+.box {
+    background: white;
+    padding: 40px;
+    border-radius: 25px;
+    width: 300px;
+    text-align: center;
+}
 
-        input:focus { border-color: var(--cyan); box-shadow: 0 0 10px rgba(0, 210, 255, 0.2); }
+h1 {
+    margin-bottom: 20px;
+}
 
-        .btn { 
-            width: 100%; padding: 16px; border-radius: 15px; border: none; 
-            font-weight: 900; text-transform: uppercase; cursor: pointer; 
-            margin-top: 20px; transition: 0.3s;
-        }
-        .btn-primary { background: linear-gradient(90deg, var(--blue), var(--cyan)); color: white; }
-        .btn-primary:active { transform: scale(0.98); }
+input {
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+}
 
-        .toggle-link { font-size: 12px; margin-top: 20px; cursor: pointer; color: var(--yellow); font-weight: 700; }
-        
-        /* Animación suave */
-        .fade { animation: fadeIn 0.5s ease; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-    </style>
+button {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    background: #1a73e8;
+    color: white;
+    border-radius: 10px;
+    font-weight: bold;
+    cursor: pointer;
+}
+</style>
 </head>
+
 <body>
 
-<div class="auth-container fade">
-    <div id="auth-box">
-        <h1 id="titulo">BIENVENIDO</h1>
-        <p id="subtitulo">Ingresa a la red de San Joaquín</p>
+<div class="box">
+    <h1>SmartMarket</h1>
 
-        <div class="input-group">
-            <label>Correo Electrónico</label>
-            <input type="email" id="email" placeholder="ejemplo@correo.com">
-        </div>
+    <input type="text" placeholder="Correo">
+    <input type="password" placeholder="Contraseña">
 
-        <div class="input-group">
-            <label>Contraseña</label>
-            <input type="password" id="pass" placeholder="••••••••">
-        </div>
-
-        <div id="reg-fields" style="display: none;">
-            <div class="input-group">
-                <label>Nombre Completo / Tienda</label>
-                <input type="text" id="nombre" placeholder="Juan Pérez / Bodega El Éxito">
-            </div>
-            <div class="input-group">
-                <label>¿Qué eres?</label>
-                <select id="tipo">
-                    <option value="persona">Soy un Cliente (Persona)</option>
-                    <option value="comercio">Tengo un Comercio (Tienda)</option>
-                </select>
-            </div>
-        </div>
-
-        <button class="btn btn-primary" id="btn-auth" onclick="procesar()">INICIAR SESIÓN</button>
-        <div class="toggle-link" id="toggle" onclick="toggleAuth()">¿No tienes cuenta? Regístrate aquí</div>
-    </div>
+    <button onclick="entrar()">Entrar</button>
 </div>
 
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
-
 <script>
-    const firebaseConfig = {
-        apiKey: "AIzaSyA6tYooh4CtX7ww9GRyXWhuakl2nLovtsY",
-        authDomain: "smartmarket-zone-e7559.firebaseapp.com",
-        projectId: "smartmarket-zone-e7559"
-    };
-    if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
-    const db = firebase.firestore();
-
-    let modoRegistro = false;
-
-    function toggleAuth() {
-        modoRegistro = !modoRegistro;
-        document.getElementById('titulo').innerText = modoRegistro ? "CREAR CUENTA" : "BIENVENIDO";
-        document.getElementById('btn-auth').innerText = modoRegistro ? "REGISTRARME" : "INICIAR SESIÓN";
-        document.getElementById('reg-fields').style.display = modoRegistro ? "block" : "none";
-        document.getElementById('toggle').innerText = modoRegistro ? "¿Ya tienes cuenta? Entra aquí" : "¿No tienes cuenta? Regístrate aquí";
-    }
-
-    async function procesar() {
-        const email = document.getElementById('email').value;
-        const pass = document.getElementById('pass').value;
-        
-        if(!email || !pass) return alert("Completa los datos");
-
-        try {
-            if (modoRegistro) {
-                const nom = document.getElementById('nombre').value;
-                const tip = document.getElementById('tipo').value;
-                if(!nom) return alert("Escribe tu nombre");
-
-                const res = await auth.createUserWithEmailAndPassword(email, pass);
-                await db.collection("usuarios").doc(res.user.uid).set({
-                    nombre: nom, tipo: tip, email: email, uid: res.user.uid
-                });
-                alert("¡Cuenta creada!");
-            } else {
-                await auth.signInWithEmailAndPassword(email, pass);
-            }
-            window.location.href = "index.html";
-        } catch (e) {
-            alert("Error: " + e.message);
-        }
-    }
+function entrar() {
+    localStorage.setItem("usuarioLogueado", "true");
+    window.location.href = "app.html";
+}
 </script>
+
 </body>
 </html>
