@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SmartMarket</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;600;900&display=swap" rel="stylesheet">
+
+<style>
+body {
+    margin:0;
+    font-family:'Outfit', sans-serif;
+    text-align:center;
+    background:linear-gradient(135deg,#1a73e8,#00d2ff);
+    color:white;
+}
+
+.container {
+    padding:100px 20px;
+}
+
+h1 {
+    font-size:50px;
+    margin-bottom:20px;
+}
+
+p {
+    font-size:18px;
+    max-width:500px;
+    margin:auto;
+}
+
+button {
+    margin-top:30px;
+    padding:15px 30px;
+    border:none;
+    border-radius:20px;
+    background:white;
+    color:#1a73e8;
+    font-weight:bold;
+    cursor:pointer;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+    <h1>SmartMarket</h1>
+    <p>Encuentra productos cerca de ti y compara precios en tiempo real.</p>
+    <button onclick="irLogin()">Comenzar</button>
+</div>
+
+<script>
+function irLogin(){
+    window.location.href = "auth.html";
+}
+</script>
+
+</body>
+</html>
