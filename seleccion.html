@@ -13,9 +13,10 @@ body {
     font-family:'Outfit', sans-serif;
     background:#f8fafc;
     text-align:center;
-    /* FONDO DE MAPA CONECTADO */
-    background-image: linear-gradient(rgba(248, 250, 252, 0.9), rgba(248, 250, 252, 0.9)), 
-                      url('https://img.freepik.com/vector-gratis/mapa-venezuela-puntos-conexion-red-digital_23-2149120456.jpg');
+
+    /* 🔥 FONDO MEJORADO (más moderno y tecnológico) */
+    background-image: linear-gradient(rgba(248, 250, 252, 0.85), rgba(248, 250, 252, 0.85)), 
+                      url('https://c.pxhere.com/images/63/63/c7c823330ec7d376ef4a7e896dd3-1451419.jpg');
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
@@ -64,14 +65,14 @@ p {
     cursor:pointer;
     box-shadow:0 10px 30px rgba(0,0,0,0.1);
     transition:0.3s;
-    overflow: hidden; /* Para que la imagen no se salga */
+    overflow: hidden;
 }
 
 .card:hover {
     transform:translateY(-10px);
 }
 
-/* IMAGEN ILUSTRATIVA MEJORADA */
+/* IMAGEN */
 .img {
     height:150px;
     border-radius:15px;
@@ -81,13 +82,15 @@ p {
     background-position: center;
 }
 
-/* IMÁGENES ESPECÍFICAS */
+/* 🔥 IMÁGENES CORREGIDAS (más coherentes con app) */
+/* Persona usando app móvil */
 .img-persona {
-    background-image: url('https://img.freepik.com/vector-gratis/persona-que-usa-su-telefono-inteligente-comprar-linea_23-2148526316.jpg');
+    background-image: url('https://img.freepik.com/vector-gratis/persona-usando-aplicacion-movil-compras-online_23-2148828409.jpg');
 }
 
+/* Comercio digital / tienda online */
 .img-comercio {
-    background-image: url('https://img.freepik.com/vector-gratis/dueno-pequeno-negocio-que-comprueba-inventario_23-2148892482.jpg');
+    background-image: url('https://img.freepik.com/vector-gratis/concepto-tienda-online_23-2148626838.jpg');
 }
 
 /* BOTÓN */
@@ -130,10 +133,22 @@ button {
 </div>
 
 <script>
+
+/* 🔥 NUEVO: SI YA ELIGIÓ, NO VUELVE AQUÍ */
+document.addEventListener("DOMContentLoaded", function() {
+    const tipo = localStorage.getItem("tipoUsuario");
+
+    if (tipo) {
+        window.location.href = "app.html";
+    }
+});
+
+/* TU FUNCIÓN ORIGINAL + GUARDADO */
 function seleccionar(tipo){
     localStorage.setItem("tipoUsuario", tipo);
     window.location.href = "app.html";
 }
+
 </script>
 
 </body>
