@@ -108,6 +108,9 @@ button {
 
 <body>
 
+<!-- 🔹 CONTENIDO PRINCIPAL, oculto al inicio -->
+<div id="mainContent" style="display:none;">
+
 <div class="logo">
     <div class="logo-box">SM</div>
     <h2>SmartMarket</h2>
@@ -132,23 +135,59 @@ button {
 
 </div>
 
+</div>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
 <script>
+// 🔹 Inicializamos Firebase
+const firebaseConfig = {
+  apiKey: "AIzaSyA6tYooh4CtX7ww9GRyXWhuakl2nLovtsY",
+  authDomain: "smartmarket-zone-e7559.firebaseapp.com",
+  projectId: "smartmarket-zone-e7559"
+};
 
-/* 🔥 NUEVO: SI YA ELIGIÓ, NO VUELVE AQUÍ */
+if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+}
+
+const db = firebase.firestore();
+
+// 🔹 Mostrar contenido solo si el usuario no tiene tipo definido
 document.addEventListener("DOMContentLoaded", function() {
-    const tipo = localStorage.getItem("tipoUsuario");
+    const mainContent = document.getElementById("mainContent");
 
-    if (tipo) {
-        window.location.href = "app.html";
-    }
+    firebase.auth().onAuthStateChanged(function(user) {
+        if (user) {
+            db.collection("usuarios").doc(user.uid).get()
+            .then((doc) => {
+                if (doc.exists && doc.data().tipo) {
+                    // Usuario ya eligió tipo → ir directo a app
+                    window.location.href = "app.html";
+                } else {
+                    // Usuario sin tipo → mostrar selección
+                    mainContent.style.display = "block";
+                }
+            })
+            .catch((error) => {
+                console.error("Error verificando tipo:", error);
+                mainContent.style.display = "block"; // mostrar por seguridad
+            });
+        } else {
+            // No hay usuario logueado → mostrar selección
+            mainContent.style.display = "block";
+        }
+    });
 });
 
-/* TU FUNCIÓN ORIGINAL + GUARDADO */
+// 🔹 Función original de selección
 function seleccionar(tipo){
     localStorage.setItem("tipoUsuario", tipo);
     window.location.href = "app.html";
 }
-
 </script>
 
 </body>
