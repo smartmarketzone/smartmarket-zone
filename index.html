@@ -35,7 +35,6 @@ header {
     background: linear-gradient(90deg,var(--blue),var(--accent));
     -webkit-background-clip:text;
     -webkit-text-fill-color:transparent;
-    margin:0;
 }
 
 .hero-desc {
@@ -45,10 +44,18 @@ header {
     margin:20px auto;
 }
 
-/* BOTÓN */
+/* BOTÓN FIJO */
+.cta-box {
+    position: fixed;
+    bottom: 20px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    z-index: 1000;
+}
+
 .btn-main {
-    margin-top:30px;
-    padding:20px 50px;
+    padding:18px 50px;
     border:none;
     border-radius:50px;
     background:var(--dark);
@@ -56,18 +63,18 @@ header {
     font-weight:700;
     cursor:pointer;
     font-size:18px;
-    box-shadow:0 20px 40px rgba(0,0,0,0.2);
+    box-shadow:0 20px 40px rgba(0,0,0,0.3);
 }
 
 .btn-main:hover {
     background:var(--blue);
 }
 
-/* SECCIONES */
+/* CONTENIDO */
 .container {
     max-width:1100px;
     margin:auto;
-    padding:60px 20px;
+    padding:40px 20px 120px;
 }
 
 /* PASOS */
@@ -75,8 +82,8 @@ header {
     display:flex;
     align-items:center;
     justify-content:space-between;
-    margin-bottom:80px;
-    gap:40px;
+    margin-bottom:60px;
+    gap:30px;
 }
 
 .paso:nth-child(even){
@@ -88,7 +95,7 @@ header {
 }
 
 .texto h2 {
-    font-size:35px;
+    font-size:32px;
     margin-bottom:10px;
 }
 
@@ -98,23 +105,28 @@ header {
 
 .mock {
     flex:1;
-    height:250px;
+    height:220px;
     background:#eef2f7;
-    border-radius:25px;
-    box-shadow:0 20px 40px rgba(0,0,0,0.1);
+    border-radius:20px;
 }
 
-/* NEGOCIO */
-.negocio {
-    background:var(--dark);
-    color:white;
-    padding:80px 20px;
-    border-radius:50px 50px 0 0;
-    text-align:center;
+/* PERSONA / COMERCIO */
+.roles {
+    display:grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px,1fr));
+    gap:20px;
+    margin-top:40px;
 }
 
-.negocio h3 {
-    color:var(--accent);
+.role-card {
+    background:white;
+    padding:25px;
+    border-radius:20px;
+    box-shadow:0 10px 30px rgba(0,0,0,0.08);
+}
+
+.role-card h3 {
+    color:var(--blue);
 }
 
 /* RESPONSIVE */
@@ -132,48 +144,59 @@ header {
 <header>
     <h1 class="hero-title">SmartMarket</h1>
     <p class="hero-desc">
-        El puente digital entre los productos disponibles en tu ciudad y las decisiones inteligentes de compra.
+        Encuentra productos disponibles en tu ciudad, compara precios y llega directo al comercio.
     </p>
-
-    <button class="btn-main" onclick="irAuth()">Comenzar experiencia 🚀</button>
 </header>
 
 <div class="container">
 
+    <!-- PASOS -->
     <div class="paso">
         <div class="texto">
-            <h2>Encuentra lo que necesitas</h2>
-            <p>Busca productos en tiempo real dentro de los comercios cercanos a tu ubicación.</p>
+            <h2>Busca productos en tiempo real</h2>
+            <p>Explora qué comercios tienen exactamente lo que necesitas cerca de ti.</p>
         </div>
         <div class="mock"></div>
     </div>
 
     <div class="paso">
         <div class="texto">
-            <h2>Compara precios</h2>
-            <p>Visualiza múltiples opciones y elige la mejor oferta sin perder tiempo.</p>
+            <h2>Compara y decide mejor</h2>
+            <p>Visualiza precios y elige la opción más conveniente sin perder tiempo.</p>
         </div>
         <div class="mock"></div>
     </div>
 
     <div class="paso">
         <div class="texto">
-            <h2>Llega directo al comercio</h2>
-            <p>Nuestro sistema te guía con GPS hasta el punto exacto donde está el producto.</p>
+            <h2>Llega directo con GPS</h2>
+            <p>Te guiamos hasta el comercio exacto donde está el producto.</p>
         </div>
         <div class="mock"></div>
+    </div>
+
+    <!-- PERSONA VS COMERCIO -->
+    <div class="roles">
+        <div class="role-card">
+            <h3>Para Personas</h3>
+            <p>Encuentra productos rápidamente, ahorra dinero y evita recorridos innecesarios.</p>
+        </div>
+
+        <div class="role-card">
+            <h3>Para Comercios</h3>
+            <p>Publica tu inventario y recibe clientes listos para comprar directamente en tu local.</p>
+        </div>
     </div>
 
 </div>
 
-<div class="negocio">
-    <h2>Para Comercios</h2>
-    <h3>Digitaliza tu inventario y atrae clientes reales</h3>
-    <p>SmartMarket conecta tu negocio con personas listas para comprar en tu zona.</p>
+<!-- BOTÓN SIEMPRE VISIBLE -->
+<div class="cta-box">
+    <button class="btn-main" onclick="irAuth()">Comenzar ahora 🚀</button>
 </div>
 
 <script>
-// SI YA ESTÁ LOGUEADO → VA DIRECTO A LA APP
+// SI YA ESTÁ LOGUEADO → VA A LA APP
 if(localStorage.getItem("usuarioLogueado") === "true"){
     window.location.href = "app.html";
 }
