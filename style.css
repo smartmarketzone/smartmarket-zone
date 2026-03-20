@@ -1,193 +1,150 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SmartMarket</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;600;900&display=swap" rel="stylesheet">
-
-<style>
-body{
-    margin:0;
-    height:100vh;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    font-family:'Outfit', sans-serif;
-    overflow:hidden;
-    background:#0f2027;
+/* RESET */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
-/* LOADER */
-.loader{
-    position:fixed;
-    width:100%;
-    height:100%;
-    background:#0f2027;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    z-index:999;
-    color:white;
-    font-size:20px;
-    transition:0.5s;
+/* BODY GENERAL */
+body.auth-body {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Outfit', sans-serif;
+    overflow: hidden;
+    position: relative;
 }
 
-/* CARD */
-.container{
-    width:340px;
-    background:rgba(255,255,255,0.05);
-    backdrop-filter:blur(20px);
-    padding:30px;
-    border-radius:20px;
-    text-align:center;
-    box-shadow:0 20px 60px rgba(0,0,0,0.6);
+/* 🌍 FONDO MAPA + OVERLAY */
+body.auth-body::before {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 100%;
+
+    background:
+        linear-gradient(rgba(15,32,39,0.85), rgba(32,58,67,0.85)),
+        url('https://images.unsplash.com/photo-1524661135-423995f22d0b?auto=format&fit=crop&w=1600&q=80');
+
+    background-size: cover;
+    background-position: center;
+    z-index: -2;
+}
+
+/* ✨ CAPA DE RED (CANVAS) */
+canvas {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+}
+
+/* 🧊 CARD */
+.card {
+    width: 90%;
+    max-width: 360px;
+    padding: 30px;
+    border-radius: 20px;
+
+    background: rgba(255,255,255,0.08);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+
+    box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+    text-align: center;
 }
 
 /* LOGO */
-.logo{
-    color:white;
-    font-size:28px;
-    font-weight:900;
-}
-.logo span{
-    color:#00d2ff;
+.logo {
+    font-size: 30px;
+    font-weight: 900;
+    color: white;
 }
 
-/* FORM */
-.form{
-    display:none;
-    animation:fade 0.4s ease;
+.logo span {
+    color: #00d2ff;
 }
 
-.active{
-    display:block;
+/* TEXTO */
+.bienvenida {
+    font-size: 14px;
+    color: #00d2ff;
+    margin-bottom: 10px;
+    font-weight: 600;
 }
 
-@keyframes fade{
-    from{opacity:0;transform:translateY(10px);}
-    to{opacity:1;transform:translateY(0);}
+.sub-text {
+    font-size: 12px;
+    color: #cbd5e1;
+    margin-bottom: 20px;
 }
 
-input{
-    width:100%;
-    padding:12px;
-    margin:10px 0;
-    border:none;
-    border-radius:10px;
-    background:rgba(255,255,255,0.15);
-    color:white;
+/* INPUTS */
+.input-group {
+    position: relative;
 }
 
-.btn{
-    width:100%;
-    padding:12px;
-    border:none;
-    border-radius:10px;
-    background:linear-gradient(135deg,#1a73e8,#00d2ff);
-    color:white;
-    font-weight:700;
-    cursor:pointer;
+input {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 12px;
+
+    border: none;
+    border-radius: 10px;
+
+    background: rgba(255,255,255,0.15);
+    color: white;
+    font-size: 14px;
 }
 
-.link{
-    color:#00d2ff;
-    cursor:pointer;
-    font-size:12px;
+input::placeholder {
+    color: #cbd5e1;
 }
 
-/* ERROR */
-.error{
-    color:#ff6b6b;
-    font-size:12px;
-}
-</style>
-</head>
-
-<body>
-
-<div class="loader" id="loader">Cargando...</div>
-
-<div class="container">
-
-    <h1 class="logo">Smart<span>Market</span></h1>
-
-    <!-- LOGIN -->
-    <div id="loginForm" class="form active">
-        <input type="email" id="loginEmail" placeholder="Correo">
-        <input type="password" id="loginPass" placeholder="Contraseña">
-        <div id="loginError" class="error"></div>
-
-        <button class="btn" onclick="login()">Iniciar sesión</button>
-
-        <p class="link" onclick="showRegister()">¿No tienes cuenta? Regístrate</p>
-    </div>
-
-    <!-- REGISTER -->
-    <div id="registerForm" class="form">
-        <input type="email" id="regEmail" placeholder="Correo">
-        <input type="password" id="regPass" placeholder="Contraseña">
-        <div id="regError" class="error"></div>
-
-        <button class="btn" onclick="register()">Crear cuenta</button>
-
-        <p class="link" onclick="showLogin()">¿Ya tienes cuenta? Inicia sesión</p>
-    </div>
-
-</div>
-
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
-
-<script>
-const firebaseConfig = {
-    apiKey: "AIzaSyA6...",
-    authDomain: "smartmarket-zone-e7559.firebaseapp.com",
-    projectId: "smartmarket-zone-e7559"
-};
-
-firebase.initializeApp(firebaseConfig);
-
-/* LOADER */
-window.onload = () => {
-    setTimeout(()=>{
-        document.getElementById("loader").style.opacity="0";
-        setTimeout(()=>document.getElementById("loader").style.display="none",500);
-    },1000);
-};
-
-/* CAMBIO DE FORM */
-function showRegister(){
-    document.getElementById("loginForm").classList.remove("active");
-    document.getElementById("registerForm").classList.add("active");
+/* 👁 VER CONTRASEÑA */
+.toggle-pass {
+    position: absolute;
+    right: 10px;
+    top: 12px;
+    cursor: pointer;
+    color: #cbd5e1;
+    font-size: 12px;
 }
 
-function showLogin(){
-    document.getElementById("registerForm").classList.remove("active");
-    document.getElementById("loginForm").classList.add("active");
+/* BOTÓN */
+.btn-primary {
+    width: 100%;
+    padding: 12px;
+
+    border: none;
+    border-radius: 10px;
+
+    background: linear-gradient(135deg,#1a73e8,#00d2ff);
+    color: white;
+    font-weight: 700;
+
+    cursor: pointer;
+    transition: 0.3s;
 }
 
-/* LOGIN */
-function login(){
-    const email = loginEmail.value;
-    const pass = loginPass.value;
-
-    firebase.auth().signInWithEmailAndPassword(email, pass)
-    .then(()=> window.location.href="selection.html")
-    .catch(e=> loginError.innerText = e.message);
+.btn-primary:hover {
+    transform: scale(1.05);
 }
 
-/* REGISTER */
-function register(){
-    const email = regEmail.value;
-    const pass = regPass.value;
-
-    firebase.auth().createUserWithEmailAndPassword(email, pass)
-    .then(()=> showLogin())
-    .catch(e=> regError.innerText = e.message);
+/* LINKS */
+a {
+    color: #00d2ff;
+    text-decoration: none;
 }
-</script>
 
-</body>
-</html>
+a:hover {
+    text-decoration: underline;
+}
+
+/* RESPONSIVE */
+@media (max-width: 500px) {
+    .card {
+        padding: 20px;
+    }
+}
