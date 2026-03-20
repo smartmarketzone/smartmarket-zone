@@ -1,44 +1,235 @@
-/* Reemplaza o añade esto a tu clase .auth-body */
-.auth-body {
-    margin: 0;
-    padding: 0;
-    width: 100%;
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-family: 'Montserrat', sans-serif;
-    
-    /* Degradado de 3 colores */
-    background: linear-gradient(-45deg, #0f2027, #203a43, #2c5364, #1e88e5);
-    background-size: 400% 400%;
-    animation: gradientAnimation 15s ease infinite;
-    overflow-x: hidden;
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SmartMarket</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;600;900&display=swap" rel="stylesheet">
+
+<style>
+body.auth-body {
+    margin:0;
+    height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    font-family:'Outfit', sans-serif;
+    overflow:hidden;
+    position:relative;
 }
 
-/* La magia del movimiento */
-@keyframes gradientAnimation {
-    0% {
-        background-position: 0% 50%;
-    }
-    50% {
-        background-position: 100% 50%;
-    }
-    100% {
-        background-position: 0% 50%;
-    }
+/* 🌍 FONDO MAPA */
+body.auth-body::before{
+    content:"";
+    position:absolute;
+    width:100%;
+    height:100%;
+    background:
+        linear-gradient(rgba(15,32,39,0.8), rgba(32,58,67,0.8)),
+        url('https://images.unsplash.com/photo-1524661135-423995f22d0b?auto=format&fit=crop&w=1500&q=80');
+    background-size:cover;
+    background-position:center;
+    z-index:-2;
 }
 
-/* Mejora la tarjeta para que resalte sobre el fondo animado */
-.card {
-    background: rgba(255, 255, 255, 0.05); /* Efecto cristal (Glassmorphism) */
-    backdrop-filter: blur(15px);           /* Desenfoca el fondo detrás de la tarjeta */
-    -webkit-backdrop-filter: blur(15px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 20px;
-    padding: 30px;
-    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
-    width: 90%;
-    max-width: 400px;
-    text-align: center;
+/* ✨ RED DE CONEXIÓN */
+canvas{
+    position:absolute;
+    width:100%;
+    height:100%;
+    z-index:-1;
 }
+
+/* 🧊 CARD */
+.card{
+    width:340px;
+    padding:30px;
+    border-radius:20px;
+    background: rgba(255,255,255,0.08);
+    backdrop-filter: blur(20px);
+    box-shadow:0 20px 60px rgba(0,0,0,0.6);
+    text-align:center;
+}
+
+/* LOGO */
+.logo{
+    color:white;
+    font-size:30px;
+    font-weight:900;
+}
+.logo span{
+    color:#00d2ff;
+}
+
+/* TEXTOS */
+.bienvenida{
+    color:#00d2ff;
+    font-size:14px;
+}
+.sub-text{
+    color:#cbd5e1;
+    font-size:12px;
+    margin-bottom:20px;
+}
+
+/* INPUTS */
+.input-group{
+    position:relative;
+}
+
+input{
+    width:100%;
+    padding:12px;
+    margin-bottom:12px;
+    border:none;
+    border-radius:10px;
+    background:rgba(255,255,255,0.15);
+    color:white;
+}
+
+input::placeholder{
+    color:#cbd5e1;
+}
+
+/* 👁 VER CONTRASEÑA */
+.toggle-pass{
+    position:absolute;
+    right:10px;
+    top:12px;
+    cursor:pointer;
+    color:#cbd5e1;
+    font-size:12px;
+}
+
+/* BOTÓN */
+.btn-primary{
+    width:100%;
+    padding:12px;
+    border:none;
+    border-radius:10px;
+    background:linear-gradient(135deg,#1a73e8,#00d2ff);
+    color:white;
+    font-weight:700;
+    cursor:pointer;
+    transition:0.3s;
+}
+.btn-primary:hover{
+    transform:scale(1.05);
+}
+
+/* LINK */
+a{
+    color:#00d2ff;
+    text-decoration:none;
+}
+</style>
+</head>
+
+<body class="auth-body">
+
+<canvas id="network"></canvas>
+
+<div class="card">
+    <h1 class="logo">Smart<span>Market</span></h1>
+
+    <p class="bienvenida">Bienvenido</p>
+    <p class="sub-text">Conectamos productos contigo en tiempo real</p>
+
+    <input type="email" id="email" placeholder="Correo">
+
+    <div class="input-group">
+        <input type="password" id="password" placeholder="Contraseña">
+        <span class="toggle-pass" onclick="togglePass()">👁</span>
+    </div>
+
+    <button class="btn-primary" onclick="login()">INICIAR SESIÓN</button>
+
+    <p style="margin-top:15px;font-size:12px;">
+        ¿No tienes cuenta?
+        <a href="register.html">Regístrate</a>
+    </p>
+</div>
+
+<!-- FIREBASE -->
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+
+<script>
+const firebaseConfig = {
+    apiKey: "AIzaSyA6tYooh4CtX7ww9GRyXWhuakl2nLovtsY",
+    authDomain: "smartmarket-zone-e7559.firebaseapp.com",
+    projectId: "smartmarket-zone-e7559"
+};
+
+firebase.initializeApp(firebaseConfig);
+
+/* 👁 MOSTRAR CONTRASEÑA */
+function togglePass(){
+    const pass = document.getElementById("password");
+    pass.type = pass.type === "password" ? "text" : "password";
+}
+
+/* LOGIN */
+function login(){
+    const email = document.getElementById("email").value;
+    const pass = document.getElementById("password").value;
+
+    firebase.auth().signInWithEmailAndPassword(email, pass)
+    .then(()=>{
+        window.location.href="selection.html";
+    })
+    .catch(e=>alert(e.message));
+}
+
+/* 🌐 RED ANIMADA */
+const canvas = document.getElementById("network");
+const ctx = canvas.getContext("2d");
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+let points = [];
+for(let i=0;i<50;i++){
+    points.push({
+        x:Math.random()*canvas.width,
+        y:Math.random()*canvas.height,
+        vx:(Math.random()-0.5)*0.5,
+        vy:(Math.random()-0.5)*0.5
+    });
+}
+
+function animate(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+
+    points.forEach(p=>{
+        p.x+=p.vx;
+        p.y+=p.vy;
+
+        if(p.x<0||p.x>canvas.width) p.vx*=-1;
+        if(p.y<0||p.y>canvas.height) p.vy*=-1;
+
+        ctx.beginPath();
+        ctx.arc(p.x,p.y,2,0,Math.PI*2);
+        ctx.fillStyle="#00d2ff";
+        ctx.fill();
+
+        points.forEach(p2=>{
+            let dist = Math.hypot(p.x-p2.x,p.y-p2.y);
+            if(dist<120){
+                ctx.beginPath();
+                ctx.moveTo(p.x,p.y);
+                ctx.lineTo(p2.x,p2.y);
+                ctx.strokeStyle="rgba(0,210,255,0.1)";
+                ctx.stroke();
+            }
+        });
+    });
+
+    requestAnimationFrame(animate);
+}
+animate();
+</script>
+
+</body>
+</html>
