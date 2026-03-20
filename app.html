@@ -3,19 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SmartMarket App</title>
+<title>SmartMarket | App</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;900&display=swap" rel="stylesheet">
 
 <style>
-body {
-    margin:0;
-    font-family:'Outfit', sans-serif;
-    background:white;
-}
+body { margin:0; font-family:'Outfit', sans-serif; }
 
 .hero {
-    background:linear-gradient(135deg,#1a73e8,#00d2ff);
+    background: linear-gradient(135deg,#1a73e8,#00d2ff);
     color:white;
     padding:60px;
     text-align:center;
@@ -32,7 +28,6 @@ button {
     background:red;
     color:white;
     border-radius:10px;
-    cursor:pointer;
 }
 </style>
 </head>
@@ -49,13 +44,10 @@ button {
 </div>
 
 <script>
-
-// PROTEGER ACCESO
 if(localStorage.getItem("usuarioLogueado") !== "true"){
     window.location.href = "auth.html";
 }
 
-// GEOLOCALIZACIÓN
 function detectar(){
     const city = document.getElementById("city");
 
@@ -76,14 +68,12 @@ function detectar(){
     }
 }
 
-// LOGOUT
 function logout(){
     localStorage.removeItem("usuarioLogueado");
     window.location.href = "index.html";
 }
 
 window.onload = detectar;
-
 </script>
 
 </body>
