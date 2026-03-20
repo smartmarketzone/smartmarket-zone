@@ -29,28 +29,55 @@ body {
     background: radial-gradient(circle at top right, #e8f0fe, transparent);
 }
 
+/* LOGO */
 .logo {
     display:flex;
     justify-content:center;
     align-items:center;
-    gap:10px;
+    gap:12px;
     margin-bottom:10px;
 }
 
-.logo-box {
+.logo-icon {
+    width:45px;
+    height:45px;
+    border-radius:12px;
     background: linear-gradient(135deg,#1a73e8,#00d2ff);
-    color:white;
-    padding:10px 14px;
-    border-radius:10px;
-    font-weight:900;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    position:relative;
 }
 
-.hero h1 {
-    font-size:55px;
-    margin:0;
-    font-weight:900;
+.pin {
+    width:14px;
+    height:14px;
+    background:white;
+    border-radius:50%;
+    position:relative;
 }
 
+.pin::after {
+    content:'';
+    position:absolute;
+    bottom:-8px;
+    left:50%;
+    transform:translateX(-50%);
+    width:6px;
+    height:10px;
+    background:white;
+    border-radius:3px;
+}
+
+.logo-text {
+    font-weight:900;
+    font-size:32px;
+    background: linear-gradient(90deg,#1a73e8,#00d2ff);
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+}
+
+/* HERO TEXT */
 .hero p {
     max-width:650px;
     margin:20px auto;
@@ -58,7 +85,7 @@ body {
     font-size:18px;
 }
 
-/* SECCIONES */
+/* CONTENIDO */
 .container {
     max-width:1100px;
     margin:auto;
@@ -111,7 +138,7 @@ body {
     font-weight:bold;
 }
 
-/* CTA FIJO */
+/* CTA */
 .cta {
     position:fixed;
     bottom:20px;
@@ -135,9 +162,8 @@ body {
     background:var(--blue);
 }
 
-/* RESPONSIVE */
 @media(max-width:700px){
-    .hero h1 { font-size:40px; }
+    .logo-text { font-size:24px; }
 }
 </style>
 </head>
@@ -146,20 +172,24 @@ body {
 
 <!-- HERO -->
 <div class="hero">
+
     <div class="logo">
-        <div class="logo-box">SM</div>
-        <h1>SmartMarket</h1>
+        <div class="logo-icon">
+            <div class="pin"></div>
+        </div>
+        <span class="logo-text">SmartMarket</span>
     </div>
 
     <p>
-        ¿Cansado de recorrer tiendas sin conseguir lo que buscas?  
+        Encuentra lo que buscas, donde realmente está.  
         SmartMarket conecta en tiempo real los productos disponibles en tu ciudad con tu decisión de compra.
     </p>
+
 </div>
 
 <div class="container">
 
-    <!-- POR QUÉ ELEGIRNOS -->
+    <!-- POR QUÉ -->
     <div class="section">
         <h2>¿Por qué SmartMarket?</h2>
 
