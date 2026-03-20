@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Login | SmartMarket</title>
+<title>Acceso | SmartMarket</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;600;900&display=swap" rel="stylesheet">
 
@@ -20,18 +20,22 @@ body {
 
 .box {
     background:white;
-    padding:40px;
+    padding:30px;
     border-radius:20px;
-    width:300px;
+    width:320px;
     text-align:center;
+}
+
+h1 {
+    margin-bottom:10px;
 }
 
 input {
     width:100%;
     padding:10px;
-    margin:10px 0;
+    margin:8px 0;
     border-radius:10px;
-    border:1px solid #ccc;
+    border:1px solid #ddd;
 }
 
 button {
@@ -41,7 +45,33 @@ button {
     background:#1a73e8;
     color:white;
     border-radius:10px;
+    margin-top:10px;
     cursor:pointer;
+}
+
+.toggle {
+    margin-top:15px;
+    font-size:14px;
+    cursor:pointer;
+    color:#1a73e8;
+}
+
+.roles {
+    display:flex;
+    gap:10px;
+    margin-top:10px;
+}
+
+.role {
+    flex:1;
+    padding:10px;
+    border-radius:10px;
+    background:#f1f5f9;
+    cursor:pointer;
+}
+.selected {
+    background:#1a73e8;
+    color:white;
 }
 </style>
 </head>
@@ -49,16 +79,37 @@ button {
 <body>
 
 <div class="box">
-    <h2>Iniciar sesión</h2>
+    <h1 id="titulo">Iniciar sesión</h1>
+
+    <div class="roles">
+        <div class="role selected" onclick="seleccionar(this)">Persona</div>
+        <div class="role" onclick="seleccionar(this)">Comercio</div>
+    </div>
 
     <input type="text" placeholder="Correo">
     <input type="password" placeholder="Contraseña">
 
-    <button onclick="login()">Entrar</button>
+    <button onclick="entrar()">Continuar</button>
+
+    <div class="toggle" onclick="toggleModo()">
+        ¿No tienes cuenta? Regístrate
+    </div>
 </div>
 
 <script>
-function login(){
+let registro = false;
+
+function toggleModo(){
+    registro = !registro;
+    document.getElementById("titulo").innerText = registro ? "Registrarse" : "Iniciar sesión";
+}
+
+function seleccionar(el){
+    document.querySelectorAll(".role").forEach(r => r.classList.remove("selected"));
+    el.classList.add("selected");
+}
+
+function entrar(){
     localStorage.setItem("usuarioLogueado","true");
     window.location.href = "app.html";
 }
