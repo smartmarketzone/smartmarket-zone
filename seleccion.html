@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -12,13 +13,42 @@ body {
     margin:0;
     font-family:'Outfit', sans-serif;
     text-align:center;
+    overflow-x:hidden;
 
-    /* 🔥 Nuevo fondo alusivo a compras/marketplace */
-    background: linear-gradient(rgba(255,255,255,0.8), rgba(255,255,255,0.8)),
+    background: linear-gradient(rgba(255,255,255,0.85), rgba(255,255,255,0.85)),
                 url('https://images.unsplash.com/photo-1581090700227-68abdf0d169b?auto=format&fit=crop&w=1350&q=80');
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
+}
+
+/* 🔥 CANVAS RED ANIMADA */
+#networkCanvas {
+    position: fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    z-index:0;
+}
+
+/* PERSONA CENTRAL */
+.network-person {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 90px;
+    height: 90px;
+    background-image: url('https://cdn-icons-png.flaticon.com/512/1946/1946429.png');
+    background-size: cover;
+    z-index: 2;
+    opacity: 0.9;
+    animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%,100%{transform:translateY(0);}
+    50%{transform:translateY(-10px);}
 }
 
 /* LOGO */
@@ -28,6 +58,7 @@ body {
     align-items:center;
     gap:10px;
     margin-top:40px;
+    animation: fadeIn 1s ease;
 }
 
 .logo-box {
@@ -41,13 +72,14 @@ body {
 /* TEXTO */
 h1 {
     margin-top:20px;
+    animation: fadeIn 1.2s ease;
 }
 
 p {
     color:#64748b;
 }
 
-/* OPCIONES */
+/* GRID */
 .grid {
     display:grid;
     grid-template-columns: repeat(auto-fit,minmax(250px,1fr));
@@ -57,18 +89,37 @@ p {
     margin:auto;
 }
 
+/* 🔥 CARD PRO */
 .card {
-    background:white;
+    background: rgba(255,255,255,0.6);
+    backdrop-filter: blur(10px);
     border-radius:20px;
     padding:20px;
     cursor:pointer;
     box-shadow:0 10px 30px rgba(0,0,0,0.1);
-    transition:0.3s;
+    transition: all 0.4s ease;
     overflow: hidden;
+    position: relative;
+}
+
+.card::before {
+    content:"";
+    position:absolute;
+    top:0;
+    left:-100%;
+    width:100%;
+    height:100%;
+    background: linear-gradient(120deg,transparent,rgba(255,255,255,0.6),transparent);
+    transition:0.6s;
+}
+
+.card:hover::before {
+    left:100%;
 }
 
 .card:hover {
-    transform:translateY(-10px);
+    transform:translateY(-12px) scale(1.03);
+    box-shadow:0 20px 40px rgba(0,0,0,0.2);
 }
 
 /* IMAGEN */
@@ -76,42 +127,38 @@ p {
     height:150px;
     border-radius:15px;
     margin-bottom:15px;
-    background:#e2e8f0;
     background-size: cover;
     background-position: center;
 }
 
-/* NUEVAS IMÁGENES MÁS ALUSIVAS */
-/* Persona usando app móvil */
+/* IMÁGENES */
 .img-persona {
-    background-image: url('https://images.unsplash.com/photo-1580894894518-3b473a6f6ee5?auto=format&fit=crop&w=500&q=80');
-    background-size: cover;
-    background-position: center;
+    background-image: url('https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?auto=format&fit=crop&w=500&q=80');
 }
 
-/* Comercio digital / tienda online */
 .img-comercio {
-    background-image: url('https://images.unsplash.com/photo-1581091012184-94c2ee7e2450?auto=format&fit=crop&w=500&q=80');
-    background-size: cover;
-    background-position: center;
+    background-image: url('https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=500&q=80');
 }
 
-/* BOTÓN */
-button {
-    margin-top:30px;
-    padding:15px 40px;
-    border:none;
-    background:#0f172a;
-    color:white;
-    border-radius:30px;
-    cursor:pointer;
+/* CONTENIDO ENCIMA */
+#mainContent {
+    position: relative;
+    z-index: 3;
+}
+
+/* ANIMACIÓN */
+@keyframes fadeIn {
+    from {opacity:0; transform:translateY(20px);}
+    to {opacity:1; transform:translateY(0);}
 }
 </style>
 </head>
 
 <body>
 
-<!-- 🔹 CONTENIDO PRINCIPAL, oculto al inicio -->
+<canvas id="networkCanvas"></canvas>
+<div class="network-person"></div>
+
 <div id="mainContent" style="display:none;">
 
 <div class="logo">
@@ -140,13 +187,12 @@ button {
 
 </div>
 
-<!-- Firebase -->
+<!-- FIREBASE -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
 <script>
-// 🔹 Inicializamos Firebase
 const firebaseConfig = {
   apiKey: "AIzaSyA6tYooh4CtX7ww9GRyXWhuakl2nLovtsY",
   authDomain: "smartmarket-zone-e7559.firebaseapp.com",
@@ -159,7 +205,6 @@ if (!firebase.apps.length) {
 
 const db = firebase.firestore();
 
-// 🔹 Mostrar contenido solo si el usuario no tiene tipo definido
 document.addEventListener("DOMContentLoaded", function() {
     const mainContent = document.getElementById("mainContent");
 
@@ -168,29 +213,80 @@ document.addEventListener("DOMContentLoaded", function() {
             db.collection("usuarios").doc(user.uid).get()
             .then((doc) => {
                 if (doc.exists && doc.data().tipo) {
-                    // Usuario ya eligió tipo → ir directo a app
                     window.location.href = "app.html";
                 } else {
-                    // Usuario sin tipo → mostrar selección
                     mainContent.style.display = "block";
                 }
             })
-            .catch((error) => {
-                console.error("Error verificando tipo:", error);
-                mainContent.style.display = "block"; // mostrar por seguridad
-            });
+            .catch(() => mainContent.style.display = "block");
         } else {
-            // No hay usuario logueado → mostrar selección
             mainContent.style.display = "block";
         }
     });
 });
 
-// 🔹 Función original de selección
 function seleccionar(tipo){
     localStorage.setItem("tipoUsuario", tipo);
     window.location.href = "app.html";
 }
+
+/* 🔥 RED ANIMADA */
+const canvas = document.getElementById("networkCanvas");
+const ctx = canvas.getContext("2d");
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+let points = [];
+
+for(let i=0;i<60;i++){
+    points.push({
+        x: Math.random()*canvas.width,
+        y: Math.random()*canvas.height,
+        vx:(Math.random()-0.5)*0.5,
+        vy:(Math.random()-0.5)*0.5
+    });
+}
+
+function animate(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+
+    for(let i=0;i<points.length;i++){
+        let p = points[i];
+        p.x += p.vx;
+        p.y += p.vy;
+
+        if(p.x<0||p.x>canvas.width) p.vx*=-1;
+        if(p.y<0||p.y>canvas.height) p.vy*=-1;
+
+        ctx.beginPath();
+        ctx.arc(p.x,p.y,2,0,Math.PI*2);
+        ctx.fillStyle="#1a73e8";
+        ctx.fill();
+
+        for(let j=i;j<points.length;j++){
+            let p2 = points[j];
+            let dist = Math.hypot(p.x-p2.x,p.y-p2.y);
+
+            if(dist<120){
+                ctx.beginPath();
+                ctx.moveTo(p.x,p.y);
+                ctx.lineTo(p2.x,p2.y);
+                ctx.strokeStyle="rgba(26,115,232,0.2)";
+                ctx.stroke();
+            }
+        }
+    }
+
+    requestAnimationFrame(animate);
+}
+
+animate();
+
+window.addEventListener("resize", ()=>{
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+});
 </script>
 
 </body>
