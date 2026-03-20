@@ -98,18 +98,21 @@ function verificarRutaUsuario(uid) {
     db.collection("usuarios").doc(uid).get().then((doc) => {
         if (doc.exists) {
             const datos = doc.data();
-            if (datos.tipo === "comercio") {
+            if (!datos.tipo) {
+                // Usuario sin tipo definido → ir a seleccion.html
+                window.location.href = "seleccion.html";
+            } else if (datos.tipo === "comercio") {
                 window.location.href = "comercio.html";
             } else {
                 window.location.href = "cliente.html";
             }
         } else {
-            // 🔥 Si el usuario no tiene rol, lo mandamos a elegir en seleccion.html
+            // Usuario nuevo sin documento → ir a seleccion.html
             window.location.href = "seleccion.html";
         }
     }).catch((error) => {
         console.error("Error verificando ruta:", error);
-        // Por seguridad, si hay error de lectura, mandamos a seleccion.html
+        // Por seguridad, enviar a seleccion.html
         window.location.href = "seleccion.html";
     });
 }
