@@ -43,11 +43,49 @@ button {
     <button onclick="logout()">Cerrar sesión</button>
 </div>
 
+<!-- 🔥 FIREBASE (AGREGADO) -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
 <script>
-if(localStorage.getItem("usuarioLogueado") !== "true"){
-    window.location.href = "auth.html";
+const firebaseConfig = {
+  apiKey: "AIzaSyA6tYooh4CtX7ww9GRyXWhuakl2nLovtsY",
+  authDomain: "smartmarket-zone-e7559.firebaseapp.com",
+  projectId: "smartmarket-zone-e7559"
+};
+
+if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
 }
 
+/* 🔐 CONTROL DE LOGIN + REDIRECCIÓN POR TIPO */
+if(localStorage.getItem("usuarioLogueado") !== "true"){
+    window.location.href = "auth.html";
+} else {
+
+    firebase.auth().onAuthStateChanged(function(user) {
+        if (user) {
+            firebase.firestore().collection("usuarios").doc(user.uid).get()
+            .then((doc) => {
+
+                if (doc.exists && doc.data().tipo === "persona") {
+                    window.location.href = "cliente.html";
+                } 
+                else if (doc.exists && doc.data().tipo === "comercio") {
+                    window.location.href = "comercio.html";
+                } 
+                else {
+                    window.location.href = "seleccion.html";
+                }
+
+            });
+        }
+    });
+
+}
+
+/* GEOLOCALIZACIÓN (NO SE TOCA) */
 function detectar(){
     const city = document.getElementById("city");
 
@@ -68,9 +106,12 @@ function detectar(){
     }
 }
 
+/* LOGOUT */
 function logout(){
     localStorage.removeItem("usuarioLogueado");
-    window.location.href = "index.html";
+    firebase.auth().signOut().then(()=>{
+        window.location.href = "index.html";
+    });
 }
 
 window.onload = detectar;
