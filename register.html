@@ -1,22 +1,24 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Diagnóstico SmartMarket</title>
-    <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Registro | SmartMarket</title>
+<link rel="stylesheet" href="style.css">
 </head>
+
 <body class="auth-body">
 
 <div class="card">
     <h1 class="logo">Smart<span>Market</span></h1>
-    <p>Prueba de Registro</p>
+    <p>Crear cuenta</p>
 
-    <input type="email" id="testEmail" placeholder="Correo electrónico">
-    <input type="password" id="testPass" placeholder="Contraseña">
+    <input type="email" id="regEmail" placeholder="Correo electrónico">
+    <input type="password" id="regPass" placeholder="Contraseña">
 
     <button type="button" class="btn-primary" onclick="probarRegistro()">
-        REGISTRARSE AHORA
+        REGISTRARSE
     </button>
 </div>
 
@@ -24,48 +26,51 @@
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
 
 <script>
-    const firebaseConfig = {
-        apiKey: "AIzaSyA6tYooh4CtX7ww9GRyXWhuakl2nLovtsY",
-        authDomain: "smartmarket-zone-e7559.firebaseapp.com",
-        projectId: "smartmarket-zone-e7559"
-    };
+const firebaseConfig = {
+    apiKey: "AIzaSyA6tYooh4CtX7ww9GRyXWhuakl2nLovtsY",
+    authDomain: "smartmarket-zone-e7559.firebaseapp.com",
+    projectId: "smartmarket-zone-e7559"
+};
 
-    if (!firebase.apps.length) {
-        firebase.initializeApp(firebaseConfig);
+if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+}
+
+function probarRegistro() {
+
+    const correo = document.getElementById("regEmail").value.trim();
+    const clave = document.getElementById("regPass").value.trim();
+
+    if (correo === "" || clave === "") {
+        alert("Completa todos los campos");
+        return;
     }
 
-    function probarRegistro() {
-        const correo = document.getElementById("testEmail").value.trim();
-        const clave = document.getElementById("testPass").value.trim();
-
-        if (correo === "" || clave === "") {
-            alert("❌ Completa todos los campos.");
-            return;
-        }
-
-        if (clave.length < 6) {
-            alert("❌ La clave debe tener al menos 6 caracteres.");
-            return;
-        }
-
-        firebase.auth().createUserWithEmailAndPassword(correo, clave)
-            .then(() => {
-                alert("✅ ¡Cuenta creada con éxito!");
-
-                // 🔥 IMPORTANTE: cerramos sesión para evitar salto automático
-                firebase.auth().signOut().then(() => {
-                    // 🔥 limpiamos tipo por seguridad
-                    localStorage.removeItem("tipoUsuario");
-
-                    // 🔥 enviamos a selección
-                    window.location.href = "tipo.html";
-                });
-
-            })
-            .catch((error) => {
-                alert("❌ ERROR: " + error.message);
-            });
+    if (clave.length < 6) {
+        alert("La contraseña debe tener al menos 6 caracteres");
+        return;
     }
+
+    firebase.auth().createUserWithEmailAndPassword(correo, clave)
+    .then(() => {
+
+        // 🔥 cerramos sesión para evitar conflictos
+        firebase.auth().signOut().then(() => {
+
+            // 🔥 limpiamos datos viejos
+            localStorage.removeItem("tipoUsuario");
+
+            // 🔥 flujo correcto
+            window.location.href = "login.html";
+
+        });
+
+    })
+    .catch((error) => {
+        alert(error.message);
+    });
+
+}
 </script>
 
 </body>
