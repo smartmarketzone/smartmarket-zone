@@ -13,6 +13,12 @@ body {
     font-family:'Outfit', sans-serif;
     background:#f8fafc;
     text-align:center;
+    /* FONDO DE MAPA CONECTADO */
+    background-image: linear-gradient(rgba(248, 250, 252, 0.9), rgba(248, 250, 252, 0.9)), 
+                      url('https://img.freepik.com/vector-gratis/mapa-venezuela-puntos-conexion-red-digital_23-2149120456.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
 }
 
 /* LOGO */
@@ -58,18 +64,30 @@ p {
     cursor:pointer;
     box-shadow:0 10px 30px rgba(0,0,0,0.1);
     transition:0.3s;
+    overflow: hidden; /* Para que la imagen no se salga */
 }
 
 .card:hover {
     transform:translateY(-10px);
 }
 
-/* IMAGEN */
+/* IMAGEN ILUSTRATIVA MEJORADA */
 .img {
     height:150px;
     border-radius:15px;
     margin-bottom:15px;
     background:#e2e8f0;
+    background-size: cover;
+    background-position: center;
+}
+
+/* IMÁGENES ESPECÍFICAS */
+.img-persona {
+    background-image: url('https://img.freepik.com/vector-gratis/persona-que-usa-su-telefono-inteligente-comprar-linea_23-2148526316.jpg');
+}
+
+.img-comercio {
+    background-image: url('https://img.freepik.com/vector-gratis/dueno-pequeno-negocio-que-comprueba-inventario_23-2148892482.jpg');
 }
 
 /* BOTÓN */
@@ -98,13 +116,13 @@ button {
 <div class="grid">
 
     <div class="card" onclick="seleccionar('persona')">
-        <div class="img"></div>
+        <div class="img img-persona"></div>
         <h3>Soy Persona</h3>
         <p>Encuentra productos, compara precios y compra mejor.</p>
     </div>
 
     <div class="card" onclick="seleccionar('comercio')">
-        <div class="img"></div>
+        <div class="img img-comercio"></div>
         <h3>Soy Comercio</h3>
         <p>Publica tu inventario y atrae clientes cercanos.</p>
     </div>
