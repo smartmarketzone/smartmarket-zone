@@ -22,12 +22,14 @@ body {
     color:var(--dark);
 }
 
+/* HERO */
 .hero {
     padding:80px 20px 60px;
     text-align:center;
     background: radial-gradient(circle at top right, #e8f0fe, transparent);
 }
 
+/* LOGO */
 .logo {
     display:flex;
     justify-content:center;
@@ -44,6 +46,7 @@ body {
     display:flex;
     align-items:center;
     justify-content:center;
+    position:relative;
 }
 
 .pin {
@@ -51,6 +54,19 @@ body {
     height:14px;
     background:white;
     border-radius:50%;
+    position:relative;
+}
+
+.pin::after {
+    content:'';
+    position:absolute;
+    bottom:-8px;
+    left:50%;
+    transform:translateX(-50%);
+    width:6px;
+    height:10px;
+    background:white;
+    border-radius:3px;
 }
 
 .logo-text {
@@ -61,6 +77,7 @@ body {
     -webkit-text-fill-color:transparent;
 }
 
+/* HERO TEXT */
 .hero p {
     max-width:650px;
     margin:20px auto;
@@ -68,6 +85,7 @@ body {
     font-size:18px;
 }
 
+/* CONTENIDO */
 .container {
     max-width:1100px;
     margin:auto;
@@ -78,6 +96,7 @@ body {
     margin-bottom:60px;
 }
 
+/* TARJETAS */
 .cards {
     display:grid;
     grid-template-columns: repeat(auto-fit,minmax(250px,1fr));
@@ -91,6 +110,7 @@ body {
     box-shadow:0 10px 30px rgba(0,0,0,0.05);
 }
 
+/* PASOS */
 .steps {
     display:grid;
     gap:25px;
@@ -118,6 +138,7 @@ body {
     font-weight:bold;
 }
 
+/* CTA */
 .cta {
     position:fixed;
     bottom:20px;
@@ -140,34 +161,115 @@ body {
 .btn:hover {
     background:var(--blue);
 }
+
+@media(max-width:700px){
+    .logo-text { font-size:24px; }
+}
 </style>
 </head>
 
 <body>
 
+<!-- HERO -->
 <div class="hero">
+
     <div class="logo">
-        <div class="logo-icon"><div class="pin"></div></div>
+        <div class="logo-icon">
+            <div class="pin"></div>
+        </div>
         <span class="logo-text">SmartMarket</span>
     </div>
 
     <p>
-        Encuentra lo que buscas, donde realmente está.
-        SmartMarket conecta productos en tiempo real con tu decisión de compra.
+        Encuentra lo que buscas, donde realmente está.  
+        SmartMarket conecta en tiempo real los productos disponibles en tu ciudad con tu decisión de compra.
     </p>
+
 </div>
 
 <div class="container">
+
+    <!-- POR QUÉ -->
     <div class="section">
         <h2>¿Por qué SmartMarket?</h2>
+
         <div class="cards">
-            <div class="card"><b>Encuentra rápido</b></div>
-            <div class="card"><b>Compara precios</b></div>
-            <div class="card"><b>Llega directo</b></div>
+            <div class="card">
+                <b>Encuentra lo que necesitas</b>
+                <p>Busca productos exactos sin perder tiempo recorriendo tiendas.</p>
+            </div>
+
+            <div class="card">
+                <b>Decide con información real</b>
+                <p>Compara precios y disponibilidad en tiempo real.</p>
+            </div>
+
+            <div class="card">
+                <b>Llega directo al producto</b>
+                <p>Te guiamos con GPS hasta el comercio exacto.</p>
+            </div>
         </div>
     </div>
+
+    <!-- CÓMO FUNCIONA -->
+    <div class="section">
+        <h2>¿Cómo funciona?</h2>
+
+        <div class="steps">
+            <div class="step">
+                <div class="step-num">1</div>
+                <div>
+                    <b>Regístrate como persona o comercio</b>
+                    <p>Accede a la plataforma en segundos.</p>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-num">2</div>
+                <div>
+                    <b>Activa tu ubicación</b>
+                    <p>Detectamos los productos disponibles cerca de ti.</p>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-num">3</div>
+                <div>
+                    <b>Busca, compara y decide</b>
+                    <p>Elige la mejor opción según precio y cercanía.</p>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-num">4</div>
+                <div>
+                    <b>Ve directo al comercio</b>
+                    <p>Llega sin perder tiempo usando navegación GPS.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- BENEFICIOS -->
+    <div class="section">
+        <h2>Beneficios</h2>
+
+        <div class="cards">
+            <div class="card">
+                <b>Para Personas</b>
+                <p>Ahorra tiempo, dinero y evita frustraciones al comprar.</p>
+            </div>
+
+            <div class="card">
+                <b>Para Comercios</b>
+                <p>Convierte tu inventario en ventas reales con clientes cercanos.</p>
+            </div>
+        </div>
+    </div>
+
 </div>
 
+<!-- BOTÓN -->
 <div class="cta">
     <button class="btn" onclick="irAuth()">Comenzar ahora 🚀</button>
 </div>
@@ -183,20 +285,21 @@ const firebaseConfig = {
   projectId: "smartmarket-zone-e7559"
 };
 
+/* Inicialización segura */
 if (!firebase.apps.length) {
     firebase.initializeApp(firebaseConfig);
 }
 
-/* 🔥 CONTROL LOGIN REAL */
+/* 🔥 SI YA ESTÁ LOGUEADO → VA A APP */
 firebase.auth().onAuthStateChanged(function(user){
     if(user){
-        window.location.href="app.html";
+        window.location.href = "app.html";
     }
 });
 
-/* 🔥 BOTÓN */
+/* 🔥 BOTÓN CORREGIDO */
 function irAuth(){
-    window.location.href="login.html";
+    window.location.href = "login.html";
 }
 </script>
 
