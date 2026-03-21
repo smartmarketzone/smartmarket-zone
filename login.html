@@ -20,7 +20,7 @@ body{
     position:relative;
 }
 
-/* 🌍 FONDO MAPA */
+/* 🌍 FONDO */
 body::before{
     content:"";
     position:absolute;
@@ -135,7 +135,7 @@ a{
 <div class="card">
     <h1 class="logo">Smart<span>Market</span></h1>
 
-    <p class="bienvenida" id="bienvenida">Detectando ubicación...</p>
+    <p id="bienvenida" class="bienvenida">Detectando ubicación...</p>
     <p class="sub-text">Encuentra lo que necesitas al mejor precio cerca de ti</p>
 
     <input type="email" id="email" placeholder="Correo">
@@ -156,6 +156,7 @@ a{
 <!-- FIREBASE -->
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
 
 <script>
 const firebaseConfig = {
@@ -165,6 +166,7 @@ const firebaseConfig = {
 };
 
 firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
 
 /* 👁 VER CONTRASEÑA */
 function togglePass(){
@@ -172,17 +174,58 @@ function togglePass(){
     p.type = p.type === "password" ? "text" : "password";
 }
 
-/* LOGIN */
+/* 🔐 LOGIN INTELIGENTE */
 function login(){
     const email = document.getElementById("email").value;
     const pass = document.getElementById("password").value;
 
     firebase.auth().signInWithEmailAndPassword(email, pass)
-    .then(()=>{
-        window.location.href="selection.html";
+    .then((cred)=>{
+
+        const user = cred.user;
+
+        db.collection("usuarios").doc(user.uid).get()
+        .then(doc=>{
+
+            if(doc.exists && doc.data().tipo){
+
+                if(doc.data().tipo === "persona"){
+                    window.location.href = "cliente.html";
+                }else{
+                    window.location.href = "comercio.html";
+                }
+
+            }else{
+                window.location.href = "selection.html";
+            }
+
+        });
+
     })
     .catch(e=>alert(e.message));
 }
+
+/* 🔁 AUTO LOGIN */
+firebase.auth().onAuthStateChanged(function(user) {
+    if (user) {
+
+        db.collection("usuarios").doc(user.uid).get()
+        .then(doc=>{
+
+            if(doc.exists && doc.data().tipo){
+
+                if(doc.data().tipo === "persona"){
+                    window.location.href = "cliente.html";
+                }else{
+                    window.location.href = "comercio.html";
+                }
+
+            }
+
+        });
+
+    }
+});
 
 /* 🌍 UBICACIÓN */
 const txt = document.getElementById("bienvenida");
