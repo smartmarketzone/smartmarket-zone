@@ -9,33 +9,184 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
 
 <style>
-body{margin:0;font-family:'Outfit',sans-serif;display:flex;background:#f1f5f9;}
+*{margin:0;padding:0;box-sizing:border-box;}
 
-.sidebar{width:250px;background:#0f172a;color:white;height:100vh;padding:20px;}
-.menu button{width:100%;padding:12px;background:none;color:white;border:none;text-align:left;cursor:pointer;border-radius:10px;}
-.menu button:hover{background:#1e293b;}
+body{
+    font-family:'Outfit',sans-serif;
+    display:flex;
+    background:#f1f5f9;
+}
 
-.main{flex:1;padding:30px;}
+/* SIDEBAR */
+.sidebar{
+    width:260px;
+    background:#0f172a;
+    color:white;
+    height:100vh;
+    padding:25px;
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+}
+
+.logo{
+    font-size:22px;
+    font-weight:900;
+    margin-bottom:20px;
+}
+
+.menu button{
+    width:100%;
+    padding:12px;
+    background:none;
+    color:#cbd5e1;
+    border:none;
+    text-align:left;
+    cursor:pointer;
+    border-radius:10px;
+}
+
+.menu button:hover{
+    background:#1e293b;
+    color:white;
+}
+
+.sidebar-bottom button{
+    width:100%;
+    margin-top:10px;
+    padding:10px;
+    border:none;
+    border-radius:10px;
+    cursor:pointer;
+}
+
+.logout{background:#1e293b;color:white;}
+.delete{background:#ef4444;color:white;}
+
+/* MAIN */
+.main{
+    flex:1;
+    padding:30px;
+}
+
+/* HEADER */
+.header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:20px;
+}
+
+.header h1{
+    font-size:24px;
+}
+
+/* SECTIONS */
 .section{display:none;}
 .active{display:block;}
 
-.card{background:white;padding:20px;border-radius:15px;margin-bottom:20px;box-shadow:0 10px 25px rgba(0,0,0,0.1);}
+/* CARDS */
+.card{
+    background:white;
+    padding:20px;
+    border-radius:15px;
+    margin-bottom:20px;
+    box-shadow:0 10px 25px rgba(0,0,0,0.08);
+}
 
-.product{display:flex;justify-content:space-between;padding:15px;background:#f8fafc;border-radius:10px;margin-bottom:10px;}
-.product:hover{background:#eef2ff;}
+/* STATS */
+.stats{
+    display:flex;
+    gap:20px;
+    flex-wrap:wrap;
+}
 
-input{width:100%;padding:10px;margin-top:10px;border-radius:10px;border:1px solid #ccc;}
-button.primary{margin-top:10px;padding:10px;background:#1a73e8;color:white;border:none;border-radius:10px;cursor:pointer;}
+.stat{
+    flex:1;
+    min-width:150px;
+    text-align:center;
+    padding:20px;
+    border-radius:15px;
+    background:linear-gradient(135deg,#1a73e8,#00d2ff);
+    color:white;
+}
 
-img{width:60px;height:60px;border-radius:10px;object-fit:cover;}
-#map{height:400px;border-radius:15px;}
+/* PRODUCTOS */
+.product{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:12px;
+    background:#f8fafc;
+    border-radius:10px;
+    margin-bottom:10px;
+}
+
+.product img{
+    width:60px;
+    height:60px;
+    border-radius:10px;
+    object-fit:cover;
+}
+
+/* INPUTS */
+input{
+    width:100%;
+    padding:12px;
+    margin-top:10px;
+    border-radius:10px;
+    border:1px solid #e2e8f0;
+}
+
+/* BUTTONS */
+button.primary{
+    margin-top:10px;
+    padding:12px;
+    background:#1a73e8;
+    color:white;
+    border:none;
+    border-radius:10px;
+    cursor:pointer;
+}
+
+button.edit{
+    background:#0ea5e9;
+    color:white;
+    border:none;
+    padding:6px 10px;
+    border-radius:8px;
+    cursor:pointer;
+}
+
+button.deleteBtn{
+    background:#ef4444;
+    color:white;
+    border:none;
+    padding:6px 10px;
+    border-radius:8px;
+    cursor:pointer;
+}
+
+/* MAPA */
+#map{
+    height:400px;
+    border-radius:15px;
+}
+
+/* DIRECCIÓN */
+.direccion{
+    margin-top:10px;
+    font-size:14px;
+    color:#64748b;
+}
 </style>
 </head>
 
 <body>
 
 <div class="sidebar">
-<h2>SmartMarket</h2>
+<div>
+<div class="logo">SmartMarket</div>
 
 <div class="menu">
 <button onclick="mostrar('dashboard')">📊 Dashboard</button>
@@ -43,37 +194,42 @@ img{width:60px;height:60px;border-radius:10px;object-fit:cover;}
 <button onclick="mostrar('mapaSec')">📍 Ubicación</button>
 <button onclick="mostrar('perfil')">⚙️ Perfil</button>
 </div>
+</div>
 
-<button onclick="logout()">🔒 Cerrar sesión</button>
+<div class="sidebar-bottom">
+<button class="logout" onclick="logout()">Cerrar sesión</button>
+<button class="delete" onclick="eliminarCuenta()">Eliminar cuenta</button>
+</div>
 </div>
 
 <div class="main">
+
+<div class="header">
+<h1 id="nombreNegocio">Mi Comercio</h1>
+</div>
 
 <!-- DASHBOARD -->
 <div id="dashboard" class="section active">
 
 <div class="card">
-<h3>📊 Panel</h3>
-<p id="estadoUbicacion">Cargando...</p>
+<p id="estadoUbicacion">Cargando ubicación...</p>
+<div class="direccion" id="direccionTexto"></div>
 </div>
 
-<div class="card">
-<h3>📈 Estadísticas</h3>
-<div style="display:flex;gap:20px;flex-wrap:wrap;">
-<div class="card" style="flex:1;text-align:center;">
+<div class="stats">
+<div class="stat">
 <h2 id="totalProductos">0</h2>
 <p>Productos</p>
 </div>
 
-<div class="card" style="flex:1;text-align:center;">
+<div class="stat">
 <h2 id="totalClicks">0</h2>
 <p>Interacciones</p>
 </div>
 
-<div class="card" style="flex:1;text-align:center;">
+<div class="stat">
 <h2 id="topProducto">-</h2>
 <p>Producto TOP</p>
-</div>
 </div>
 </div>
 
@@ -83,19 +239,18 @@ img{width:60px;height:60px;border-radius:10px;object-fit:cover;}
 <div id="productos" class="section">
 
 <div class="card">
-<h3>Agregar producto</h3>
+<h3>Agregar / Editar producto</h3>
 
 <input id="nombre" placeholder="Nombre">
 <input id="precio" placeholder="Precio">
 <input id="categoria" placeholder="Categoría">
 <input id="descripcion" placeholder="Descripción">
-<input type="file" id="imagen">
 
-<button class="primary" onclick="agregarProducto()">Agregar</button>
+<button class="primary" onclick="agregarProducto()">Guardar producto</button>
 </div>
 
 <div class="card">
-<h3>Lista</h3>
+<h3>Inventario</h3>
 <div id="lista"></div>
 </div>
 
@@ -104,7 +259,6 @@ img{width:60px;height:60px;border-radius:10px;object-fit:cover;}
 <!-- MAPA -->
 <div id="mapaSec" class="section">
 <div class="card">
-<h3>Ubicación</h3>
 <div id="map"></div>
 </div>
 </div>
@@ -120,11 +274,9 @@ img{width:60px;height:60px;border-radius:10px;object-fit:cover;}
 
 </div>
 
-<!-- FIREBASE v8 -->
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
-
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
 <script>
@@ -138,15 +290,33 @@ if(!firebase.apps.length) firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
 let map;
+let editId = null;
 
 /* AUTH */
 firebase.auth().onAuthStateChanged(user=>{
-if(!user) location.href="login.html";
-else{
-cargarProductos();
-cargarUbicacion();
-cargarEstadisticas();
+if(!user){
+location.href="login.html";
+return;
 }
+
+db.collection("usuarios").doc(user.uid).get().then(doc=>{
+
+if(!doc.exists || !doc.data().ubicacion){
+location.href="ubicacion.html";
+return;
+}
+
+const data = doc.data();
+
+nombreNegocio.innerText = data.negocio || "Mi Comercio";
+direccionTexto.innerText = data.direccion || "";
+
+estadoUbicacion.innerText = "📍 Ubicación activa";
+
+cargarProductos();
+cargarEstadisticas();
+
+});
 });
 
 /* NAV */
@@ -160,29 +330,36 @@ if(id==="mapaSec") setTimeout(initMap,500);
 function agregarProducto(){
 const user = firebase.auth().currentUser;
 
-if(!nombre.value || !precio.value) return alert("Completa datos");
-
-const reader = new FileReader();
-const file = imagen.files[0];
-
-reader.onload = ()=>{
-db.collection("productos").add({
+const data = {
 nombre:nombre.value,
 precio:parseFloat(precio.value),
-categoria:categoria.value || "General",
+categoria:categoria.value,
 descripcion:descripcion.value,
-imagen:reader.result || "",
 dueño:user.uid,
 clicks:0,
 fecha:new Date()
-}).then(()=>{
+};
+
+if(editId){
+db.collection("productos").doc(editId).update(data).then(()=>{
+editId=null;
 limpiar();
 cargarProductos();
 });
-};
+}else{
+db.collection("productos").add(data).then(()=>{
+limpiar();
+cargarProductos();
+});
+}
+}
 
-if(file) reader.readAsDataURL(file);
-else reader.onload();
+function editarProducto(id,p){
+editId=id;
+nombre.value=p.nombre;
+precio.value=p.precio;
+categoria.value=p.categoria;
+descripcion.value=p.descripcion;
 }
 
 function limpiar(){
@@ -190,18 +367,16 @@ nombre.value="";
 precio.value="";
 categoria.value="";
 descripcion.value="";
-imagen.value="";
 }
 
 function cargarProductos(){
 const user = firebase.auth().currentUser;
-const lista = document.getElementById("lista");
 lista.innerHTML="";
 
 db.collection("productos").where("dueño","==",user.uid)
 .get().then(snap=>{
 
-document.getElementById("totalProductos").innerText = snap.size;
+totalProductos.innerText = snap.size;
 
 snap.forEach(doc=>{
 let p = doc.data();
@@ -209,17 +384,15 @@ let p = doc.data();
 lista.innerHTML += `
 <div class="product">
 <div style="display:flex;gap:10px;">
-<img src="${p.imagen || 'https://via.placeholder.com/60'}">
+<img src="https://via.placeholder.com/60">
 <div>
 <b>${p.nombre}</b><br>
-${p.categoria}<br>
-Bs ${p.precio}<br>
-👁 ${p.clicks || 0}
+Bs ${p.precio}
 </div>
 </div>
 <div>
-<button onclick="registrarClick('${doc.id}')">👁</button>
-<button onclick="eliminarProducto('${doc.id}')">❌</button>
+<button class="edit" onclick='editarProducto("${doc.id}", ${JSON.stringify(p)})'>✏️</button>
+<button class="deleteBtn" onclick="eliminarProducto('${doc.id}')">❌</button>
 </div>
 </div>`;
 });
@@ -231,33 +404,16 @@ function eliminarProducto(id){
 db.collection("productos").doc(id).delete().then(cargarProductos);
 }
 
-/* ANALÍTICA */
-function registrarClick(id){
-db.collection("productos").doc(id).update({
-clicks: firebase.firestore.FieldValue.increment(1)
-});
-cargarEstadisticas();
-}
-
+/* STATS */
 function cargarEstadisticas(){
 const user = firebase.auth().currentUser;
 
 db.collection("productos")
 .where("dueño","==",user.uid)
-.orderBy("clicks","desc")
-.limit(1)
 .get().then(snap=>{
-if(!snap.empty){
-topProducto.innerText = snap.docs[0].data().nombre;
-}
-});
-
-db.collection("productos")
-.where("dueño","==",user.uid)
-.get().then(snap=>{
-let total = 0;
-snap.forEach(doc=> total += doc.data().clicks || 0);
-totalClicks.innerText = total;
+let total=0;
+snap.forEach(d=> total+=d.data().clicks||0);
+totalClicks.innerText=total;
 });
 }
 
@@ -267,14 +423,6 @@ if(map) return;
 
 map = L.map('map').setView([10.48,-66.90],13);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
-
-map.on('click',e=>{
-const user = firebase.auth().currentUser;
-db.collection("usuarios").doc(user.uid).set({
-ubicacion:e.latlng
-},{merge:true});
-estadoUbicacion.innerText="📍 Guardada";
-});
 }
 
 /* PERFIL */
@@ -286,9 +434,18 @@ telefono:telefono.value
 },{merge:true});
 }
 
-/* AUTH */
+/* CUENTA */
 function logout(){
 firebase.auth().signOut().then(()=>location.href="login.html");
+}
+
+function eliminarCuenta(){
+if(confirm("¿Eliminar cuenta definitivamente?")){
+const user = firebase.auth().currentUser;
+
+db.collection("usuarios").doc(user.uid).delete();
+user.delete().then(()=>location.href="index.html");
+}
 }
 </script>
 
