@@ -216,10 +216,37 @@ body {
         <h2>¿Cómo funciona?</h2>
 
         <div class="steps">
-            <div class="step"><div class="step-num">1</div><div><b>Regístrate como persona o comercio</b><p>Accede a la plataforma en segundos.</p></div></div>
-            <div class="step"><div class="step-num">2</div><div><b>Activa tu ubicación</b><p>Detectamos los productos disponibles cerca de ti.</p></div></div>
-            <div class="step"><div class="step-num">3</div><div><b>Busca, compara y decide</b><p>Elige la mejor opción según precio y cercanía.</p></div></div>
-            <div class="step"><div class="step-num">4</div><div><b>Ve directo al comercio</b><p>Llega sin perder tiempo usando navegación GPS.</p></div></div>
+            <div class="step">
+                <div class="step-num">1</div>
+                <div>
+                    <b>Regístrate como persona o comercio</b>
+                    <p>Accede a la plataforma en segundos.</p>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-num">2</div>
+                <div>
+                    <b>Activa tu ubicación</b>
+                    <p>Detectamos los productos disponibles cerca de ti.</p>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-num">3</div>
+                <div>
+                    <b>Busca, compara y decide</b>
+                    <p>Elige la mejor opción según precio y cercanía.</p>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-num">4</div>
+                <div>
+                    <b>Ve directo al comercio</b>
+                    <p>Llega sin perder tiempo usando navegación GPS.</p>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -251,9 +278,6 @@ body {
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
 
-<!-- TU LÓGICA -->
-<script src="auth.js"></script>
-
 <script>
 const firebaseConfig = {
     apiKey: "AIzaSyA6tYooh4CtX7ww9GRyXWhuakl2nLovtsY",
@@ -268,7 +292,7 @@ if (!firebase.apps.length) {
 /* 🔥 CORRECCIÓN CLAVE */
 firebase.auth().onAuthStateChanged(function(user){
     if(user){
-        verificarRutaUsuario(user.uid);
+        window.location.href = "seleccion.html";
     }
 });
 
