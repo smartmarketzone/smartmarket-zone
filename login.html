@@ -20,7 +20,6 @@ body{
     position:relative;
 }
 
-/* 🌍 FONDO */
 body::before{
     content:"";
     position:absolute;
@@ -34,7 +33,6 @@ body::before{
     z-index:-2;
 }
 
-/* ✨ RED */
 canvas{
     position:absolute;
     width:100%;
@@ -42,7 +40,6 @@ canvas{
     z-index:-1;
 }
 
-/* 🧊 CARD */
 .card{
     width:90%;
     max-width:360px;
@@ -54,7 +51,6 @@ canvas{
     text-align:center;
 }
 
-/* LOGO */
 .logo{
     font-size:30px;
     font-weight:900;
@@ -64,7 +60,6 @@ canvas{
     color:#00d2ff;
 }
 
-/* TEXTOS */
 .bienvenida{
     color:#00d2ff;
     font-size:14px;
@@ -76,7 +71,6 @@ canvas{
     margin-bottom:20px;
 }
 
-/* INPUT */
 .input-group{
     position:relative;
 }
@@ -95,7 +89,6 @@ input::placeholder{
     color:#cbd5e1;
 }
 
-/* 👁 */
 .toggle-pass{
     position:absolute;
     right:10px;
@@ -104,7 +97,6 @@ input::placeholder{
     color:#cbd5e1;
 }
 
-/* BOTÓN */
 .btn{
     width:100%;
     padding:12px;
@@ -120,7 +112,6 @@ input::placeholder{
     transform:scale(1.05);
 }
 
-/* LINK */
 a{
     color:#00d2ff;
     text-decoration:none;
@@ -153,7 +144,6 @@ a{
     </p>
 </div>
 
-<!-- FIREBASE -->
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
@@ -177,7 +167,7 @@ function togglePass(){
     p.type = p.type === "password" ? "text" : "password";
 }
 
-/* 🔐 LOGIN INTELIGENTE */
+/* 🔐 LOGIN SEGURO */
 function login(){
 
     const email = document.getElementById("email").value.trim();
@@ -190,6 +180,9 @@ function login(){
 
     firebase.auth().signInWithEmailAndPassword(email, pass)
     .then((cred)=>{
+
+        // ✔ SESIÓN SOLO AQUÍ
+        sessionStorage.setItem("auth", "true");
 
         const user = cred.user;
 
@@ -213,35 +206,13 @@ function login(){
     })
     .catch(e=>{
         console.error(e);
-        alert("Error: " + e.message);
+        alert("Credenciales incorrectas");
     });
 }
 
-/* 🔁 AUTO LOGIN CONTROLADO (CORREGIDO) */
+/* 🚫 BLOQUEAR AUTO REDIRECCIÓN */
 firebase.auth().onAuthStateChanged(function(user) {
-    if (user) {
-
-        const currentPage = window.location.pathname;
-
-        // ❗ Evita redirección si no estás en login.html
-        if (!currentPage.includes("login.html")) return;
-
-        db.collection("usuarios").doc(user.uid).get()
-        .then(doc=>{
-
-            if(doc.exists && doc.data().tipo){
-
-                if(doc.data().tipo === "persona"){
-                    window.location.href = "cliente.html";
-                }else{
-                    window.location.href = "comercio.html";
-                }
-
-            }
-
-        });
-
-    }
+    // NO hacer nada → evita auto login
 });
 
 /* 🌍 UBICACIÓN */
@@ -263,7 +234,7 @@ if(navigator.geolocation){
     });
 }
 
-/* ✨ RED ANIMADA */
+/* ✨ RED */
 const canvas=document.getElementById("network");
 const ctx=canvas.getContext("2d");
 
