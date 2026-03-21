@@ -163,6 +163,23 @@ function togglePass(){
     p.type = p.type === "password" ? "text" : "password";
 }
 
+/* 🧠 FUNCIONES NUEVAS (SIN BORRAR NADA) */
+function getUsuarios(){
+    return JSON.parse(localStorage.getItem("usuarios")) || [];
+}
+
+function guardarUsuario(email){
+    let usuarios = getUsuarios();
+
+    if(usuarios.includes(email)){
+        return false;
+    }
+
+    usuarios.push(email);
+    localStorage.setItem("usuarios", JSON.stringify(usuarios));
+    return true;
+}
+
 /* REGISTER PRO */
 function register(){
 
@@ -179,11 +196,21 @@ function register(){
         return;
     }
 
+    /* 🚫 VALIDACIÓN NUEVA */
+    const usuarios = getUsuarios();
+    if(usuarios.includes(email)){
+        alert("Este correo ya está registrado");
+        return;
+    }
+
     firebase.auth().createUserWithEmailAndPassword(email, pass)
     .then(()=>{
+
+        /* 🧠 GUARDADO NUEVO */
+        guardarUsuario(email);
+
         alert("Cuenta creada correctamente");
 
-        // 🔥 CLAVE: VA A SELECCIÓN
         window.location.href = "seleccion.html";
     })
     .catch(e=>{
