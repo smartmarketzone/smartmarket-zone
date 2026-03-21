@@ -274,6 +274,7 @@ button.deleteBtn{
 
 </div>
 
+<!-- FIREBASE -->
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
@@ -281,7 +282,7 @@ button.deleteBtn{
 
 <script>
 const firebaseConfig = {
-apiKey:"AIzaSy...",
+apiKey:"AIzaSyA6tYooh4CtX7ww9GRyXWhuakl2nLovtsY",
 authDomain:"smartmarket-zone-e7559.firebaseapp.com",
 projectId:"smartmarket-zone-e7559"
 };
@@ -291,32 +292,55 @@ const db = firebase.firestore();
 
 let map;
 let editId = null;
+let authReady = false;
 
-/* AUTH */
-firebase.auth().onAuthStateChanged(user=>{
-if(!user){
-location.href="login.html";
-return;
-}
+/* 🔥 AUTH CORREGIDO SIN BUCLES */
+firebase.auth().onAuthStateChanged(async (user)=>{
 
-db.collection("usuarios").doc(user.uid).get().then(doc=>{
+    if(!user){
+        setTimeout(()=>{
+            if(!firebase.auth().currentUser){
+                window.location.href="login.html";
+            }
+        },500);
+        return;
+    }
 
-if(!doc.exists || !doc.data().ubicacion){
-location.href="ubicacion.html";
-return;
-}
+    if(authReady) return;
+    authReady = true;
 
-const data = doc.data();
+    try{
+        const doc = await db.collection("usuarios").doc(user.uid).get();
 
-nombreNegocio.innerText = data.negocio || "Mi Comercio";
-direccionTexto.innerText = data.direccion || "";
+        if(!doc.exists){
+            window.location.href="app.html";
+            return;
+        }
 
-estadoUbicacion.innerText = "📍 Ubicación activa";
+        const data = doc.data();
 
-cargarProductos();
-cargarEstadisticas();
+        if(data.tipo !== "comercio"){
+            window.location.href="app.html";
+            return;
+        }
 
-});
+        if(!data.ubicacion){
+            window.location.href="ubicacion.html";
+            return;
+        }
+
+        nombreNegocio.innerText = data.negocio || "Mi Comercio";
+        direccionTexto.innerText = data.direccion || "";
+        estadoUbicacion.innerText = "📍 Ubicación activa";
+
+        cargarProductos();
+        cargarEstadisticas();
+
+    }catch(e){
+        console.error(e);
+        window.location.href="app.html";
+    }
+
 });
 
 /* NAV */
@@ -330,10 +354,15 @@ if(id==="mapaSec") setTimeout(initMap,500);
 function agregarProducto(){
 const user = firebase.auth().currentUser;
 
+if(!nombre.value || !precio.value){
+alert("Completa los datos");
+return;
+}
+
 const data = {
 nombre:nombre.value,
 precio:parseFloat(precio.value),
-categoria:categoria.value,
+categoria:categoria.value || "General",
 descripcion:descripcion.value,
 dueño:user.uid,
 clicks:0,
