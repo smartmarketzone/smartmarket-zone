@@ -28,7 +28,6 @@
             overflow-x: hidden;
         }
 
-        /* --- NAVIGATION --- */
         nav {
             display: flex; justify-content: space-between; align-items: center;
             padding: 20px 5%; background: rgba(6, 11, 22, 0.9);
@@ -54,7 +53,6 @@
         .sub-nav a { color: var(--text-gray); text-decoration: none; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
         .sub-nav a.active { color: var(--accent); border-bottom: 2px solid var(--accent); padding-bottom: 5px; }
 
-        /* --- HERO --- */
         .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
         
         .hero { display: flex; align-items: center; padding: 80px 0; gap: 50px; }
@@ -62,14 +60,12 @@
         .hero-info h1 { font-size: 64px; font-weight: 900; line-height: 1; margin-bottom: 20px; }
         .hero-info p { font-size: 20px; color: var(--text-gray); margin-bottom: 40px; }
 
-        /* Mapa de Venezuela Tech con CSS/SVG */
         .hero-visual { flex: 1; display: flex; justify-content: center; position: relative; }
         .map-container {
             width: 100%; max-width: 500px; height: 400px;
             background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
             display: flex; align-items: center; justify-content: center;
         }
-        /* Icono de red/nodos simulando el mapa */
         .tech-map { font-size: 300px; color: var(--accent); opacity: 0.2; animation: pulse 3s infinite; }
 
         @keyframes pulse {
@@ -78,7 +74,6 @@
             100% { transform: scale(1); opacity: 0.2; }
         }
 
-        /* --- CARDS: PARA QUIÉN SOMOS --- */
         .section-title { font-size: 32px; font-weight: 800; margin: 60px 0 30px; }
         .dual-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
         .card-main {
@@ -89,7 +84,6 @@
         .card-main:hover { border-color: var(--accent); transform: translateY(-10px); background: #161e35; }
         .card-main i { font-size: 50px; color: var(--accent); }
 
-        /* --- TIMELINE: CÓMO FUNCIONA --- */
         .timeline {
             display: flex; justify-content: space-between; position: relative;
             margin: 60px 0; padding-top: 20px;
@@ -105,7 +99,6 @@
             margin: 0 auto 15px; color: var(--accent); font-weight: 800;
         }
 
-        /* --- FEATURES --- */
         .features-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
         .feature-box {
             background: var(--card-bg); padding: 30px; border-radius: 20px; text-align: center;
@@ -114,7 +107,6 @@
         .feature-box:hover { background: #161e35; }
         .feature-box i { font-size: 35px; color: var(--accent); margin-bottom: 15px; display: block; }
 
-        /* --- MOCKUPS: TU NEGOCIO EN CONTROL --- */
         .mockups-area {
             display: flex; align-items: flex-end; justify-content: center; gap: 30px;
             background: radial-gradient(rgba(0, 229, 255, 0.05), transparent);
@@ -141,7 +133,6 @@
             border-radius: 10px; display: flex; align-items: center; gap: 10px; cursor: pointer;
         }
 
-        /* Responsive */
         @media (max-width: 900px) {
             .hero, .dual-cards, .features-grid, .mockups-area { flex-direction: column; grid-template-columns: 1fr; }
             .timeline { flex-direction: column; align-items: center; gap: 40px; }
@@ -163,7 +154,6 @@
         </div>
         <div class="nav-btns">
             <button class="btn-log" onclick="redirigir('login')">Iniciar Sesión</button>
-            <button class="btn-reg" onclick="redirigir('registro')">Regístrate</button>
         </div>
     </nav>
 
@@ -286,10 +276,7 @@
     </div>
 
     <script>
-        // Función universal para botones
         function redirigir(destino) {
-            console.log("Navegando a: " + destino);
-            
             switch(destino) {
                 case 'login': window.location.href = 'login.html'; break;
                 case 'registro': window.location.href = 'registro.html'; break;
@@ -299,11 +286,10 @@
                 case 'google': alert("La aplicación Android estará disponible próximamente."); break;
                 case 'inicio': window.scrollTo(0,0); break;
                 default:
-                    alert("Sección de " + destino + " en desarrollo.");
+                    alert("Sección en desarrollo.");
             }
         }
 
-        // Efecto de Sub-Nav activa al hacer Scroll
         window.onscroll = function() {
             let sections = ['inicio', 'nosotros', 'features', 'precios'];
             let scrollPos = document.documentElement.scrollTop || document.body.scrollTop;
