@@ -9,99 +9,108 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
 
 <style>
+:root{
+    --primary:#2563eb;
+    --bg:#f8fafc;
+    --card:#ffffff;
+    --border:#e5e7eb;
+    --text:#0f172a;
+    --muted:#64748b;
+}
+
+/* DARK MODE */
+@media (prefers-color-scheme: dark){
+    :root{
+        --bg:#0f172a;
+        --card:#1e293b;
+        --border:#334155;
+        --text:#f1f5f9;
+        --muted:#94a3b8;
+    }
+}
+
 *{margin:0;padding:0;box-sizing:border-box;}
 
 body{
     font-family:'Outfit',sans-serif;
-    background:#f1f5f9;
-}
-
-/* MAPA */
-#map{
-    position:fixed;
-    width:100%;
-    height:100%;
-    z-index:10;
-    display:none;
+    background:var(--bg);
+    color:var(--text);
 }
 
 /* TOPBAR */
 .topbar{
     position:fixed;
     top:0;
-    left:0;
     width:100%;
-    background:white;
-    padding:12px 20px;
-    z-index:20;
-    box-shadow:0 2px 10px rgba(0,0,0,0.1);
+    background:rgba(255,255,255,0.8);
+    backdrop-filter:blur(10px);
+    padding:14px 20px;
     display:flex;
     justify-content:space-between;
     align-items:center;
+    border-bottom:1px solid var(--border);
+    z-index:20;
 }
 
 .topbar h1{
-    font-size:20px;
     font-weight:900;
 }
 
 /* PANEL */
 .panel{
     position:fixed;
-    top:70px;
+    top:80px;
     left:20px;
     width:380px;
-    height:calc(100% - 90px);
-    background:white;
-    border-radius:20px;
+    height:calc(100% - 100px);
+    background:var(--card);
+    border-radius:16px;
     padding:15px;
-    z-index:15;
     overflow:auto;
-    box-shadow:0 10px 30px rgba(0,0,0,0.2);
+    border:1px solid var(--border);
 }
 
-/* BUSCADOR */
+/* SEARCH */
 .search{
     width:100%;
-    padding:10px;
-    border-radius:10px;
-    border:1px solid #e2e8f0;
+    padding:12px;
+    border-radius:12px;
+    border:1px solid var(--border);
     margin-bottom:10px;
+    outline:none;
 }
 
 /* COMERCIO */
 .comercio{
-    padding:12px;
-    border:1px solid #e2e8f0;
+    padding:14px;
+    border:1px solid var(--border);
     border-radius:12px;
     margin-bottom:10px;
     cursor:pointer;
-    transition:.2s;
 }
 
 .comercio:hover{
-    border-color:#1a73e8;
-    transform:scale(1.02);
+    border-color:var(--primary);
+    transform:translateY(-2px);
 }
 
 /* GRID */
 .grid{
     display:grid;
     grid-template-columns:1fr 1fr;
-    gap:10px;
+    gap:12px;
 }
 
 /* CARD */
 .card{
-    background:white;
-    border-radius:15px;
+    border:1px solid var(--border);
+    border-radius:16px;
     overflow:hidden;
-    box-shadow:0 4px 12px rgba(0,0,0,0.1);
 }
 
 .card img{
     width:100%;
-    height:110px;
+    height:120px;
     object-fit:cover;
 }
 
@@ -110,10 +119,11 @@ body{
 }
 
 .precio{
-    color:#1a73e8;
+    color:var(--primary);
     font-weight:700;
 }
 
+/* BOTONES */
 .btn{
     padding:10px;
     border:none;
@@ -121,21 +131,32 @@ body{
     cursor:pointer;
 }
 
-.primary{background:#1a73e8;color:white;}
-.sec{background:#e2e8f0;}
-.mapBtn{background:#1a73e8;color:white;}
+.primary{
+    background:var(--primary);
+    color:white;
+}
+
+.sec{
+    background:var(--border);
+}
+
+/* MAP */
+#map{
+    position:fixed;
+    inset:0;
+    display:none;
+    z-index:10;
+}
 
 .backMap{
     position:fixed;
-    top:80px;
+    top:90px;
     left:20px;
-    z-index:30;
-    display:none;
+    background:white;
     padding:10px;
     border-radius:10px;
-    background:white;
-    box-shadow:0 4px 10px rgba(0,0,0,0.2);
-    cursor:pointer;
+    display:none;
+    z-index:30;
 }
 </style>
 </head>
@@ -146,18 +167,18 @@ body{
 
 <div class="topbar">
     <h1>SmartMarket</h1>
-    <div style="display:flex; gap:10px;">
-        <button class="btn mapBtn" onclick="mostrarMapa()">🗺️ Mapa</button>
+    <div>
+        <button class="btn primary" onclick="mostrarMapa()">Mapa</button>
         <button class="btn sec" onclick="logout()">Salir</button>
     </div>
 </div>
 
-<div class="panel" id="panel">
+<div class="panel">
     <input class="search" id="searchGlobal" placeholder="Buscar comercio...">
     <div id="contenido"></div>
 </div>
 
-<div class="backMap" id="backMap" onclick="cerrarMapa()">⬅️ Volver</div>
+<div class="backMap" onclick="cerrarMapa()">Volver</div>
 
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
@@ -185,72 +206,26 @@ let markersLayer = L.layerGroup().addTo(map);
 navigator.geolocation.getCurrentPosition(pos=>{
     userLat=pos.coords.latitude;
     userLng=pos.coords.longitude;
-
     map.setView([userLat,userLng],13);
-
-    L.marker([userLat,userLng]).addTo(markersLayer).bindPopup("Tu ubicación");
 });
 
 /* DATA */
 let comercios=[];
+let favoritos=[];
 
-db.collection("usuarios").get().then(snap=>{
+async function cargarDatos(){
+    let snap = await db.collection("usuarios").get();
     snap.forEach(doc=>{
         let c=doc.data();
-        if(!c.ubicacion) return;
-        c.id=doc.id;
-        comercios.push(c);
-    });
-    renderComercios(comercios);
-});
-
-/* LISTA */
-function renderComercios(lista){
-    contenido.innerHTML = lista.map(c=>`
-        <div class="comercio" onclick='abrirComercio(${JSON.stringify(c)})'>
-            <b>${c.negocio || "Comercio"}</b>
-        </div>
-    `).join("");
-}
-
-/* MOSTRAR MAPA */
-function mostrarMapa(){
-    document.getElementById("map").style.display="block";
-    document.getElementById("backMap").style.display="block";
-
-    setTimeout(()=>{
-        map.invalidateSize(); // 🔥 SOLUCIÓN CLAVE
-        cargarComerciosMapa();
-    },200);
-}
-
-/* CERRAR MAPA */
-function cerrarMapa(){
-    document.getElementById("map").style.display="none";
-    document.getElementById("backMap").style.display="none";
-}
-
-/* CARGAR COMERCIOS EN MAPA */
-function cargarComerciosMapa(){
-    markersLayer.clearLayers();
-
-    // usuario
-    L.marker([userLat,userLng]).addTo(markersLayer).bindPopup("Tu ubicación");
-
-    comercios.forEach(c=>{
-        let dist = calcularDistancia(userLat,userLng,c.ubicacion.lat,c.ubicacion.lng);
-
-        if(dist < 5){
-            let m = L.marker([c.ubicacion.lat,c.ubicacion.lng]).addTo(markersLayer);
-            m.bindPopup(c.negocio || "Comercio");
-
-            m.on("click",()=>{
-                cerrarMapa();
-                abrirComercio(c);
-            });
+        if(c.ubicacion){
+            c.id=doc.id;
+            comercios.push(c);
         }
     });
+    renderComercios(comercios);
 }
+
+cargarDatos();
 
 /* DISTANCIA */
 function calcularDistancia(lat1,lon1,lat2,lon2){
@@ -262,39 +237,96 @@ function calcularDistancia(lat1,lon1,lat2,lon2){
         Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*
         Math.sin(dLon/2)**2;
 
-    return 2*R*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
+    return (2*R*Math.atan2(Math.sqrt(a),Math.sqrt(1-a))).toFixed(1);
 }
 
-/* COMERCIO */
-function abrirComercio(c){
-    db.collection("publicaciones").get().then(snap=>{
-        let productos=[];
-        snap.forEach(d=>{
-            let p=d.data();
-            if(p.negocio===c.negocio) productos.push(p);
-        });
-        renderProductos(c,productos);
-    });
+/* LISTA */
+function renderComercios(lista){
+    contenido.innerHTML = lista.map(c=>{
+        let dist = c.ubicacion ? calcularDistancia(userLat,userLng,c.ubicacion.lat,c.ubicacion.lng) : "?";
+
+        return `
+        <div class="comercio" onclick='abrirComercio(${JSON.stringify(c)})'>
+            <b>${c.negocio}</b><br>
+            <small>${dist} km</small>
+        </div>
+        `;
+    }).join("");
 }
 
 /* PRODUCTOS */
-function renderProductos(c,lista){
+async function abrirComercio(c){
+    let snap = await db.collection("publicaciones").get();
+    let productos=[];
+
+    snap.forEach(d=>{
+        let p=d.data();
+        if(p.negocio===c.negocio) productos.push(p);
+    });
+
     contenido.innerHTML = `
-        <h3>${c.negocio}</h3>
-        <button class="btn sec" onclick="volver()">← Volver</button>
+        <h2>${c.negocio}</h2>
+        <button class="btn sec" onclick="volver()">Volver</button>
         <div class="grid">
-        ${lista.map(p=>`
+        ${productos.map(p=>{
+            let fav = favoritos.includes(p.nombre);
+            return `
             <div class="card">
                 <img src="${p.imagen}">
                 <div class="card-body">
                     <b>${p.nombre}</b>
                     <div class="precio">$${p.precio}</div>
-                    <button class="btn primary" onclick="favorito('${p.nombre}')">❤️</button>
+                    <button class="btn ${fav?'primary':'sec'}" onclick="toggleFav('${p.nombre}')">
+                        ${fav?'❤️ Guardado':'♡ Guardar'}
+                    </button>
                 </div>
-            </div>
-        `).join("")}
+            </div>`;
+        }).join("")}
         </div>
     `;
+}
+
+/* FAVORITOS */
+function toggleFav(nombre){
+    if(favoritos.includes(nombre)){
+        favoritos = favoritos.filter(f=>f!==nombre);
+    }else{
+        favoritos.push(nombre);
+    }
+    alert("Favoritos actualizados");
+}
+
+/* MAPA */
+function mostrarMapa(){
+    map.style.display="block";
+    document.querySelector(".backMap").style.display="block";
+
+    setTimeout(()=>{
+        map.invalidateSize();
+        cargarMapa();
+    },200);
+}
+
+function cerrarMapa(){
+    map.style.display="none";
+    document.querySelector(".backMap").style.display="none";
+}
+
+function cargarMapa(){
+    markersLayer.clearLayers();
+
+    L.marker([userLat,userLng]).addTo(markersLayer);
+
+    comercios.forEach(c=>{
+        if(!c.ubicacion) return;
+
+        let m = L.marker([c.ubicacion.lat,c.ubicacion.lng]).addTo(markersLayer);
+
+        m.on("click",()=>{
+            cerrarMapa();
+            abrirComercio(c);
+        });
+    });
 }
 
 /* BUSCADOR */
@@ -303,14 +335,7 @@ searchGlobal.oninput=()=>{
     renderComercios(comercios.filter(c=>(c.negocio||"").toLowerCase().includes(t)));
 };
 
-/* VOLVER */
 function volver(){ renderComercios(comercios); }
-
-/* FAVORITOS */
-function favorito(nombre){
-    let user=firebase.auth().currentUser;
-    db.collection("usuarios").doc(user.uid).collection("favoritos").add({nombre});
-}
 
 /* LOGOUT */
 function logout(){
