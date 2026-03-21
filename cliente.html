@@ -16,7 +16,7 @@ body{
     background:#f1f5f9;
 }
 
-/* MAPA (OCULTO AL INICIO) */
+/* MAPA */
 #map{
     position:fixed;
     width:100%;
@@ -114,12 +114,6 @@ body{
     font-weight:700;
 }
 
-.small{
-    font-size:12px;
-    color:#64748b;
-}
-
-/* BOTONES */
 .btn{
     padding:10px;
     border:none;
@@ -129,13 +123,8 @@ body{
 
 .primary{background:#1a73e8;color:white;}
 .sec{background:#e2e8f0;}
+.mapBtn{background:#1a73e8;color:white;}
 
-.mapBtn{
-    background:#1a73e8;
-    color:white;
-}
-
-/* BOTON VOLVER MAPA */
 .backMap{
     position:fixed;
     top:80px;
@@ -186,11 +175,11 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
 /* MAPA */
-let map = L.map('map').setView([0,0],13);
+let map = L.map('map');
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
 
-let userLat=0;
-let userLng=0;
+let userLat=0, userLng=0;
+let markersLayer = L.layerGroup().addTo(map);
 
 /* UBICACION */
 navigator.geolocation.getCurrentPosition(pos=>{
@@ -198,44 +187,41 @@ navigator.geolocation.getCurrentPosition(pos=>{
     userLng=pos.coords.longitude;
 
     map.setView([userLat,userLng],13);
-    L.marker([userLat,userLng]).addTo(map).bindPopup("Tu ubicación");
+
+    L.marker([userLat,userLng]).addTo(markersLayer).bindPopup("Tu ubicación");
 });
 
 /* DATA */
 let comercios=[];
 
-/* CARGAR */
 db.collection("usuarios").get().then(snap=>{
     snap.forEach(doc=>{
         let c=doc.data();
         if(!c.ubicacion) return;
-
         c.id=doc.id;
         comercios.push(c);
     });
-
     renderComercios(comercios);
 });
 
-/* RENDER LISTA */
+/* LISTA */
 function renderComercios(lista){
-    let html="";
-    lista.forEach(c=>{
-        html+=`
+    contenido.innerHTML = lista.map(c=>`
         <div class="comercio" onclick='abrirComercio(${JSON.stringify(c)})'>
-            <b>${c.negocio || "Comercio"}</b><br>
-            <span class="small">Ver productos</span>
-        </div>`;
-    });
-    contenido.innerHTML=html;
+            <b>${c.negocio || "Comercio"}</b>
+        </div>
+    `).join("");
 }
 
-/* ABRIR MAPA */
+/* MOSTRAR MAPA */
 function mostrarMapa(){
     document.getElementById("map").style.display="block";
     document.getElementById("backMap").style.display="block";
 
-    cargarComerciosMapa();
+    setTimeout(()=>{
+        map.invalidateSize(); // 🔥 SOLUCIÓN CLAVE
+        cargarComerciosMapa();
+    },200);
 }
 
 /* CERRAR MAPA */
@@ -244,13 +230,20 @@ function cerrarMapa(){
     document.getElementById("backMap").style.display="none";
 }
 
-/* COMERCIOS EN MAPA */
+/* CARGAR COMERCIOS EN MAPA */
 function cargarComerciosMapa(){
-    comercios.forEach(c=>{
-        let distancia = calcularDistancia(userLat,userLng,c.ubicacion.lat,c.ubicacion.lng);
+    markersLayer.clearLayers();
 
-        if(distancia < 5){ // 🔥 solo cercanos (5km)
-            let m = L.marker([c.ubicacion.lat,c.ubicacion.lng]).addTo(map);
+    // usuario
+    L.marker([userLat,userLng]).addTo(markersLayer).bindPopup("Tu ubicación");
+
+    comercios.forEach(c=>{
+        let dist = calcularDistancia(userLat,userLng,c.ubicacion.lat,c.ubicacion.lng);
+
+        if(dist < 5){
+            let m = L.marker([c.ubicacion.lat,c.ubicacion.lng]).addTo(markersLayer);
+            m.bindPopup(c.negocio || "Comercio");
+
             m.on("click",()=>{
                 cerrarMapa();
                 abrirComercio(c);
@@ -265,17 +258,14 @@ function calcularDistancia(lat1,lon1,lat2,lon2){
     let dLat=(lat2-lat1)*Math.PI/180;
     let dLon=(lon2-lon1)*Math.PI/180;
 
-    let a=
-        Math.sin(dLat/2)*Math.sin(dLat/2)+
-        Math.cos(lat1*Math.PI/180)*
-        Math.cos(lat2*Math.PI/180)*
-        Math.sin(dLon/2)*Math.sin(dLon/2);
+    let a=Math.sin(dLat/2)**2 +
+        Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*
+        Math.sin(dLon/2)**2;
 
-    let c=2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
-    return R*c;
+    return 2*R*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
 }
 
-/* ABRIR COMERCIO */
+/* COMERCIO */
 function abrirComercio(c){
     db.collection("publicaciones").get().then(snap=>{
         let productos=[];
@@ -283,44 +273,38 @@ function abrirComercio(c){
             let p=d.data();
             if(p.negocio===c.negocio) productos.push(p);
         });
-
         renderProductos(c,productos);
     });
 }
 
 /* PRODUCTOS */
 function renderProductos(c,lista){
-    let html=`<h3>${c.negocio}</h3>
-    <button class="btn sec" onclick="volver()">← Volver</button>
-    <div class="grid">`;
-
-    lista.forEach(p=>{
-        html+=`
-        <div class="card">
-            <img src="${p.imagen}">
-            <div class="card-body">
-                <b>${p.nombre}</b>
-                <div class="precio">$${p.precio}</div>
-                <button class="btn primary" onclick="favorito('${p.nombre}')">❤️</button>
+    contenido.innerHTML = `
+        <h3>${c.negocio}</h3>
+        <button class="btn sec" onclick="volver()">← Volver</button>
+        <div class="grid">
+        ${lista.map(p=>`
+            <div class="card">
+                <img src="${p.imagen}">
+                <div class="card-body">
+                    <b>${p.nombre}</b>
+                    <div class="precio">$${p.precio}</div>
+                    <button class="btn primary" onclick="favorito('${p.nombre}')">❤️</button>
+                </div>
             </div>
-        </div>`;
-    });
-
-    html+="</div>";
-    contenido.innerHTML=html;
+        `).join("")}
+        </div>
+    `;
 }
 
 /* BUSCADOR */
 searchGlobal.oninput=()=>{
     let t=searchGlobal.value.toLowerCase();
-    let filtrados=comercios.filter(c=>(c.negocio||"").toLowerCase().includes(t));
-    renderComercios(filtrados);
+    renderComercios(comercios.filter(c=>(c.negocio||"").toLowerCase().includes(t)));
 };
 
 /* VOLVER */
-function volver(){
-    renderComercios(comercios);
-}
+function volver(){ renderComercios(comercios); }
 
 /* FAVORITOS */
 function favorito(nombre){
