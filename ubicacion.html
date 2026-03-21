@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ubicación del Comercio | SmartMarket</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;600;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+
+<style>
+body{
+    margin:0;
+    font-family:'Outfit',sans-serif;
+    background: linear-gradient(135deg,#1a73e8,#00d2ff);
+    color:white;
+    text-align:center;
+}
+
+.container{
+    max-width:800px;
+    margin:auto;
+    padding:20px;
+}
+
+h1{
+    font-size:28px;
+    font-weight:900;
+}
+
+p{
+    color:#e2e8f0;
+}
+
+.card{
+    background:white;
+    color:#0f172a;
+    padding:20px;
+    border-radius:20px;
+    margin-top:20px;
+}
+
+#map{
+    height:350px;
+    border-radius:15px;
+    margin-top:15px;
+}
+
+input{
+    width:100%;
+    padding:12px;
+    margin-top:15px;
+    border-radius:10px;
+    border:1px solid #ccc;
+}
+
+button{
+    width:100%;
+    margin-top:15px;
+    padding:12px;
+    border:none;
+    border-radius:10px;
+    cursor:pointer;
+    font-weight:700;
+}
+
+.primary{
+    background:#1a73e8;
+    color:white;
+}
+
+.secondary{
+    background:#0ea5e9;
+    color:white;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>Ubica tu comercio</h1>
+<p>Esto permitirá que los clientes te encuentren en el mapa</p>
+
+<div class="card">
+
+<button class="secondary" onclick="detectarUbicacion()">📡 Detectar mi ubicación</button>
+
+<div id="map"></div>
+
+<input id="direccion" placeholder="Dirección del comercio">
+
+<button class="primary" onclick="guardarUbicacion()">Guardar ubicación</button>
+
+</div>
+
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+<script>
+const firebaseConfig = {
+apiKey:"AIzaSy...",
+authDomain:"smartmarket-zone-e7559.firebaseapp.com",
+projectId:"smartmarket-zone-e7559"
+};
+
+if(!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
+let map;
+let marker;
+
+/* AUTH */
+firebase.auth().onAuthStateChanged(user=>{
+if(!user) location.href="login.html";
+else initMap();
+});
+
+/* MAPA */
+function initMap(){
+map = L.map('map').setView([10.48,-66.90],13);
+
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png')
+.addTo(map);
+
+map.on('click', async function(e){
+    colocarMarcador(e.latlng);
+    obtenerDireccion(e.latlng.lat, e.latlng.lng);
+});
+}
+
+/* MARCADOR */
+function colocarMarcador(latlng){
+if(marker) map.removeLayer(marker);
+
+marker = L.marker(latlng).addTo(map);
+}
+
+/* GPS */
+function detectarUbicacion(){
+navigator.geolocation.getCurrentPosition(pos=>{
+const lat = pos.coords.latitude;
+const lng = pos.coords.longitude;
+
+const latlng = {lat:lat,lng:lng};
+
+map.setView(latlng,15);
+colocarMarcador(latlng);
+obtenerDireccion(lat,lng);
+
+});
+}
+
+/* DIRECCIÓN AUTOMÁTICA */
+async function obtenerDireccion(lat,lng){
+try{
+const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`);
+const data = await res.json();
+
+direccion.value = data.display_name || "";
+}catch{
+direccion.value = "";
+}
+}
+
+/* GUARDAR */
+function guardarUbicacion(){
+const user = firebase.auth().currentUser;
+
+if(!marker) return alert("Selecciona ubicación");
+
+const latlng = marker.getLatLng();
+
+db.collection("usuarios").doc(user.uid).set({
+ubicacion: latlng,
+direccion: direccion.value
+},{merge:true})
+.then(()=>{
+location.href="comercio.html";
+});
+}
+</script>
+
+</body>
+</html>
