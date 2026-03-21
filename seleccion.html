@@ -216,10 +216,13 @@ const firebaseConfig = {
   projectId: "smartmarket-zone-e7559"
 };
 
-firebase.initializeApp(firebaseConfig);
+if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+}
+
 const db = firebase.firestore();
 
-/* 🔥 CONTROL PRO */
+/* 🔥 CONTROL TOTAL */
 firebase.auth().onAuthStateChanged(function(user){
 
     if(!user){
@@ -234,7 +237,6 @@ firebase.auth().onAuthStateChanged(function(user){
 
         if(doc.exists && doc.data().tipo){
 
-            // 🔥 YA ELIGIÓ → NO VUELVE
             if(doc.data().tipo === "persona"){
                 window.location.href="cliente.html";
             }else{
@@ -245,16 +247,29 @@ firebase.auth().onAuthStateChanged(function(user){
             document.getElementById("mainContent").style.display="block";
         }
 
+    })
+    .catch(()=>{
+        document.getElementById("loader").style.display="none";
+        document.getElementById("mainContent").style.display="block";
     });
 
 });
 
-/* GUARDAR */
+/* 🔥 GUARDAR TIPO PRO */
 function seleccionar(tipo){
+
     const user = firebase.auth().currentUser;
 
+    if(!user){
+        alert("Sesión expirada");
+        window.location.href="login.html";
+        return;
+    }
+
     db.collection("usuarios").doc(user.uid).set({
-        tipo: tipo
+        tipo: tipo,
+        email: user.email,
+        fecha: new Date()
     }, { merge:true })
     .then(()=>{
 
@@ -264,10 +279,13 @@ function seleccionar(tipo){
             window.location.href="comercio.html";
         }
 
+    })
+    .catch(()=>{
+        alert("Error guardando datos");
     });
 }
 
-/* RED ANIMADA (igual) */
+/* RED ANIMADA */
 const canvas = document.getElementById("networkCanvas");
 const ctx = canvas.getContext("2d");
 
