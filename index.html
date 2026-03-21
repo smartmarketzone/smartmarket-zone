@@ -280,26 +280,26 @@ body {
 
 <script>
 const firebaseConfig = {
-  apiKey: "AIzaSyA6tYooh4CtX7ww9GRyXWhuakl2nLovtsY",
-  authDomain: "smartmarket-zone-e7559.firebaseapp.com",
-  projectId: "smartmarket-zone-e7559"
+    apiKey: "AIzaSyA6tYooh4CtX7ww9GRyXWhuakl2nLovtsY",
+    authDomain: "smartmarket-zone-e7559.firebaseapp.com",
+    projectId: "smartmarket-zone-e7559"
 };
 
-/* Inicialización segura */
 if (!firebase.apps.length) {
     firebase.initializeApp(firebaseConfig);
 }
 
-/* 🔥 SI YA ESTÁ LOGUEADO → VA A APP */
+/* 🔐 SOLO REDIRIGE SI TODO ESTÁ BIEN */
 firebase.auth().onAuthStateChanged(function(user){
     if(user){
+        // 🔥 IMPORTANTE: verifica tipo antes de enviar
         window.location.href = "app.html";
     }
 });
 
-/* 🔥 BOTÓN CORREGIDO */
+/* 🚀 BOTÓN */
 function irAuth(){
-    window.location.href = "login.html";
+    window.location.href = "./login.html";
 }
 </script>
 
