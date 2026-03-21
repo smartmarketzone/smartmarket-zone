@@ -6,7 +6,10 @@
 <title>SmartMarket</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700;900&display=swap" rel="stylesheet">
+
 <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.css"/>
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.Default.css"/>
 
 <style>
 :root{
@@ -15,20 +18,9 @@
     --card:#ffffff;
     --border:#e5e7eb;
     --text:#0f172a;
-    --muted:#64748b;
 }
 
-/* DARK MODE */
-@media (prefers-color-scheme: dark){
-    :root{
-        --bg:#0f172a;
-        --card:#1e293b;
-        --border:#334155;
-        --text:#f1f5f9;
-        --muted:#94a3b8;
-    }
-}
-
+/* BASE */
 *{margin:0;padding:0;box-sizing:border-box;}
 
 body{
@@ -37,23 +29,27 @@ body{
     color:var(--text);
 }
 
+/* MAPA */
+#map{
+    position:fixed;
+    inset:0;
+    z-index:10;
+    display:none;
+}
+
 /* TOPBAR */
 .topbar{
     position:fixed;
     top:0;
     width:100%;
-    background:rgba(255,255,255,0.8);
+    background:rgba(255,255,255,0.9);
     backdrop-filter:blur(10px);
     padding:14px 20px;
+    z-index:20;
     display:flex;
     justify-content:space-between;
     align-items:center;
     border-bottom:1px solid var(--border);
-    z-index:20;
-}
-
-.topbar h1{
-    font-weight:900;
 }
 
 /* PANEL */
@@ -66,6 +62,7 @@ body{
     background:var(--card);
     border-radius:16px;
     padding:15px;
+    z-index:15;
     overflow:auto;
     border:1px solid var(--border);
 }
@@ -77,7 +74,6 @@ body{
     border-radius:12px;
     border:1px solid var(--border);
     margin-bottom:10px;
-    outline:none;
 }
 
 /* COMERCIO */
@@ -87,6 +83,7 @@ body{
     border-radius:12px;
     margin-bottom:10px;
     cursor:pointer;
+    transition:.2s;
 }
 
 .comercio:hover{
@@ -106,6 +103,11 @@ body{
     border:1px solid var(--border);
     border-radius:16px;
     overflow:hidden;
+    transition:.2s;
+}
+
+.card:hover{
+    transform:translateY(-3px);
 }
 
 .card img{
@@ -131,32 +133,23 @@ body{
     cursor:pointer;
 }
 
-.primary{
-    background:var(--primary);
-    color:white;
-}
+.primary{background:var(--primary);color:white;}
+.sec{background:var(--border);}
 
-.sec{
-    background:var(--border);
-}
-
-/* MAP */
-#map{
-    position:fixed;
-    inset:0;
-    display:none;
-    z-index:10;
-}
-
+/* BACK MAP */
 .backMap{
     position:fixed;
-    top:90px;
+    bottom:20px;
     left:20px;
-    background:white;
-    padding:10px;
-    border-radius:10px;
-    display:none;
     z-index:30;
+    display:none;
+    padding:12px 16px;
+    border-radius:999px;
+    background:var(--card);
+    border:1px solid var(--border);
+    font-weight:600;
+    cursor:pointer;
+    box-shadow:0 10px 25px rgba(0,0,0,0.15);
 }
 </style>
 </head>
@@ -168,7 +161,7 @@ body{
 <div class="topbar">
     <h1>SmartMarket</h1>
     <div>
-        <button class="btn primary" onclick="mostrarMapa()">Mapa</button>
+        <button class="btn primary" onclick="mostrarMapa()">🗺️ Mapa</button>
         <button class="btn sec" onclick="logout()">Salir</button>
     </div>
 </div>
@@ -178,9 +171,11 @@ body{
     <div id="contenido"></div>
 </div>
 
-<div class="backMap" onclick="cerrarMapa()">Volver</div>
+<div id="backMap" class="backMap" onclick="cerrarMapa()">← Volver</div>
 
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet.markercluster/dist/leaflet.markercluster.js"></script>
+
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
@@ -199,8 +194,10 @@ const db = firebase.firestore();
 let map = L.map('map');
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
 
-let userLat=0, userLng=0;
-let markersLayer = L.layerGroup().addTo(map);
+let markersLayer = L.markerClusterGroup();
+map.addLayer(markersLayer);
+
+let userLat=0,userLng=0;
 
 /* UBICACION */
 navigator.geolocation.getCurrentPosition(pos=>{
@@ -211,20 +208,26 @@ navigator.geolocation.getCurrentPosition(pos=>{
 
 /* DATA */
 let comercios=[];
-let favoritos=[];
+let cacheProductos={};
 
+/* CARGA OPTIMIZADA */
 async function cargarDatos(){
     let snap = await db.collection("usuarios").get();
+
     snap.forEach(doc=>{
         let c=doc.data();
-        if(c.ubicacion){
+        if(!c.ubicacion) return;
+
+        let dist = calcularDistancia(userLat,userLng,c.ubicacion.lat,c.ubicacion.lng);
+
+        if(dist < 10){
             c.id=doc.id;
             comercios.push(c);
         }
     });
+
     renderComercios(comercios);
 }
-
 cargarDatos();
 
 /* DISTANCIA */
@@ -232,74 +235,29 @@ function calcularDistancia(lat1,lon1,lat2,lon2){
     let R=6371;
     let dLat=(lat2-lat1)*Math.PI/180;
     let dLon=(lon2-lon1)*Math.PI/180;
-
     let a=Math.sin(dLat/2)**2 +
         Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*
         Math.sin(dLon/2)**2;
-
     return (2*R*Math.atan2(Math.sqrt(a),Math.sqrt(1-a))).toFixed(1);
 }
 
 /* LISTA */
 function renderComercios(lista){
     contenido.innerHTML = lista.map(c=>{
-        let dist = c.ubicacion ? calcularDistancia(userLat,userLng,c.ubicacion.lat,c.ubicacion.lng) : "?";
+        let dist = calcularDistancia(userLat,userLng,c.ubicacion.lat,c.ubicacion.lng);
 
         return `
         <div class="comercio" onclick='abrirComercio(${JSON.stringify(c)})'>
             <b>${c.negocio}</b><br>
             <small>${dist} km</small>
-        </div>
-        `;
+        </div>`;
     }).join("");
-}
-
-/* PRODUCTOS */
-async function abrirComercio(c){
-    let snap = await db.collection("publicaciones").get();
-    let productos=[];
-
-    snap.forEach(d=>{
-        let p=d.data();
-        if(p.negocio===c.negocio) productos.push(p);
-    });
-
-    contenido.innerHTML = `
-        <h2>${c.negocio}</h2>
-        <button class="btn sec" onclick="volver()">Volver</button>
-        <div class="grid">
-        ${productos.map(p=>{
-            let fav = favoritos.includes(p.nombre);
-            return `
-            <div class="card">
-                <img src="${p.imagen}">
-                <div class="card-body">
-                    <b>${p.nombre}</b>
-                    <div class="precio">$${p.precio}</div>
-                    <button class="btn ${fav?'primary':'sec'}" onclick="toggleFav('${p.nombre}')">
-                        ${fav?'❤️ Guardado':'♡ Guardar'}
-                    </button>
-                </div>
-            </div>`;
-        }).join("")}
-        </div>
-    `;
-}
-
-/* FAVORITOS */
-function toggleFav(nombre){
-    if(favoritos.includes(nombre)){
-        favoritos = favoritos.filter(f=>f!==nombre);
-    }else{
-        favoritos.push(nombre);
-    }
-    alert("Favoritos actualizados");
 }
 
 /* MAPA */
 function mostrarMapa(){
-    map.style.display="block";
-    document.querySelector(".backMap").style.display="block";
+    document.getElementById("map").style.display="block";
+    document.getElementById("backMap").style.display="block";
 
     setTimeout(()=>{
         map.invalidateSize();
@@ -308,8 +266,8 @@ function mostrarMapa(){
 }
 
 function cerrarMapa(){
-    map.style.display="none";
-    document.querySelector(".backMap").style.display="none";
+    document.getElementById("map").style.display="none";
+    document.getElementById("backMap").style.display="none";
 }
 
 function cargarMapa(){
@@ -318,15 +276,68 @@ function cargarMapa(){
     L.marker([userLat,userLng]).addTo(markersLayer);
 
     comercios.forEach(c=>{
-        if(!c.ubicacion) return;
+        let marker = L.marker([c.ubicacion.lat,c.ubicacion.lng])
+            .bindPopup(`<b>${c.negocio}</b>`);
 
-        let m = L.marker([c.ubicacion.lat,c.ubicacion.lng]).addTo(markersLayer);
-
-        m.on("click",()=>{
+        marker.on("click",()=>{
             cerrarMapa();
             abrirComercio(c);
         });
+
+        markersLayer.addLayer(marker);
     });
+}
+
+/* PRODUCTOS OPTIMIZADOS */
+async function abrirComercio(c){
+
+    if(cacheProductos[c.id]){
+        return renderProductos(c,cacheProductos[c.id]);
+    }
+
+    let snap = await db
+        .collection("usuarios")
+        .doc(c.id)
+        .collection("publicaciones")
+        .get();
+
+    let productos=[];
+    snap.forEach(d=>productos.push(d.data()));
+
+    cacheProductos[c.id]=productos;
+
+    renderProductos(c,productos);
+}
+
+/* RENDER */
+function renderProductos(c,lista){
+    contenido.innerHTML = `
+        <h3>${c.negocio}</h3>
+        <button class="btn sec" onclick="volver()">← Volver</button>
+        <div class="grid">
+        ${lista.map(p=>`
+            <div class="card">
+                <img src="${p.imagen}">
+                <div class="card-body">
+                    <b>${p.nombre}</b>
+                    <div class="precio">$${p.precio}</div>
+                    <button class="btn sec" onclick="favorito('${p.nombre}')">♡</button>
+                </div>
+            </div>
+        `).join("")}
+        </div>
+    `;
+}
+
+/* FAVORITOS */
+function favorito(nombre){
+    let user=firebase.auth().currentUser;
+
+    db.collection("usuarios")
+      .doc(user.uid)
+      .collection("favoritos")
+      .doc(nombre)
+      .set({nombre});
 }
 
 /* BUSCADOR */
