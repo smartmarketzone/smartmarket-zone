@@ -153,7 +153,9 @@ const firebaseConfig = {
     projectId: "smartmarket-zone-e7559"
 };
 
-firebase.initializeApp(firebaseConfig);
+if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+}
 
 /* 👁 */
 function togglePass(){
@@ -161,22 +163,33 @@ function togglePass(){
     p.type = p.type === "password" ? "text" : "password";
 }
 
-/* REGISTER */
+/* REGISTER PRO */
 function register(){
-    const email = document.getElementById("email").value;
-    const pass = document.getElementById("password").value;
+
+    const email = document.getElementById("email").value.trim();
+    const pass = document.getElementById("password").value.trim();
 
     if(!email || !pass){
-        alert("Completa los campos");
+        alert("Completa todos los campos");
+        return;
+    }
+
+    if(pass.length < 6){
+        alert("La contraseña debe tener al menos 6 caracteres");
         return;
     }
 
     firebase.auth().createUserWithEmailAndPassword(email, pass)
     .then(()=>{
         alert("Cuenta creada correctamente");
-        window.location.href = "login.html";
+
+        // 🔥 CLAVE: VA A SELECCIÓN
+        window.location.href = "seleccion.html";
     })
-    .catch(e=>alert(e.message));
+    .catch(e=>{
+        console.error(e);
+        alert("Error: " + e.message);
+    });
 }
 
 /* RED */
