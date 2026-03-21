@@ -8,37 +8,115 @@
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;900&display=swap" rel="stylesheet">
 
 <style>
-body { margin:0; font-family:'Outfit', sans-serif; }
+*{margin:0;padding:0;box-sizing:border-box;}
 
-.hero {
-    background: linear-gradient(135deg,#1a73e8,#00d2ff);
+body {
+    font-family:'Outfit', sans-serif;
+    height:100vh;
+    overflow:hidden;
     color:white;
-    padding:60px;
+}
+
+/* 🔥 FONDO PRO */
+body::before{
+    content:"";
+    position:fixed;
+    width:100%;
+    height:100%;
+    background: linear-gradient(135deg,#1a73e8,#00d2ff);
+    z-index:-2;
+}
+
+/* RED */
+#networkCanvas {
+    position: fixed;
+    width:100%;
+    height:100%;
+    z-index:-1;
+}
+
+/* CONTENIDO */
+.container {
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    height:100%;
     text-align:center;
 }
 
-.badge { margin-top:10px; }
+/* LOGO */
+.logo {
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-bottom:20px;
+}
 
-button {
-    margin-top:20px;
+.logo-box {
+    background:white;
+    color:#1a73e8;
     padding:10px;
-    border:none;
-    background:red;
-    color:white;
     border-radius:10px;
+    font-weight:900;
+}
+
+/* TEXTO */
+h1 {
+    font-size:28px;
+}
+
+p {
+    margin-top:10px;
+    opacity:0.9;
+}
+
+/* LOADER */
+.loader {
+    margin-top:25px;
+    width:40px;
+    height:40px;
+    border:4px solid rgba(255,255,255,0.3);
+    border-top:4px solid white;
+    border-radius:50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* BOTÓN */
+button {
+    margin-top:30px;
+    padding:12px 25px;
+    border:none;
+    background:#0f172a;
+    color:white;
+    border-radius:12px;
+    cursor:pointer;
 }
 </style>
 </head>
 
 <body>
 
-<div class="hero">
-    <h1>SmartMarket</h1>
-    <div class="badge" id="city">Detectando ubicación...</div>
-</div>
+<canvas id="networkCanvas"></canvas>
 
-<div style="text-align:center;">
+<div class="container">
+
+    <div class="logo">
+        <div class="logo-box">SM</div>
+        <h2>SmartMarket</h2>
+    </div>
+
+    <h1>Preparando tu experiencia...</h1>
+    <p id="status">Verificando tu cuenta</p>
+
+    <div class="loader"></div>
+
     <button onclick="logout()">Cerrar sesión</button>
+
 </div>
 
 <!-- 🔥 FIREBASE -->
@@ -59,13 +137,17 @@ if (!firebase.apps.length) {
 
 const db = firebase.firestore();
 
-/* 🔐 CONTROL DE FLUJO (CORRECTO Y LIMPIO) */
+const statusText = document.getElementById("status");
+
+/* 🔐 CONTROL DE FLUJO */
 firebase.auth().onAuthStateChanged(function(user) {
 
     if (!user) {
         window.location.href = "login.html";
         return;
     }
+
+    statusText.innerText = "Cargando tu perfil...";
 
     db.collection("usuarios").doc(user.uid).get()
     .then((doc) => {
@@ -75,13 +157,15 @@ firebase.auth().onAuthStateChanged(function(user) {
             const tipo = doc.data().tipo;
 
             if (tipo === "persona") {
-                window.location.href = "cliente.html";
+                statusText.innerText = "Entrando como cliente...";
+                setTimeout(()=> window.location.href = "cliente.html", 800);
             } 
             else if (tipo === "comercio") {
-                window.location.href = "comercio.html";
+                statusText.innerText = "Entrando como comercio...";
+                setTimeout(()=> window.location.href = "comercio.html", 800);
             } 
             else {
-                window.location.href = "seleccion.html"; // 🔥 corregido nombre
+                window.location.href = "seleccion.html";
             }
 
         } else {
@@ -95,36 +179,6 @@ firebase.auth().onAuthStateChanged(function(user) {
 
 });
 
-/* 🌍 GEOLOCALIZACIÓN */
-function detectar(){
-    const city = document.getElementById("city");
-
-    if(!navigator.geolocation){
-        city.innerText = "SmartMarket";
-        return;
-    }
-
-    navigator.geolocation.getCurrentPosition(async pos => {
-        const lat = pos.coords.latitude;
-        const lon = pos.coords.longitude;
-
-        try{
-            const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`);
-            const data = await res.json();
-
-            city.innerText =
-                data.address.city ||
-                data.address.town ||
-                data.address.state ||
-                "Tu zona";
-        }catch{
-            city.innerText = "SmartMarket";
-        }
-    }, () => {
-        city.innerText = "SmartMarket";
-    });
-}
-
 /* 🔒 LOGOUT */
 function logout(){
     firebase.auth().signOut().then(()=>{
@@ -132,7 +186,58 @@ function logout(){
     });
 }
 
-window.onload = detectar;
+/* 🔥 RED ANIMADA */
+const canvas = document.getElementById("networkCanvas");
+const ctx = canvas.getContext("2d");
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+let points = [];
+
+for(let i=0;i<50;i++){
+    points.push({
+        x: Math.random()*canvas.width,
+        y: Math.random()*canvas.height,
+        vx:(Math.random()-0.5)*0.4,
+        vy:(Math.random()-0.5)*0.4
+    });
+}
+
+function animate(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+
+    for(let i=0;i<points.length;i++){
+        let p = points[i];
+        p.x += p.vx;
+        p.y += p.vy;
+
+        if(p.x<0||p.x>canvas.width) p.vx*=-1;
+        if(p.y<0||p.y>canvas.height) p.vy*=-1;
+
+        ctx.beginPath();
+        ctx.arc(p.x,p.y,2,0,Math.PI*2);
+        ctx.fillStyle="white";
+        ctx.fill();
+
+        for(let j=i;j<points.length;j++){
+            let p2 = points[j];
+            let dist = Math.hypot(p.x-p2.x,p.y-p2.y);
+
+            if(dist<120){
+                ctx.beginPath();
+                ctx.moveTo(p.x,p.y);
+                ctx.lineTo(p2.x,p2.y);
+                ctx.strokeStyle="rgba(255,255,255,0.1)";
+                ctx.stroke();
+            }
+        }
+    }
+
+    requestAnimationFrame(animate);
+}
+
+animate();
 </script>
 
 </body>
