@@ -35,7 +35,7 @@ body::before {
     z-index: -2;
 }
 
-/* ✨ RESTAURADA: TU RED ANIMADA ORIGINAL (Puntos Blancos) */
+/* ✨ RED ANIMADA */
 #networkCanvas {
     position: fixed;
     top:0;
@@ -66,7 +66,7 @@ body::before {
     50% { transform: translateY(-15px); }
 }
 
-/* CONTENIDO PRINCIPAL */
+/* CONTENIDO */
 #mainContent {
     position: relative;
     z-index: 3;
@@ -75,7 +75,6 @@ body::before {
     width: 100%;
 }
 
-/* LOGO */
 .logo {
     font-size: 32px;
     font-weight: 900;
@@ -83,11 +82,10 @@ body::before {
 }
 .logo span { color: #00d2ff; }
 
-/* TEXTOS */
 h1 { font-size: 28px; font-weight: 900; margin-bottom: 5px; color: #fff; }
 .sub-text { color: #cbd5e1; font-size: 14px; margin-bottom: 30px; }
 
-/* GRID DE TARJETAS */
+/* GRID */
 .grid {
     display: flex;
     justify-content: center;
@@ -98,7 +96,7 @@ h1 { font-size: 28px; font-weight: 900; margin-bottom: 5px; color: #fff; }
     flex-wrap: wrap;
 }
 
-/* CARD GLASSMORPHISM PROFESIONAL */
+/* CARD */
 .card {
     background: rgba(255, 255, 255, 0.08);
     backdrop-filter: blur(18px);
@@ -114,12 +112,11 @@ h1 { font-size: 28px; font-weight: 900; margin-bottom: 5px; color: #fff; }
 }
 
 .card:hover {
-    transform: translateY(-15px) scale(1.03); /* TU ESCALA ORIGINAL */
+    transform: translateY(-15px) scale(1.03);
     background: rgba(255, 255, 255, 0.12);
     border-color: #00d2ff;
 }
 
-/* ✨ RESTAURADO: TU EFECTO DE BRILLO ORIGINAL (`::before`) */
 .card::before {
     content:"";
     position:absolute;
@@ -129,11 +126,11 @@ h1 { font-size: 28px; font-weight: 900; margin-bottom: 5px; color: #fff; }
     height:100%;
     background: linear-gradient(120deg,transparent,rgba(255,255,255,0.3),transparent);
     transition:0.6s;
-    z-index: 1; /* Para que el brillo pase sobre la imagen */
+    z-index: 1;
 }
 .card:hover::before { left: 100%; }
 
-/* IMÁGENES ILUSTRATIVAS */
+/* IMÁGENES */
 .img {
     height: 160px;
     border-radius: 15px;
@@ -142,7 +139,7 @@ h1 { font-size: 28px; font-weight: 900; margin-bottom: 5px; color: #fff; }
     background-position: center;
     border: 1px solid rgba(255,255,255,0.1);
     position: relative;
-    z-index: 0; /* Imagen detrás del brillo */
+    z-index: 0;
 }
 
 .img-persona { background-image: url('https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?auto=format&fit=crop&w=500&q=80'); }
@@ -151,7 +148,7 @@ h1 { font-size: 28px; font-weight: 900; margin-bottom: 5px; color: #fff; }
 .card h3 { font-size: 22px; font-weight: 900; color: #00d2ff; margin-bottom: 10px; position: relative; z-index: 2; }
 .card p { color: #cbd5e1; font-size: 14px; line-height: 1.5; position: relative; z-index: 2; }
 
-/* LOADING SCREEN */
+/* LOADER */
 .loader {
     position: fixed;
     width: 100%;
@@ -243,8 +240,7 @@ firebase.auth().onAuthStateChanged(function(user){
             if(doc.data().tipo === "persona"){
                 window.location.href="cliente.html";
             }else{
-                if(!doc.data().ubicacion) window.location.href="ubicacion.html";
-                else window.location.href="comercio.html";
+                window.location.href="comercio.html"; // ✅ CORREGIDO
             }
         }else{
             document.getElementById("mainContent").style.display="block";
@@ -268,11 +264,11 @@ function seleccionar(tipo){
     }, { merge:true })
     .then(()=>{
         if(tipo==="persona") window.location.href="cliente.html";
-        else window.location.href="ubicacion.html";
+        else window.location.href="comercio.html"; // ✅ CORREGIDO
     });
 }
 
-/* ✨ RESTAURADA: TU RED ANIMADA ORIGINAL (Puntos Blancos) */
+/* RED ANIMADA */
 const canvas = document.getElementById("networkCanvas");
 const ctx = canvas.getContext("2d");
 
@@ -303,7 +299,7 @@ function animate(){
 
         ctx.beginPath();
         ctx.arc(p.x,p.y,2,0,Math.PI*2);
-        ctx.fillStyle="rgba(255,255,255,0.8)"; // TUS PUNTOS BLANCOS
+        ctx.fillStyle="rgba(255,255,255,0.8)";
         ctx.fill();
 
         for(let j=i;j<points.length;j++){
@@ -314,7 +310,7 @@ function animate(){
                 ctx.beginPath();
                 ctx.moveTo(p.x,p.y);
                 ctx.lineTo(p2.x,p2.y);
-                ctx.strokeStyle="rgba(255,255,255,0.15)"; // TUS LÍNEAS BLANCAS
+                ctx.strokeStyle="rgba(255,255,255,0.15)";
                 ctx.stroke();
             }
         }
