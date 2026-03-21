@@ -15,12 +15,10 @@ body {
     text-align:center;
     overflow-x:hidden;
     color:white;
-
-    /* 🔥 BASE AZUL */
     background: linear-gradient(135deg,#1a73e8,#00d2ff);
 }
 
-/* 🔥 CAPA OSCURA SUAVE PARA FUSIÓN */
+/* CAPA OSCURA */
 body::after{
     content:"";
     position:fixed;
@@ -38,10 +36,10 @@ body::after{
     width:100%;
     height:100%;
     z-index:0;
-    opacity:0.6; /* 🔥 integración visual */
+    opacity:0.6;
 }
 
-/* PERSONA FLOTANTE */
+/* PERSONA */
 .network-person {
     position: fixed;
     bottom: 20px;
@@ -99,7 +97,7 @@ p {
     margin:auto;
 }
 
-/* CARD PRO */
+/* CARD */
 .card {
     background: rgba(255,255,255,0.15);
     backdrop-filter: blur(25px);
@@ -214,7 +212,7 @@ p {
 
 </div>
 
-<!-- FIREBASE (igual que tienes) -->
+<!-- FIREBASE -->
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
@@ -232,6 +230,7 @@ if (!firebase.apps.length) {
 
 const db = firebase.firestore();
 
+/* CONTROL */
 firebase.auth().onAuthStateChanged(function(user){
 
     if(!user){
@@ -249,7 +248,12 @@ firebase.auth().onAuthStateChanged(function(user){
             if(doc.data().tipo === "persona"){
                 window.location.href="cliente.html";
             }else{
-                window.location.href="comercio.html";
+                /* 🔥 CORRECCIÓN AQUÍ */
+                if(!doc.data().ubicacion){
+                    window.location.href="ubicacion.html";
+                }else{
+                    window.location.href="comercio.html";
+                }
             }
 
         }else{
@@ -264,6 +268,7 @@ firebase.auth().onAuthStateChanged(function(user){
 
 });
 
+/* SELECCIÓN */
 function seleccionar(tipo){
 
     const user = firebase.auth().currentUser;
@@ -280,11 +285,14 @@ function seleccionar(tipo){
         fecha: new Date()
     }, { merge:true })
     .then(()=>{
+
         if(tipo==="persona"){
             window.location.href="cliente.html";
         }else{
-            window.location.href="comercio.html";
+            /* 🔥 CORRECCIÓN AQUÍ */
+            window.location.href="ubicacion.html";
         }
+
     })
     .catch(()=>{
         alert("Error guardando datos");
