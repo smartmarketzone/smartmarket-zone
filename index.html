@@ -3,279 +3,314 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SmartMarket | Venezuela</title>
+<title>SmartMarket | Presentación Profesional</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;600;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;900&display=swap" rel="stylesheet">
 
 <style>
 :root {
-    --blue:#1a73e8;
-    --accent:#00d2ff;
-    --dark:#0f172a;
-    --gray:#64748b;
+    --blue: #1a73e8;
+    --accent: #00d2ff;
+    --dark: #0f172a;
+    --gray: #64748b;
+    --glass: rgba(255, 255, 255, 0.8);
 }
 
+/* 📱 FONDO PROFESIONAL CON TEXTURA */
 body {
-    margin:0;
-    font-family:'Outfit', sans-serif;
-    background:#f8fafc;
-    color:var(--dark);
+    margin: 0;
+    font-family: 'Outfit', sans-serif;
+    background-color: #f1f5f9;
+    background-image: 
+        radial-gradient(at 0% 0%, rgba(26, 115, 232, 0.05) 0px, transparent 50%),
+        radial-gradient(at 100% 100%, rgba(0, 210, 255, 0.05) 0px, transparent 50%);
+    color: var(--dark);
+    line-height: 1.6;
 }
 
-/* HERO */
+/* HERO SECTION - EFECTO CONFERENCIA */
 .hero {
-    padding:80px 20px 60px;
-    text-align:center;
-    background: radial-gradient(circle at top right, #e8f0fe, transparent);
+    padding: 100px 20px 80px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
 }
 
-/* LOGO */
-.logo {
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    gap:12px;
-    margin-bottom:10px;
+/* ✨ NUEVO LOGO PROFESIONAL (NODOS) */
+.logo-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 30px;
 }
 
-.logo-icon {
-    width:45px;
-    height:45px;
-    border-radius:12px;
-    background: linear-gradient(135deg,#1a73e8,#00d2ff);
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    position:relative;
+.logo-icon-new {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, var(--blue), var(--accent));
+    border-radius: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 20px 40px rgba(26, 115, 232, 0.3);
+    margin-bottom: 15px;
+    position: relative;
+    transition: transform 0.3s ease;
 }
 
-.pin {
-    width:14px;
-    height:14px;
-    background:white;
-    border-radius:50%;
-    position:relative;
-}
+.logo-icon-new:hover { transform: scale(1.05) rotate(5deg); }
 
-.pin::after {
-    content:'';
-    position:absolute;
-    bottom:-8px;
-    left:50%;
-    transform:translateX(-50%);
-    width:6px;
-    height:10px;
-    background:white;
-    border-radius:3px;
+/* Dibujo de Nodos internos del logo */
+.nodes {
+    width: 40px;
+    height: 40px;
+    position: relative;
 }
+.node { width: 8px; height: 8px; background: white; border-radius: 50%; position: absolute; }
+.n1 { top: 0; left: 50%; transform: translateX(-50%); }
+.n2 { bottom: 0; left: 0; }
+.n3 { bottom: 0; right: 0; }
+.line { position: absolute; background: rgba(255,255,255,0.4); }
+.l1 { width: 2px; height: 35px; left: 19px; top: 4px; transform: rotate(30deg); }
+.l2 { width: 2px; height: 35px; left: 19px; top: 4px; transform: rotate(-30deg); }
+.l3 { width: 30px; height: 2px; bottom: 3px; left: 5px; }
 
 .logo-text {
-    font-weight:900;
-    font-size:32px;
-    background: linear-gradient(90deg,#1a73e8,#00d2ff);
-    -webkit-background-clip:text;
-    -webkit-text-fill-color:transparent;
+    font-weight: 900;
+    font-size: 42px;
+    letter-spacing: -1px;
+    background: linear-gradient(90deg, var(--blue), var(--accent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 
 /* HERO TEXT */
+h1.main-title {
+    font-size: 48px;
+    font-weight: 900;
+    max-width: 800px;
+    margin: 0 auto 20px;
+    line-height: 1.1;
+    color: var(--dark);
+}
+
 .hero p {
-    max-width:650px;
-    margin:20px auto;
-    color:var(--gray);
-    font-size:18px;
+    max-width: 650px;
+    margin: 0 auto;
+    color: var(--gray);
+    font-size: 20px;
+    font-weight: 300;
 }
 
-/* CONTENIDO */
+/* CONTENEDOR */
 .container {
-    max-width:1100px;
-    margin:auto;
-    padding:40px 20px 120px;
+    max-width: 1100px;
+    margin: auto;
+    padding: 0 20px 150px;
 }
 
-.section {
-    margin-bottom:60px;
+h2 {
+    font-size: 32px;
+    font-weight: 900;
+    margin-bottom: 40px;
+    text-align: center;
+    position: relative;
 }
 
-/* TARJETAS */
+h2::after {
+    content: '';
+    width: 50px;
+    height: 4px;
+    background: var(--accent);
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 2px;
+}
+
+/* TARJETAS MEJORADAS */
 .cards {
-    display:grid;
-    grid-template-columns: repeat(auto-fit,minmax(250px,1fr));
-    gap:20px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
 }
 
 .card {
-    background:white;
-    padding:25px;
-    border-radius:20px;
-    box-shadow:0 10px 30px rgba(0,0,0,0.05);
+    background: var(--glass);
+    backdrop-filter: blur(10px);
+    padding: 40px 30px;
+    border-radius: 30px;
+    border: 1px solid rgba(255,255,255,0.5);
+    box-shadow: 0 10px 40px rgba(0,0,0,0.03);
+    transition: all 0.3s ease;
 }
 
-/* PASOS */
+.card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 50px rgba(26, 115, 232, 0.1);
+    background: white;
+}
+
+.card b { font-size: 20px; color: var(--blue); display: block; margin-bottom: 15px; }
+
+/* PASOS MEJORADOS */
 .steps {
-    display:grid;
-    gap:25px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
 }
 
 .step {
-    display:flex;
-    gap:20px;
-    align-items:center;
-    background:white;
-    padding:20px;
-    border-radius:20px;
-    box-shadow:0 10px 25px rgba(0,0,0,0.05);
+    background: white;
+    padding: 30px;
+    border-radius: 25px;
+    text-align: center;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.02);
+    border: 1px solid #edf2f7;
 }
 
 .step-num {
-    width:45px;
-    height:45px;
-    background:var(--blue);
-    color:white;
-    border-radius:50%;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-weight:bold;
+    width: 50px;
+    height: 50px;
+    background: var(--dark);
+    color: white;
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 900;
+    margin: 0 auto 20px;
+    font-size: 20px;
 }
 
-/* CTA */
+/* CTA BOTÓN PREMIUM */
 .cta {
-    position:fixed;
-    bottom:20px;
-    width:100%;
-    display:flex;
-    justify-content:center;
+    position: fixed;
+    bottom: 40px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    z-index: 100;
 }
 
 .btn {
-    background:var(--dark);
-    color:white;
-    padding:18px 50px;
-    border:none;
-    border-radius:40px;
-    font-weight:700;
-    cursor:pointer;
-    box-shadow:0 20px 40px rgba(0,0,0,0.3);
+    background: var(--dark);
+    color: white;
+    padding: 20px 60px;
+    border: none;
+    border-radius: 50px;
+    font-weight: 700;
+    font-size: 18px;
+    cursor: pointer;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 .btn:hover {
-    background:var(--blue);
+    transform: scale(1.05);
+    background: var(--blue);
+    box-shadow: 0 25px 50px rgba(26, 115, 232, 0.4);
 }
 
 @media(max-width:700px){
-    .logo-text { font-size:24px; }
+    .logo-text { font-size:32px; }
+    h1.main-title { font-size: 36px; }
+    .hero { padding-top: 60px; }
 }
 </style>
 </head>
 
 <body>
 
-<!-- HERO -->
 <div class="hero">
-
-    <div class="logo">
-        <div class="logo-icon">
-            <div class="pin"></div>
+    <div class="logo-container">
+        <div class="logo-icon-new">
+            <div class="nodes">
+                <div class="line l1"></div>
+                <div class="line l2"></div>
+                <div class="line l3"></div>
+                <div class="node n1"></div>
+                <div class="node n2"></div>
+                <div class="node n3"></div>
+            </div>
         </div>
         <span class="logo-text">SmartMarket</span>
     </div>
 
+    <h1 class="main-title">Encuentra lo que buscas, donde realmente está.</h1>
     <p>
-        Encuentra lo que buscas, donde realmente está.  
         SmartMarket conecta en tiempo real los productos disponibles en tu ciudad con tu decisión de compra.
     </p>
-
 </div>
 
 <div class="container">
 
-    <!-- POR QUÉ -->
     <div class="section">
         <h2>¿Por qué SmartMarket?</h2>
-
         <div class="cards">
             <div class="card">
                 <b>Encuentra lo que necesitas</b>
-                <p>Busca productos exactos sin perder tiempo recorriendo tiendas.</p>
+                <p>Busca productos exactos sin perder tiempo recorriendo tiendas innecesariamente.</p>
             </div>
-
             <div class="card">
                 <b>Decide con información real</b>
-                <p>Compara precios y disponibilidad en tiempo real.</p>
+                <p>Compara precios y disponibilidad en tiempo real desde la palma de tu mano.</p>
             </div>
-
             <div class="card">
                 <b>Llega directo al producto</b>
-                <p>Te guiamos con GPS hasta el comercio exacto.</p>
+                <p>Te guiamos con precisión GPS hasta el comercio exacto que tiene tu artículo.</p>
             </div>
         </div>
     </div>
 
-    <!-- CÓMO FUNCIONA -->
     <div class="section">
         <h2>¿Cómo funciona?</h2>
-
         <div class="steps">
             <div class="step">
                 <div class="step-num">1</div>
-                <div>
-                    <b>Regístrate</b>
-                    <p>Crea tu cuenta en segundos.</p>
-                </div>
+                <b>Regístrate</b>
+                <p>Crea tu cuenta profesional en segundos.</p>
             </div>
-
             <div class="step">
                 <div class="step-num">2</div>
-                <div>
-                    <b>Activa tu ubicación</b>
-                    <p>Detectamos lo que hay cerca de ti.</p>
-                </div>
+                <b>Activa Ubicación</b>
+                <p>Detectamos el inventario cerca de ti.</p>
             </div>
-
             <div class="step">
                 <div class="step-num">3</div>
-                <div>
-                    <b>Busca y compara</b>
-                    <p>Encuentra el mejor precio disponible.</p>
-                </div>
+                <b>Busca y compara</b>
+                <p>Filtra por precio y cercanía de inmediato.</p>
             </div>
-
             <div class="step">
                 <div class="step-num">4</div>
-                <div>
-                    <b>Compra inteligente</b>
-                    <p>Ve directo al comercio sin perder tiempo.</p>
-                </div>
+                <b>Compra inteligente</b>
+                <p>Ahorra combustible y tiempo valioso.</p>
             </div>
         </div>
     </div>
 
-    <!-- BENEFICIOS -->
     <div class="section">
         <h2>Beneficios</h2>
-
         <div class="cards">
-            <div class="card">
+            <div class="card" style="border-left: 5px solid var(--blue);">
                 <b>Para Personas</b>
-                <p>Ahorra tiempo y dinero comprando mejor.</p>
+                <p>Transforma tu manera de comprar. Menos estrés, más ahorro y eficiencia total.</p>
             </div>
-
-            <div class="card">
+            <div class="card" style="border-left: 5px solid var(--accent);">
                 <b>Para Comercios</b>
-                <p>Atrae clientes reales listos para comprar.</p>
+                <p>Digitaliza tu vitrina. Atrae a clientes locales que ya están listos para pagar.</p>
             </div>
         </div>
     </div>
 
 </div>
 
-<!-- BOTÓN -->
 <div class="cta">
     <button class="btn" onclick="irAuth()">Comenzar ahora 🚀</button>
 </div>
 
 <script>
-/* ✅ SIMPLE Y SIN ERRORES */
 function irAuth(){
     window.location.href = "login.html";
 }
