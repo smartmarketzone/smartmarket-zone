@@ -217,9 +217,14 @@ function login(){
     });
 }
 
-/* 🔁 AUTO LOGIN CONTROLADO */
+/* 🔁 AUTO LOGIN CONTROLADO (CORREGIDO) */
 firebase.auth().onAuthStateChanged(function(user) {
     if (user) {
+
+        const currentPage = window.location.pathname;
+
+        // ❗ Evita redirección si no estás en login.html
+        if (!currentPage.includes("login.html")) return;
 
         db.collection("usuarios").doc(user.uid).get()
         .then(doc=>{
