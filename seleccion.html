@@ -16,11 +16,19 @@ body {
     overflow-x:hidden;
     color:white;
 
-    /* ✅ SOLO EL FONDO BUENO (derecha) */
+    /* 🔥 BASE AZUL */
     background: linear-gradient(135deg,#1a73e8,#00d2ff);
 }
 
-/* ❌ ELIMINAMOS EL BEFORE OSCURO COMPLETAMENTE */
+/* 🔥 CAPA OSCURA SUAVE PARA FUSIÓN */
+body::after{
+    content:"";
+    position:fixed;
+    width:100%;
+    height:100%;
+    background: rgba(15,23,42,0.35);
+    z-index:-1;
+}
 
 /* RED */
 #networkCanvas {
@@ -30,6 +38,7 @@ body {
     width:100%;
     height:100%;
     z-index:0;
+    opacity:0.6; /* 🔥 integración visual */
 }
 
 /* PERSONA FLOTANTE */
@@ -71,12 +80,13 @@ body {
 /* TEXTOS */
 h1 {
     margin-top:20px;
-    font-size:28px;
-    font-weight:800;
+    font-size:30px;
+    font-weight:900;
 }
 
 p {
     color:#e2e8f0;
+    margin-top:10px;
 }
 
 /* GRID */
@@ -91,20 +101,20 @@ p {
 
 /* CARD PRO */
 .card {
-    background: rgba(255,255,255,0.12);
-    backdrop-filter: blur(20px);
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(25px);
     border-radius:20px;
     padding:20px;
     cursor:pointer;
-    box-shadow:0 20px 50px rgba(0,0,0,0.3);
+    box-shadow:0 20px 50px rgba(0,0,0,0.4);
     transition: all 0.4s ease;
     overflow: hidden;
     position: relative;
-    border:1px solid rgba(255,255,255,0.2);
+    border:1px solid rgba(255,255,255,0.25);
 }
 
 .card:hover {
-    transform:translateY(-12px) scale(1.04);
+    transform:translateY(-12px) scale(1.05);
 }
 
 /* EFECTO BRILLO */
@@ -140,10 +150,10 @@ p {
     background-image: url('https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=500&q=80');
 }
 
-/* TITULOS DE TARJETA */
+/* TITULOS */
 .card h3 {
     font-size:20px;
-    font-weight:800;
+    font-weight:900;
     margin-bottom:10px;
 }
 
@@ -204,7 +214,7 @@ p {
 
 </div>
 
-<!-- FIREBASE -->
+<!-- FIREBASE (igual que tienes) -->
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
@@ -222,7 +232,6 @@ if (!firebase.apps.length) {
 
 const db = firebase.firestore();
 
-/* CONTROL */
 firebase.auth().onAuthStateChanged(function(user){
 
     if(!user){
@@ -255,7 +264,6 @@ firebase.auth().onAuthStateChanged(function(user){
 
 });
 
-/* GUARDAR */
 function seleccionar(tipo){
 
     const user = firebase.auth().currentUser;
@@ -272,13 +280,11 @@ function seleccionar(tipo){
         fecha: new Date()
     }, { merge:true })
     .then(()=>{
-
         if(tipo==="persona"){
             window.location.href="cliente.html";
         }else{
             window.location.href="comercio.html";
         }
-
     })
     .catch(()=>{
         alert("Error guardando datos");
@@ -316,7 +322,7 @@ function animate(){
 
         ctx.beginPath();
         ctx.arc(p.x,p.y,2,0,Math.PI*2);
-        ctx.fillStyle="#ffffff";
+        ctx.fillStyle="rgba(255,255,255,0.8)";
         ctx.fill();
 
         for(let j=i;j<points.length;j++){
@@ -327,7 +333,7 @@ function animate(){
                 ctx.beginPath();
                 ctx.moveTo(p.x,p.y);
                 ctx.lineTo(p2.x,p2.y);
-                ctx.strokeStyle="rgba(255,255,255,0.1)";
+                ctx.strokeStyle="rgba(255,255,255,0.15)";
                 ctx.stroke();
             }
         }
