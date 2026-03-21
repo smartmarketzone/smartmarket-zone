@@ -289,16 +289,18 @@ if (!firebase.apps.length) {
     firebase.initializeApp(firebaseConfig);
 }
 
-/* 🔥 CORRECCIÓN CLAVE */
-firebase.auth().onAuthStateChanged(function(user){
-    if(user){
-        window.location.href = "seleccion.html";
-    }
-});
-
-/* BOTÓN */
+/* 🚀 BOTÓN INTELIGENTE */
 function irAuth(){
-    window.location.href = "login.html";
+
+    const user = firebase.auth().currentUser;
+
+    if(user){
+        // Si ya está logueado → ir a selección
+        window.location.href = "seleccion.html";
+    } else {
+        // Si no → login
+        window.location.href = "login.html";
+    }
 }
 </script>
 
