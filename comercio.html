@@ -20,7 +20,7 @@ body{
 /* SIDEBAR */
 .sidebar{
     width:260px;
-    background:#0f172a;
+    background:linear-gradient(180deg,#0f172a,#020617);
     color:white;
     height:100vh;
     padding:25px;
@@ -69,14 +69,11 @@ body{
 }
 
 .header{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
+    background:white;
+    padding:15px 20px;
+    border-radius:15px;
     margin-bottom:20px;
-}
-
-.header h1{
-    font-size:24px;
+    box-shadow:0 5px 15px rgba(0,0,0,0.05);
 }
 
 .section{display:none;}
@@ -114,6 +111,10 @@ body{
     background:#f8fafc;
     border-radius:10px;
     margin-bottom:10px;
+    transition:0.2s;
+}
+.product:hover{
+    transform:scale(1.02);
 }
 
 .product img{
@@ -134,28 +135,10 @@ input{
 button.primary{
     margin-top:10px;
     padding:12px;
-    background:#1a73e8;
+    background:linear-gradient(135deg,#00c6ff,#0072ff);
     color:white;
     border:none;
     border-radius:10px;
-    cursor:pointer;
-}
-
-button.edit{
-    background:#0ea5e9;
-    color:white;
-    border:none;
-    padding:6px 10px;
-    border-radius:8px;
-    cursor:pointer;
-}
-
-button.deleteBtn{
-    background:#ef4444;
-    color:white;
-    border:none;
-    padding:6px 10px;
-    border-radius:8px;
     cursor:pointer;
 }
 
@@ -200,7 +183,6 @@ button.deleteBtn{
 
 <!-- DASHBOARD -->
 <div id="dashboard" class="section active">
-
 <div class="card">
 <p id="estadoUbicacion">Cargando ubicación...</p>
 <div class="direccion" id="direccionTexto"></div>
@@ -211,23 +193,19 @@ button.deleteBtn{
 <h2 id="totalProductos">0</h2>
 <p>Productos</p>
 </div>
-
 <div class="stat">
 <h2 id="totalClicks">0</h2>
 <p>Interacciones</p>
 </div>
-
 <div class="stat">
 <h2 id="topProducto">-</h2>
 <p>Producto TOP</p>
 </div>
 </div>
-
 </div>
 
 <!-- PRODUCTOS -->
 <div id="productos" class="section">
-
 <div class="card">
 <h3>Agregar / Editar producto</h3>
 
@@ -235,6 +213,7 @@ button.deleteBtn{
 <input id="precio" placeholder="Precio">
 <input id="categoria" placeholder="Categoría">
 <input id="descripcion" placeholder="Descripción">
+<input id="imagen" placeholder="URL de imagen">
 
 <button class="primary" onclick="agregarProducto()">Guardar producto</button>
 </div>
@@ -243,7 +222,6 @@ button.deleteBtn{
 <h3>Inventario</h3>
 <div id="lista"></div>
 </div>
-
 </div>
 
 <!-- MAPA -->
@@ -251,7 +229,8 @@ button.deleteBtn{
 <div class="card">
 <div id="map"></div>
 
-<input id="direccion" placeholder="Dirección">
+<input id="direccion" placeholder="Dirección detectada">
+<button class="primary" onclick="detectarUbicacion()">Usar mi ubicación</button>
 <button class="primary" onclick="guardarUbicacion()">Guardar ubicación</button>
 
 </div>
@@ -288,54 +267,32 @@ let marker;
 let editId = null;
 let authReady = false;
 
-/* 🔥 AUTH */
-firebase.auth().onAuthStateChanged(async (user)=>{
+/* AUTH */
+firebase.auth().onAuthStateChanged(async user=>{
+if(!user){
+location.href="login.html";
+return;
+}
 
-    if(!user){
-        setTimeout(()=>{
-            if(!firebase.auth().currentUser){
-                window.location.href="login.html";
-            }
-        },500);
-        return;
-    }
+if(authReady) return;
+authReady=true;
 
-    if(authReady) return;
-    authReady = true;
+const doc = await db.collection("usuarios").doc(user.uid).get();
+const data = doc.data();
 
-    try{
-        const doc = await db.collection("usuarios").doc(user.uid).get();
+/* UBICACIÓN INTEGRADA */
+if(!data.ubicacion || !data.ubicacion.lat){
+mostrar("mapaSec");
+setTimeout(initMap,300);
+return;
+}
 
-        if(!doc.exists){
-            window.location.href="app.html";
-            return;
-        }
+nombreNegocio.innerText = data.negocio || "Mi Comercio";
+direccionTexto.innerText = data.direccion || "";
+estadoUbicacion.innerText = "📍 Ubicación activa";
 
-        const data = doc.data();
-
-        if(data.tipo !== "comercio"){
-            window.location.href="app.html";
-            return;
-        }
-
-        // ✅ YA NO REDIRECCIONA
-        if(!data.ubicacion || !data.ubicacion.lat || !data.ubicacion.lng){
-            mostrar("mapaSec");
-            setTimeout(initMap,300);
-            return;
-        }
-
-        nombreNegocio.innerText = data.negocio || "Mi Comercio";
-        direccionTexto.innerText = data.direccion || "";
-        estadoUbicacion.innerText = "📍 Ubicación activa";
-
-        cargarProductos();
-        cargarEstadisticas();
-
-    }catch(e){
-        console.error(e);
-        window.location.href="app.html";
-    }
+cargarProductos();
+cargarEstadisticas();
 
 });
 
@@ -351,35 +308,169 @@ function initMap(){
 if(map) return;
 
 map = L.map('map').setView([10.48,-66.90],13);
+
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
 
-map.on('click', function(e){
-if(marker) map.removeLayer(marker);
-marker = L.marker(e.latlng).addTo(map);
+map.on('click', e=>{
+colocarMarcador(e.latlng);
+obtenerDireccion(e.latlng.lat,e.latlng.lng);
 });
 }
 
-/* GUARDAR UBICACIÓN */
-function guardarUbicacion(){
-const user = firebase.auth().currentUser;
+function colocarMarcador(latlng){
+if(marker) map.removeLayer(marker);
+marker = L.marker(latlng).addTo(map);
+}
 
+function detectarUbicacion(){
+navigator.geolocation.getCurrentPosition(pos=>{
+const latlng={lat:pos.coords.latitude,lng:pos.coords.longitude};
+map.setView(latlng,15);
+colocarMarcador(latlng);
+obtenerDireccion(latlng.lat,latlng.lng);
+});
+}
+
+async function obtenerDireccion(lat,lng){
+try{
+const res=await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`);
+const data=await res.json();
+direccion.value=data.display_name||"";
+}catch{
+direccion.value="";
+}
+}
+
+function guardarUbicacion(){
+const user=firebase.auth().currentUser;
 if(!marker) return alert("Selecciona ubicación");
 
-const latlng = marker.getLatLng();
+const latlng=marker.getLatLng();
 
 db.collection("usuarios").doc(user.uid).set({
-ubicacion:{
-lat:latlng.lat,
-lng:latlng.lng
-},
-direccion:direccion.value || ""
-},{merge:true})
-.then(()=>{
-location.reload();
+ubicacion:{lat:latlng.lat,lng:latlng.lng},
+direccion:direccion.value||""
+},{merge:true}).then(()=>location.reload());
+}
+
+/* PRODUCTOS */
+function agregarProducto(){
+const user=firebase.auth().currentUser;
+
+const data={
+nombre:nombre.value,
+precio:parseFloat(precio.value),
+categoria:categoria.value||"General",
+descripcion:descripcion.value,
+imagen:imagen.value||"https://via.placeholder.com/60",
+dueño:user.uid,
+clicks:0,
+fecha:new Date()
+};
+
+if(editId){
+db.collection("productos").doc(editId).update(data).then(()=>{
+editId=null;
+limpiar();
+cargarProductos();
+});
+}else{
+db.collection("productos").add(data).then(()=>{
+limpiar();
+cargarProductos();
+});
+}
+}
+
+function editarProducto(id,p){
+editId=id;
+nombre.value=p.nombre;
+precio.value=p.precio;
+categoria.value=p.categoria;
+descripcion.value=p.descripcion;
+imagen.value=p.imagen;
+}
+
+function limpiar(){
+nombre.value="";
+precio.value="";
+categoria.value="";
+descripcion.value="";
+imagen.value="";
+}
+
+function cargarProductos(){
+const user=firebase.auth().currentUser;
+lista.innerHTML="Cargando...";
+
+db.collection("productos").where("dueño","==",user.uid)
+.get().then(snap=>{
+lista.innerHTML="";
+totalProductos.innerText=snap.size;
+
+if(snap.empty){
+lista.innerHTML="<p>No tienes productos aún</p>";
+return;
+}
+
+snap.forEach(doc=>{
+let p=doc.data();
+
+lista.innerHTML+=`
+<div class="product">
+<div style="display:flex;gap:10px;">
+<img src="${p.imagen}">
+<div>
+<b>${p.nombre}</b><br>
+Bs ${p.precio}
+</div>
+</div>
+<div>
+<button class="edit" onclick='editarProducto("${doc.id}", ${JSON.stringify(p)})'>✏️</button>
+<button class="deleteBtn" onclick="eliminarProducto('${doc.id}')">❌</button>
+</div>
+</div>`;
+});
 });
 }
 
-/* RESTO IGUAL */
+function eliminarProducto(id){
+db.collection("productos").doc(id).delete().then(cargarProductos);
+}
+
+/* STATS */
+function cargarEstadisticas(){
+const user=firebase.auth().currentUser;
+
+db.collection("productos").where("dueño","==",user.uid)
+.get().then(snap=>{
+let total=0;
+snap.forEach(d=> total+=d.data().clicks||0);
+totalClicks.innerText=total;
+});
+}
+
+/* PERFIL */
+function guardarPerfil(){
+const user=firebase.auth().currentUser;
+db.collection("usuarios").doc(user.uid).set({
+negocio:negocio.value,
+telefono:telefono.value
+},{merge:true});
+}
+
+/* CUENTA */
+function logout(){
+firebase.auth().signOut().then(()=>location.href="login.html");
+}
+
+function eliminarCuenta(){
+if(confirm("¿Eliminar cuenta definitivamente?")){
+const user=firebase.auth().currentUser;
+db.collection("usuarios").doc(user.uid).delete();
+user.delete().then(()=>location.href="index.html");
+}
+}
 </script>
 
 </body>
