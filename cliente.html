@@ -3,77 +3,150 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cliente | SmartMarket</title>
+<title>SmartMarket</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;600;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
+
 body{
     font-family:'Outfit',sans-serif;
-    color:white;
-    overflow:hidden;
+    background:#f1f5f9;
 }
 
-/* Fondo */
-body::before{
-    content:"";
+/* MAPA (OCULTO AL INICIO) */
+#map{
     position:fixed;
     width:100%;
     height:100%;
-    background:linear-gradient(rgba(15,32,39,0.9), rgba(32,58,67,0.9));
-    z-index:-2;
+    z-index:10;
+    display:none;
 }
 
-/* Mapa */
-#map{
-    position:absolute;
+/* TOPBAR */
+.topbar{
+    position:fixed;
+    top:0;
+    left:0;
     width:100%;
-    height:100%;
+    background:white;
+    padding:12px 20px;
+    z-index:20;
+    box-shadow:0 2px 10px rgba(0,0,0,0.1);
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
 }
 
-/* Panel */
+.topbar h1{
+    font-size:20px;
+    font-weight:900;
+}
+
+/* PANEL */
 .panel{
-    position:absolute;
-    top:20px;
+    position:fixed;
+    top:70px;
     left:20px;
-    width:370px;
-    max-height:90vh;
-    overflow:auto;
-    background:rgba(255,255,255,0.08);
-    backdrop-filter:blur(18px);
+    width:380px;
+    height:calc(100% - 90px);
+    background:white;
     border-radius:20px;
-    padding:20px;
-    z-index:3;
+    padding:15px;
+    z-index:15;
+    overflow:auto;
+    box-shadow:0 10px 30px rgba(0,0,0,0.2);
 }
 
-/* Inputs */
-input,select{
+/* BUSCADOR */
+.search{
     width:100%;
-    padding:8px;
-    margin-top:10px;
+    padding:10px;
     border-radius:10px;
-    border:none;
+    border:1px solid #e2e8f0;
+    margin-bottom:10px;
 }
 
-/* Botón */
-.btn{
-    background:#00d2ff;
-    border:none;
+/* COMERCIO */
+.comercio{
+    padding:12px;
+    border:1px solid #e2e8f0;
+    border-radius:12px;
+    margin-bottom:10px;
+    cursor:pointer;
+    transition:.2s;
+}
+
+.comercio:hover{
+    border-color:#1a73e8;
+    transform:scale(1.02);
+}
+
+/* GRID */
+.grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+}
+
+/* CARD */
+.card{
+    background:white;
+    border-radius:15px;
+    overflow:hidden;
+    box-shadow:0 4px 12px rgba(0,0,0,0.1);
+}
+
+.card img{
+    width:100%;
+    height:110px;
+    object-fit:cover;
+}
+
+.card-body{
     padding:10px;
-    margin-top:10px;
+}
+
+.precio{
+    color:#1a73e8;
+    font-weight:700;
+}
+
+.small{
+    font-size:12px;
+    color:#64748b;
+}
+
+/* BOTONES */
+.btn{
+    padding:10px;
+    border:none;
     border-radius:10px;
     cursor:pointer;
-    width:100%;
 }
 
-/* Producto */
-.product{
-    background:rgba(255,255,255,0.1);
+.primary{background:#1a73e8;color:white;}
+.sec{background:#e2e8f0;}
+
+.mapBtn{
+    background:#1a73e8;
+    color:white;
+}
+
+/* BOTON VOLVER MAPA */
+.backMap{
+    position:fixed;
+    top:80px;
+    left:20px;
+    z-index:30;
+    display:none;
     padding:10px;
-    margin-top:10px;
     border-radius:10px;
+    background:white;
+    box-shadow:0 4px 10px rgba(0,0,0,0.2);
+    cursor:pointer;
 }
 </style>
 </head>
@@ -82,222 +155,182 @@ input,select{
 
 <div id="map"></div>
 
-<div class="panel" id="panel">
-    <h2>SmartMarket</h2>
-
-    <input type="text" id="searchGlobal" placeholder="Buscar producto...">
-
-    <div id="listaComercios"></div>
-
-    <button class="btn" onclick="logout()">Cerrar sesión</button>
+<div class="topbar">
+    <h1>SmartMarket</h1>
+    <div style="display:flex; gap:10px;">
+        <button class="btn mapBtn" onclick="mostrarMapa()">🗺️ Mapa</button>
+        <button class="btn sec" onclick="logout()">Salir</button>
+    </div>
 </div>
 
-<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<div class="panel" id="panel">
+    <input class="search" id="searchGlobal" placeholder="Buscar comercio...">
+    <div id="contenido"></div>
+</div>
 
+<div class="backMap" id="backMap" onclick="cerrarMapa()">⬅️ Volver</div>
+
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
 
 <script>
 const firebaseConfig = {
-    apiKey: "TU_API_KEY",
-    authDomain: "TU_DOMAIN",
-    projectId: "TU_PROJECT"
+    apiKey:"TU_API_KEY",
+    authDomain:"TU_DOMAIN",
+    projectId:"TU_PROJECT"
 };
 
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
 /* MAPA */
-let map = L.map('map').setView([0,0], 13);
+let map = L.map('map').setView([0,0],13);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
 
-/* CAPA MAPA */
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
-    attribution:'© OpenStreetMap'
-}).addTo(map);
+let userLat=0;
+let userLng=0;
 
 /* UBICACION */
 navigator.geolocation.getCurrentPosition(pos=>{
-    let lat = pos.coords.latitude;
-    let lng = pos.coords.longitude;
+    userLat=pos.coords.latitude;
+    userLng=pos.coords.longitude;
 
-    map.setView([lat,lng],13);
-
-    L.marker([lat,lng]).addTo(map).bindPopup("Tu ubicación");
+    map.setView([userLat,userLng],13);
+    L.marker([userLat,userLng]).addTo(map).bindPopup("Tu ubicación");
 });
 
-/* CARGAR COMERCIOS */
-let comerciosGlobal = [];
+/* DATA */
+let comercios=[];
 
-db.collection("comercios").get().then(snapshot=>{
-    snapshot.forEach(doc=>{
-        let c = doc.data();
-        c.id = doc.id;
-        comerciosGlobal.push(c);
+/* CARGAR */
+db.collection("usuarios").get().then(snap=>{
+    snap.forEach(doc=>{
+        let c=doc.data();
+        if(!c.ubicacion) return;
 
-        let marker = L.marker([c.ubicacion.lat, c.ubicacion.lng]).addTo(map);
-
-        marker.on("click",()=>{
-            abrirComercio(c);
-        });
+        c.id=doc.id;
+        comercios.push(c);
     });
 
-    renderListaComercios(comerciosGlobal);
+    renderComercios(comercios);
 });
 
-/* LISTA LATERAL */
-function renderListaComercios(lista){
-    let cont = document.getElementById("listaComercios");
-    cont.innerHTML="";
-
+/* RENDER LISTA */
+function renderComercios(lista){
+    let html="";
     lista.forEach(c=>{
-        cont.innerHTML += `
-            <div class="product" onclick='abrirComercio(${JSON.stringify(c)})'>
-                <b>${c.nombre}</b><br>
-                ⭐ ${c.reputacion || 0}
-            </div>
-        `;
+        html+=`
+        <div class="comercio" onclick='abrirComercio(${JSON.stringify(c)})'>
+            <b>${c.negocio || "Comercio"}</b><br>
+            <span class="small">Ver productos</span>
+        </div>`;
+    });
+    contenido.innerHTML=html;
+}
+
+/* ABRIR MAPA */
+function mostrarMapa(){
+    document.getElementById("map").style.display="block";
+    document.getElementById("backMap").style.display="block";
+
+    cargarComerciosMapa();
+}
+
+/* CERRAR MAPA */
+function cerrarMapa(){
+    document.getElementById("map").style.display="none";
+    document.getElementById("backMap").style.display="none";
+}
+
+/* COMERCIOS EN MAPA */
+function cargarComerciosMapa(){
+    comercios.forEach(c=>{
+        let distancia = calcularDistancia(userLat,userLng,c.ubicacion.lat,c.ubicacion.lng);
+
+        if(distancia < 5){ // 🔥 solo cercanos (5km)
+            let m = L.marker([c.ubicacion.lat,c.ubicacion.lng]).addTo(map);
+            m.on("click",()=>{
+                cerrarMapa();
+                abrirComercio(c);
+            });
+        }
     });
 }
 
-/* PERFIL COMERCIO */
-function abrirComercio(comercio){
-    document.getElementById("panel").innerHTML = `
-        <h2>${comercio.nombre}</h2>
-        ⭐ ${comercio.reputacion || 0}
+/* DISTANCIA */
+function calcularDistancia(lat1,lon1,lat2,lon2){
+    let R=6371;
+    let dLat=(lat2-lat1)*Math.PI/180;
+    let dLon=(lon2-lon1)*Math.PI/180;
 
-        <button class="btn" onclick="irMapa(${comercio.ubicacion.lat},${comercio.ubicacion.lng})">
-            Ver ubicación
-        </button>
+    let a=
+        Math.sin(dLat/2)*Math.sin(dLat/2)+
+        Math.cos(lat1*Math.PI/180)*
+        Math.cos(lat2*Math.PI/180)*
+        Math.sin(dLon/2)*Math.sin(dLon/2);
 
-        <input id="search" placeholder="Buscar producto">
-        <select id="categoria">
-            <option value="">Todas</option>
-        </select>
+    let c=2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
+    return R*c;
+}
 
-        <div id="productos"></div>
-
-        <button class="btn" onclick="volver()">Volver</button>
-    `;
-
-    db.collection("productos")
-    .where("comercioId","==",comercio.id)
-    .get()
-    .then(snap=>{
-        let productos = [];
-        let categorias = new Set();
-
+/* ABRIR COMERCIO */
+function abrirComercio(c){
+    db.collection("publicaciones").get().then(snap=>{
+        let productos=[];
         snap.forEach(d=>{
-            let p = d.data();
-            productos.push(p);
-            categorias.add(p.categoria);
+            let p=d.data();
+            if(p.negocio===c.negocio) productos.push(p);
         });
 
-        /* llenar categorías */
-        let select = document.getElementById("categoria");
-        categorias.forEach(cat=>{
-            select.innerHTML += `<option>${cat}</option>`;
-        });
-
-        mostrarProductos(productos);
-
-        /* filtros */
-        document.getElementById("search").oninput = ()=>{
-            filtrar(productos);
-        };
-
-        document.getElementById("categoria").onchange = ()=>{
-            filtrar(productos);
-        };
+        renderProductos(c,productos);
     });
 }
 
-/* FILTROS */
-function filtrar(lista){
-    let texto = document.getElementById("search").value.toLowerCase();
-    let cat = document.getElementById("categoria").value;
-
-    let filtrados = lista.filter(p=>{
-        return (
-            p.nombre.toLowerCase().includes(texto) &&
-            (cat=="" || p.categoria==cat) &&
-            p.stock > 0
-        );
-    });
-
-    mostrarProductos(filtrados);
-}
-
-/* MOSTRAR PRODUCTOS */
-function mostrarProductos(lista){
-    let cont = document.getElementById("productos");
-    cont.innerHTML="";
-
-    if(lista.length === 0){
-        cont.innerHTML = "Sin productos";
-        return;
-    }
+/* PRODUCTOS */
+function renderProductos(c,lista){
+    let html=`<h3>${c.negocio}</h3>
+    <button class="btn sec" onclick="volver()">← Volver</button>
+    <div class="grid">`;
 
     lista.forEach(p=>{
-        cont.innerHTML += `
-            <div class="product">
-                <b>${p.nombre}</b><br>
-                💲 ${p.precio}<br>
-                📦 ${p.stock}
-
-                <button onclick="favorito('${p.nombre}')">❤️</button>
-                <button onclick="comparar('${p.nombre}')">Comparar</button>
+        html+=`
+        <div class="card">
+            <img src="${p.imagen}">
+            <div class="card-body">
+                <b>${p.nombre}</b>
+                <div class="precio">$${p.precio}</div>
+                <button class="btn primary" onclick="favorito('${p.nombre}')">❤️</button>
             </div>
-        `;
+        </div>`;
     });
+
+    html+="</div>";
+    contenido.innerHTML=html;
+}
+
+/* BUSCADOR */
+searchGlobal.oninput=()=>{
+    let t=searchGlobal.value.toLowerCase();
+    let filtrados=comercios.filter(c=>(c.negocio||"").toLowerCase().includes(t));
+    renderComercios(filtrados);
+};
+
+/* VOLVER */
+function volver(){
+    renderComercios(comercios);
 }
 
 /* FAVORITOS */
 function favorito(nombre){
-    let user = firebase.auth().currentUser;
-
-    db.collection("usuarios")
-    .doc(user.uid)
-    .collection("favoritos")
-    .add({nombre});
-}
-
-/* COMPARADOR */
-function comparar(nombre){
-    db.collection("productos")
-    .where("nombre","==",nombre)
-    .get()
-    .then(snap=>{
-        let lista=[];
-
-        snap.forEach(d=>lista.push(d.data()));
-
-        lista.sort((a,b)=>a.precio-b.precio);
-
-        let texto = "Comparador:\n";
-        lista.forEach(p=>{
-            texto += `${p.nombre} - $${p.precio}\n`;
-        });
-
-        alert(texto);
-    });
-}
-
-/* GOOGLE MAPS */
-function irMapa(lat,lng){
-    window.open(`https://www.google.com/maps?q=${lat},${lng}`);
-}
-
-/* VOLVER */
-function volver(){
-    location.reload();
+    let user=firebase.auth().currentUser;
+    db.collection("usuarios").doc(user.uid).collection("favoritos").add({nombre});
 }
 
 /* LOGOUT */
 function logout(){
-    firebase.auth().signOut().then(()=>{
-        window.location.href="login.html";
-    });
+    firebase.auth().signOut().then(()=>location.href="login.html");
 }
 </script>
 
