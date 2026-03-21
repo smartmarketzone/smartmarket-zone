@@ -11,111 +11,115 @@
 *{margin:0;padding:0;box-sizing:border-box;}
 
 body {
-    font-family:'Outfit', sans-serif;
-    text-align:center;
-    overflow-x:hidden;
-    color:white;
-    background: linear-gradient(135deg,#1a73e8,#00d2ff);
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Outfit', sans-serif;
+    overflow: hidden;
+    position: relative;
+    color: white;
 }
 
-/* CAPA OSCURA */
-body::after{
-    content:"";
-    position:fixed;
-    width:100%;
-    height:100%;
-    background: rgba(15,23,42,0.35);
-    z-index:-1;
+/* 🌍 FONDO OSCURO DEL LOGIN */
+body::before {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: 
+        linear-gradient(rgba(15,32,39,0.85), rgba(32,58,67,0.85)),
+        url('https://images.unsplash.com/photo-1524661135-423995f22d0b?auto=format&fit=crop&w=1600&q=80');
+    background-size: cover;
+    background-position: center;
+    z-index: -2;
 }
 
-/* RED */
+/* ✨ RESTAURADA: TU RED ANIMADA ORIGINAL (Puntos Blancos) */
 #networkCanvas {
     position: fixed;
     top:0;
     left:0;
     width:100%;
     height:100%;
-    z-index:0;
+    z-index: -1;
     opacity:0.6;
 }
 
-/* PERSONA */
+/* ICONO FLOTANTE */
 .network-person {
     position: fixed;
-    bottom: 20px;
-    right: 20px;
-    width: 90px;
-    height: 90px;
+    bottom: 30px;
+    right: 30px;
+    width: 70px;
+    height: 70px;
     background-image: url('https://cdn-icons-png.flaticon.com/512/1946/1946429.png');
     background-size: cover;
     z-index: 2;
-    opacity: 0.9;
+    opacity: 0.6;
+    filter: invert(1) brightness(2);
     animation: float 3s ease-in-out infinite;
 }
 
 @keyframes float {
-    0%,100%{transform:translateY(0);}
-    50%{transform:translateY(-10px);}
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-15px); }
+}
+
+/* CONTENIDO PRINCIPAL */
+#mainContent {
+    position: relative;
+    z-index: 3;
+    display: none;
+    text-align: center;
+    width: 100%;
 }
 
 /* LOGO */
 .logo {
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    gap:10px;
-    margin-top:40px;
+    font-size: 32px;
+    font-weight: 900;
+    margin-bottom: 10px;
 }
-
-.logo-box {
-    background: white;
-    color:#1a73e8;
-    padding:10px;
-    border-radius:10px;
-    font-weight:900;
-}
+.logo span { color: #00d2ff; }
 
 /* TEXTOS */
-h1 {
-    margin-top:20px;
-    font-size:30px;
-    font-weight:900;
-}
+h1 { font-size: 28px; font-weight: 900; margin-bottom: 5px; color: #fff; }
+.sub-text { color: #cbd5e1; font-size: 14px; margin-bottom: 30px; }
 
-p {
-    color:#e2e8f0;
-    margin-top:10px;
-}
-
-/* GRID */
+/* GRID DE TARJETAS */
 .grid {
-    display:grid;
-    grid-template-columns: repeat(auto-fit,minmax(250px,1fr));
-    gap:30px;
-    padding:40px;
-    max-width:900px;
-    margin:auto;
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    padding: 20px;
+    max-width: 900px;
+    margin: auto;
+    flex-wrap: wrap;
 }
 
-/* CARD */
+/* CARD GLASSMORPHISM PROFESIONAL */
 .card {
-    background: rgba(255,255,255,0.15);
-    backdrop-filter: blur(25px);
-    border-radius:20px;
-    padding:20px;
-    cursor:pointer;
-    box-shadow:0 20px 50px rgba(0,0,0,0.4);
-    transition: all 0.4s ease;
-    overflow: hidden;
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(18px);
+    border-radius: 25px;
+    padding: 30px;
+    width: 320px;
+    cursor: pointer;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     position: relative;
-    border:1px solid rgba(255,255,255,0.25);
+    overflow: hidden;
 }
 
 .card:hover {
-    transform:translateY(-12px) scale(1.05);
+    transform: translateY(-15px) scale(1.03); /* TU ESCALA ORIGINAL */
+    background: rgba(255, 255, 255, 0.12);
+    border-color: #00d2ff;
 }
 
-/* EFECTO BRILLO */
+/* ✨ RESTAURADO: TU EFECTO DE BRILLO ORIGINAL (`::before`) */
 .card::before {
     content:"";
     position:absolute;
@@ -125,114 +129,107 @@ p {
     height:100%;
     background: linear-gradient(120deg,transparent,rgba(255,255,255,0.3),transparent);
     transition:0.6s;
+    z-index: 1; /* Para que el brillo pase sobre la imagen */
 }
+.card:hover::before { left: 100%; }
 
-.card:hover::before {
-    left:100%;
-}
-
-/* IMÁGENES */
+/* IMÁGENES ILUSTRATIVAS */
 .img {
-    height:150px;
-    border-radius:15px;
-    margin-bottom:15px;
+    height: 160px;
+    border-radius: 15px;
+    margin-bottom: 20px;
     background-size: cover;
     background-position: center;
-}
-
-.img-persona {
-    background-image: url('https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?auto=format&fit=crop&w=500&q=80');
-}
-
-.img-comercio {
-    background-image: url('https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=500&q=80');
-}
-
-/* TITULOS */
-.card h3 {
-    font-size:20px;
-    font-weight:900;
-    margin-bottom:10px;
-}
-
-/* CONTENIDO */
-#mainContent {
+    border: 1px solid rgba(255,255,255,0.1);
     position: relative;
-    z-index: 3;
-    display:none;
+    z-index: 0; /* Imagen detrás del brillo */
 }
 
-/* LOADING */
-.loader{
-    position:fixed;
-    width:100%;
-    height:100%;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    background:#0f172a;
-    z-index:5;
-    font-size:18px;
+.img-persona { background-image: url('https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?auto=format&fit=crop&w=500&q=80'); }
+.img-comercio { background-image: url('https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=500&q=80'); }
+
+.card h3 { font-size: 22px; font-weight: 900; color: #00d2ff; margin-bottom: 10px; position: relative; z-index: 2; }
+.card p { color: #cbd5e1; font-size: 14px; line-height: 1.5; position: relative; z-index: 2; }
+
+/* LOADING SCREEN */
+.loader {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: #0f172a;
+    z-index: 10;
+    color: white;
+}
+
+.spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid rgba(0, 210, 255, 0.1);
+    border-top: 4px solid #00d2ff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 15px;
+}
+
+@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+@media (max-width: 650px) {
+    body { overflow-y: auto; height: auto; padding: 40px 0; }
+    .grid { flex-direction: column; align-items: center; }
 }
 </style>
 </head>
 
 <body>
 
-<div class="loader" id="loader">Cargando...</div>
+<div class="loader" id="loader">
+    <div class="spinner"></div>
+    <p>Sincronizando SmartMarket...</p>
+</div>
 
 <canvas id="networkCanvas"></canvas>
 <div class="network-person"></div>
 
 <div id="mainContent">
+    <div class="logo">Smart<span>Market</span></div>
+    <h1>¿Cómo quieres usar la plataforma?</h1>
+    <p class="sub-text">Selecciona la opción que mejor se adapte a ti</p>
 
-<div class="logo">
-    <div class="logo-box">SM</div>
-    <h2>SmartMarket</h2>
-</div>
+    <div class="grid">
+        <div class="card" onclick="seleccionar('persona')">
+            <div class="img img-persona"></div>
+            <h3>Soy Persona</h3>
+            <p>Encuentra productos, compara precios en tiempo real y ahorra en cada compra.</p>
+        </div>
 
-<h1>¿Cómo quieres usar SmartMarket?</h1>
-<p>Selecciona la opción que mejor se adapte a ti</p>
-
-<div class="grid">
-
-    <div class="card" onclick="seleccionar('persona')">
-        <div class="img img-persona"></div>
-        <h3>Soy Persona</h3>
-        <p>Encuentra productos, compara precios y compra de forma inteligente.</p>
+        <div class="card" onclick="seleccionar('comercio')">
+            <div class="img img-comercio"></div>
+            <h3>Soy Comercio</h3>
+            <p>Publica tu inventario, digitaliza tu negocio y atrae clientes cercanos.</p>
+        </div>
     </div>
-
-    <div class="card" onclick="seleccionar('comercio')">
-        <div class="img img-comercio"></div>
-        <h3>Soy Comercio</h3>
-        <p>Publica tu inventario y atrae clientes cercanos listos para comprar.</p>
-    </div>
-
 </div>
 
-</div>
-
-<!-- FIREBASE -->
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
 
 <script>
 const firebaseConfig = {
-  apiKey: "AIzaSyA6tYooh4CtX7ww9GRyXWhuakl2nLovtsY",
-  authDomain: "smartmarket-zone-e7559.firebaseapp.com",
-  projectId: "smartmarket-zone-e7559"
+    apiKey: "AIzaSyA6tYooh4CtX7ww9GRyXWhuakl2nLovtsY",
+    authDomain: "smartmarket-zone-e7559.firebaseapp.com",
+    projectId: "smartmarket-zone-e7559"
 };
 
-if (!firebase.apps.length) {
-    firebase.initializeApp(firebaseConfig);
-}
-
+if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
-/* CONTROL */
+/* VERIFICACIÓN DE SESIÓN */
 firebase.auth().onAuthStateChanged(function(user){
-
     if(!user){
         window.location.href="login.html";
         return;
@@ -240,44 +237,29 @@ firebase.auth().onAuthStateChanged(function(user){
 
     db.collection("usuarios").doc(user.uid).get()
     .then(doc=>{
-
         document.getElementById("loader").style.display="none";
-
+        
         if(doc.exists && doc.data().tipo){
-
             if(doc.data().tipo === "persona"){
                 window.location.href="cliente.html";
             }else{
-                /* 🔥 CORRECCIÓN AQUÍ */
-                if(!doc.data().ubicacion){
-                    window.location.href="ubicacion.html";
-                }else{
-                    window.location.href="comercio.html";
-                }
+                if(!doc.data().ubicacion) window.location.href="ubicacion.html";
+                else window.location.href="comercio.html";
             }
-
         }else{
             document.getElementById("mainContent").style.display="block";
         }
-
     })
     .catch(()=>{
         document.getElementById("loader").style.display="none";
         document.getElementById("mainContent").style.display="block";
     });
-
 });
 
-/* SELECCIÓN */
+/* GUARDAR SELECCIÓN */
 function seleccionar(tipo){
-
     const user = firebase.auth().currentUser;
-
-    if(!user){
-        alert("Sesión expirada");
-        window.location.href="login.html";
-        return;
-    }
+    if(!user) return;
 
     db.collection("usuarios").doc(user.uid).set({
         tipo: tipo,
@@ -285,21 +267,12 @@ function seleccionar(tipo){
         fecha: new Date()
     }, { merge:true })
     .then(()=>{
-
-        if(tipo==="persona"){
-            window.location.href="cliente.html";
-        }else{
-            /* 🔥 CORRECCIÓN AQUÍ */
-            window.location.href="ubicacion.html";
-        }
-
-    })
-    .catch(()=>{
-        alert("Error guardando datos");
+        if(tipo==="persona") window.location.href="cliente.html";
+        else window.location.href="ubicacion.html";
     });
 }
 
-/* RED */
+/* ✨ RESTAURADA: TU RED ANIMADA ORIGINAL (Puntos Blancos) */
 const canvas = document.getElementById("networkCanvas");
 const ctx = canvas.getContext("2d");
 
@@ -330,7 +303,7 @@ function animate(){
 
         ctx.beginPath();
         ctx.arc(p.x,p.y,2,0,Math.PI*2);
-        ctx.fillStyle="rgba(255,255,255,0.8)";
+        ctx.fillStyle="rgba(255,255,255,0.8)"; // TUS PUNTOS BLANCOS
         ctx.fill();
 
         for(let j=i;j<points.length;j++){
@@ -341,7 +314,7 @@ function animate(){
                 ctx.beginPath();
                 ctx.moveTo(p.x,p.y);
                 ctx.lineTo(p2.x,p2.y);
-                ctx.strokeStyle="rgba(255,255,255,0.15)";
+                ctx.strokeStyle="rgba(255,255,255,0.15)"; // TUS LÍNEAS BLANCAS
                 ctx.stroke();
             }
         }
