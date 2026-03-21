@@ -10,6 +10,7 @@ const db = firebase.firestore();
 
 let map;
 let marker;
+let mapReady = false; // 🔧 evita múltiples ejecuciones
 
 /* AUTH */
 firebase.auth().onAuthStateChanged(user=>{
@@ -17,6 +18,11 @@ if(!user){
     location.href="login.html";
     return;
 }
+
+// 🔧 CORRECCIÓN: evita que se ejecute varias veces
+if(mapReady) return;
+mapReady = true;
+
 initMap();
 });
 
@@ -66,7 +72,7 @@ direccion.value = "";
 }
 }
 
-/* GUARDAR (🔥 CORREGIDO) */
+/* GUARDAR */
 function guardarUbicacion(){
 const user = firebase.auth().currentUser;
 
