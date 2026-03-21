@@ -41,7 +41,7 @@ button {
     <button onclick="logout()">Cerrar sesión</button>
 </div>
 
-<!-- ✅ FIREBASE UNIFICADO (v8 como todo tu proyecto) -->
+<!-- 🔥 FIREBASE -->
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
@@ -59,7 +59,7 @@ if (!firebase.apps.length) {
 
 const db = firebase.firestore();
 
-/* 🔐 CONTROL REAL DE SESIÓN (SOLO FIREBASE) */
+/* 🔐 CONTROL DE FLUJO (CORRECTO Y LIMPIO) */
 firebase.auth().onAuthStateChanged(function(user) {
 
     if (!user) {
@@ -70,21 +70,32 @@ firebase.auth().onAuthStateChanged(function(user) {
     db.collection("usuarios").doc(user.uid).get()
     .then((doc) => {
 
-        if (doc.exists && doc.data().tipo === "persona") {
-            window.location.href = "cliente.html";
-        } 
-        else if (doc.exists && doc.data().tipo === "comercio") {
-            window.location.href = "comercio.html";
-        } 
-        else {
-            window.location.href = "selection.html";
+        if (doc.exists) {
+
+            const tipo = doc.data().tipo;
+
+            if (tipo === "persona") {
+                window.location.href = "cliente.html";
+            } 
+            else if (tipo === "comercio") {
+                window.location.href = "comercio.html";
+            } 
+            else {
+                window.location.href = "seleccion.html"; // 🔥 corregido nombre
+            }
+
+        } else {
+            window.location.href = "seleccion.html";
         }
 
+    })
+    .catch(() => {
+        window.location.href = "seleccion.html";
     });
 
 });
 
-/* 🌍 GEOLOCALIZACIÓN (IGUAL PERO MÁS ROBUSTO) */
+/* 🌍 GEOLOCALIZACIÓN */
 function detectar(){
     const city = document.getElementById("city");
 
@@ -114,7 +125,7 @@ function detectar(){
     });
 }
 
-/* 🔒 LOGOUT LIMPIO */
+/* 🔒 LOGOUT */
 function logout(){
     firebase.auth().signOut().then(()=>{
         window.location.href = "login.html";
